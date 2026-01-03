@@ -172,9 +172,7 @@
         <h2>I Have</h2>
         <div class="grid">
           <div class="slot add-btn" onclick="openModal()">+</div>
-          <div class="slot filled">
-        <img src="https://static.wikia.nocookie.net/roblox-blox-piece/images/4/40/Dragon_%28West%29_Fruit.png/revision/latest/scale-to-width/360?cb=20241222155217" alt="Dragon">
-        <div class="value">Valeur : ???</div>
+          <div class="slot" onclick="openModal()">+</div>
       </div>
           <div class="slot"></div>
           <div class="slot"></div>
@@ -222,7 +220,7 @@
       <h3>Choisir un objet</h3>
       <div class="items">
         <!-- Exemples d'objets (images à remplacer plus tard) -->
-        <div class="item">Objet 1</div>
+        <div class="item"><img src="https://static.wikia.nocookie.net/roblox-blox-piece/images/4/40/Dragon_%28West%29_Fruit.png/revision/latest/scale-to-width/360?cb=20241222155217" alt="Dragon"><div class="value">Valeur : ???</div></div>
         <div class="item">Objet 2</div>
         <div class="item">Objet 3</div>
         <div class="item">Objet 4</div>
@@ -235,17 +233,23 @@
   </div>
 
   <script>
-    const modal = document.getElementById('modal');
-
     function openModal() {
-      modal.classList.add('active');
+      document.getElementById('modal').style.display = 'flex';
     }
 
-    modal.addEventListener('click', (e) => {
-      if (e.target === modal) {
-        modal.classList.remove('active');
-      }
-    });
+    function closeModal() {
+      document.getElementById('modal').style.display = 'none';
+    }
+
+    function selectItem(name, img) {
+      const slot = document.querySelector('.slot');
+      slot.innerHTML = `
+        <img src="${img}" alt="${name}">
+        <div class="value">Valeur : ???</div>
+      `;
+      slot.classList.add('filled');
+      closeModal();
+    }
   </script>
 
 </body>
