@@ -276,7 +276,8 @@ function openModal(side) {
 }
 
 function selectItem(name) {
-    const sideSlots = slots[currentSide];
+    const side = currentSide; // 🔒 side figé ici
+    const sideSlots = slots[side];
     const plusIndex = sideSlots.findIndex(s => s.classList.contains("add-btn"));
     if (plusIndex === -1) return;
 
@@ -289,39 +290,34 @@ function selectItem(name) {
             <div class="demand-text">Demand: ?/?</div>
         </div>
     `;
-    slot.onclick = () => removeItem(currentSide, plusIndex);
+    slot.onclick = () => removeItem(side, plusIndex); // ✅ side correct
 
     document.getElementById("modal").style.display = "none";
-    updatePlus(currentSide);
+    updatePlus(side);
 }
 
-/* ✅ BUG CORRIGÉ ICI */
 function removeItem(side, index) {
     const sideSlots = slots[side];
-
-    // Récupérer tous les fruits sauf celui supprimé
     const items = [];
+
     sideSlots.forEach((slot, i) => {
         if (slot.classList.contains("item") && i !== index) {
             items.push(slot.innerHTML);
         }
     });
 
-    // Reset total des slots
     sideSlots.forEach(slot => {
         slot.className = "slot";
         slot.innerHTML = "";
         slot.onclick = null;
     });
 
-    // Réinsérer les fruits décalés vers la gauche
     items.forEach((html, i) => {
         sideSlots[i].className = "slot item";
         sideSlots[i].innerHTML = html;
         sideSlots[i].onclick = () => removeItem(side, i);
     });
 
-    // Bouton + toujours après le dernier fruit
     updatePlus(side);
 }
 
@@ -331,4 +327,3 @@ initGrid("want");
 
 </body>
 </html>
-
