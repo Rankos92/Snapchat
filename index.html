@@ -78,6 +78,26 @@ body {
     background-size: 70%;
 }
 
+/* Nouveau style pour le bouton + */
+.slot.add-btn {
+    background: #141414;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 36px;
+    font-weight: bold;
+    color: #fff;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border-radius: 12px;
+}
+
+.slot.add-btn:hover {
+    background: #6d28d9;
+    box-shadow: 0 0 15px #8b5cf6;
+    transform: scale(1.08);
+}
+
 .value-box {
     background: rgba(0,0,0,0.65);
     padding: 4px 0;
@@ -91,20 +111,6 @@ body {
 .demand-text {
     font-size: 9px;
     color: #666;
-}
-
-.add-btn {
-    background: linear-gradient(145deg, #6d28d9, #8b5cf6);
-    cursor: pointer;
-    justify-content: center;
-    display: flex;
-    align-items: center;
-}
-
-.add-btn span {
-    font-size: 36px;
-    font-weight: bold;
-    color: white;
 }
 
 /* Nouveau design pour le bloc YOUR OFFER / YOU WANT */
@@ -158,6 +164,7 @@ body {
     opacity: 0.6;
     align-self: center;
 }
+
 .modal {
     position: fixed;
     inset: 0;
@@ -190,6 +197,7 @@ body {
 
 .item:hover {
     background: #6d28d9;
+    box-shadow: 0 0 15px #8b5cf6;
 }
 </style>
 </head>
