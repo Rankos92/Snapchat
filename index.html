@@ -73,6 +73,9 @@ body {
 
 .slot.item {
     cursor: pointer;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 70%; /* image réduit à 70% du slot */
 }
 
 .value-box {
@@ -94,29 +97,30 @@ body {
     background: linear-gradient(145deg, #6d28d9, #8b5cf6);
     cursor: pointer;
     justify-content: center;
+    display: flex;
+    align-items: center;
 }
 
 .add-btn span {
     font-size: 36px;
     font-weight: bold;
+    color: white;
 }
 
 .values {
     margin-top: 30px;
     width: 100%;
-    max-width: 600px;
-    background: #0b0b0b;
-    border-radius: 18px;
-    padding: 20px;
+    max-width: 400px;
     display: flex;
-    justify-content: space-between;
+    justify-content: space-around;
     align-items: center;
+    font-size: 28px;
+    color: #8b5cf6;
 }
 
-.value-number {
-    font-size: 32px;
-    font-weight: 700;
-    color: #8b5cf6;
+.vs {
+    font-size: 24px;
+    opacity: 0.6;
 }
 
 .modal {
@@ -168,17 +172,9 @@ body {
 </div>
 
 <div class="values">
-    <div>
-        <h3>YOUR OFFER</h3>
-        <div class="value-number">0</div>
-        <div>Demand: 0/10</div>
-    </div>
-    <div>VS</div>
-    <div>
-        <h3>YOU WANT</h3>
-        <div class="value-number">0</div>
-        <div>Demand: 0/10</div>
-    </div>
+    <div class="value-number" id="offer-value">0</div>
+    <div class="vs">VS</div>
+    <div class="value-number" id="want-value">0</div>
 </div>
 
 <div class="modal" id="modal">
@@ -222,7 +218,7 @@ function updatePlus(side) {
 
 function openModal(side) {
     currentSide = side;
-    modal.style.display = "flex";
+    document.getElementById("modal").style.display = "flex";
 }
 
 function selectItem(name) {
@@ -235,8 +231,10 @@ function selectItem(name) {
     if (name === "Dragon") {
         slot.style.backgroundImage =
         "url('https://static.wikia.nocookie.net/roblox-blox-piece/images/4/40/Dragon_%28West%29_Fruit.png')";
-        slot.style.backgroundSize = "cover";
+        slot.style.backgroundSize = "70%";
         slot.style.backgroundPosition = "center";
+    } else {
+        slot.style.backgroundImage = "";
     }
 
     slot.innerHTML += `
@@ -249,7 +247,7 @@ function selectItem(name) {
     const index = slots[side].indexOf(slot);
     slot.onclick = () => removeItem(side, index);
 
-    modal.style.display = "none";
+    document.getElementById("modal").style.display = "none";
     updatePlus(side);
 }
 
