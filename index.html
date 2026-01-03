@@ -75,7 +75,7 @@ body {
 .slot.item {
     cursor: pointer;
     transition: box-shadow 0.25s ease;
-    background-size: 70% 70%; /* ajuste l'image */
+    background-size: 70% 70%;
     background-repeat: no-repeat;
     background-position: center;
 }
@@ -288,9 +288,9 @@ function selectItem(name) {
     const slot = sideSlots[plusIndex];
     slot.className = "slot item";
 
-    // ✅ Image Dragon corrigée
+    // ✅ Image Dragon corrigée (URL encodée pour parenthèses)
     if (name === "Dragon") {
-        slot.style.backgroundImage = "url('https://static.wikia.nocookie.net/roblox-blox-piece/images/4/40/Dragon_(West)_Fruit.png/revision/latest?cb=20241222155217')";
+        slot.style.backgroundImage = "url('https://static.wikia.nocookie.net/roblox-blox-piece/images/4/40/Dragon_%28West%29_Fruit.png/revision/latest?cb=20241222155217')";
     }
 
     slot.innerHTML = `
