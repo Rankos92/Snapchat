@@ -21,7 +21,6 @@ body {
     align-items: center;
 }
 
-/* TITRE */
 .title {
     margin-top: 30px;
     font-size: 48px;
@@ -32,7 +31,6 @@ body {
     text-shadow: 0 0 25px rgba(139,92,246,0.5);
 }
 
-/* ZONE TRADE */
 .trade-zone {
     margin-top: 40px;
     background: #1a1a1a;
@@ -40,10 +38,8 @@ body {
     border-radius: 20px;
     display: flex;
     gap: 60px;
-    box-shadow: 0 0 30px rgba(0,0,0,0.8);
 }
 
-/* COLONNES */
 .trade-column {
     display: flex;
     flex-direction: column;
@@ -56,7 +52,6 @@ body {
     color: #aaa;
 }
 
-/* GRILLE (4 CASES) */
 .grid {
     display: grid;
     grid-template-columns: repeat(2, 90px);
@@ -64,7 +59,6 @@ body {
     gap: 15px;
 }
 
-/* CASE */
 .slot {
     width: 90px;
     height: 90px;
@@ -73,14 +67,14 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
+    text-align: center;
+    font-size: 13px;
 }
 
-/* BOUTON + */
 .add-btn {
     background: linear-gradient(145deg, #6d28d9, #8b5cf6);
     cursor: pointer;
     transition: transform 0.2s ease, box-shadow 0.2s ease;
-    flex-direction: column;
 }
 
 .add-btn span {
@@ -93,7 +87,7 @@ body {
     box-shadow: 0 0 20px rgba(139,92,246,0.7);
 }
 
-/* ===== VALEURS BAS ===== */
+/* VALUES */
 .values {
     margin-top: 30px;
     width: 100%;
@@ -111,20 +105,10 @@ body {
     flex: 1;
 }
 
-.value-block h3 {
-    font-size: 14px;
-    color: #aaa;
-}
-
 .value-number {
     font-size: 32px;
     font-weight: 700;
     color: #8b5cf6;
-}
-
-.demand {
-    font-size: 13px;
-    color: #777;
 }
 
 .vs {
@@ -132,7 +116,7 @@ body {
     opacity: 0.6;
 }
 
-/* ===== MODAL SCROLL ===== */
+/* MODAL */
 .modal {
     position: fixed;
     inset: 0;
@@ -140,7 +124,6 @@ body {
     display: none;
     justify-content: center;
     align-items: center;
-    z-index: 100;
 }
 
 .modal-content {
@@ -152,12 +135,6 @@ body {
     overflow-y: auto;
 }
 
-.modal-content h3 {
-    margin-bottom: 15px;
-    color: #aaa;
-}
-
-/* ITEMS GRID */
 .items {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
@@ -170,20 +147,10 @@ body {
     padding: 10px;
     text-align: center;
     cursor: pointer;
-    transition: background 0.2s;
 }
 
 .item:hover {
     background: #6d28d9;
-}
-
-/* SCROLL BAR */
-.modal-content::-webkit-scrollbar {
-    width: 6px;
-}
-.modal-content::-webkit-scrollbar-thumb {
-    background: #6d28d9;
-    border-radius: 10px;
 }
 </style>
 </head>
@@ -194,36 +161,23 @@ body {
 
 <div class="trade-zone">
 
-    <!-- I HAVE -->
     <div class="trade-column">
         <h2>I Have</h2>
-        <div class="grid">
-            <div class="slot add-btn" onclick="openModal()"><span>+</span></div>
-            <div class="slot"></div>
-            <div class="slot"></div>
-            <div class="slot"></div>
-        </div>
+        <div class="grid" data-side="have"></div>
     </div>
 
-    <!-- I WANT -->
     <div class="trade-column">
         <h2>I Want</h2>
-        <div class="grid">
-            <div class="slot add-btn" onclick="openModal()"><span>+</span></div>
-            <div class="slot"></div>
-            <div class="slot"></div>
-            <div class="slot"></div>
-        </div>
+        <div class="grid" data-side="want"></div>
     </div>
 
 </div>
 
-<!-- VALEURS -->
 <div class="values">
     <div class="value-block">
         <h3>YOUR OFFER</h3>
         <div class="value-number">0</div>
-        <div class="demand">Demand: 0/10</div>
+        <div>Demand: 0/10</div>
     </div>
 
     <div class="vs">VS</div>
@@ -231,41 +185,77 @@ body {
     <div class="value-block">
         <h3>YOU WANT</h3>
         <div class="value-number">0</div>
-        <div class="demand">Demand: 0/10</div>
+        <div>Demand: 0/10</div>
     </div>
 </div>
 
-<!-- MODAL -->
-<div class="modal" id="modal" onclick="closeModal(event)">
+<div class="modal" id="modal">
     <div class="modal-content">
         <h3>Available Items</h3>
         <div class="items">
-            <div class="item">Dragon</div>
-            <div class="item">Leopard</div>
-            <div class="item">Kitsune</div>
-            <div class="item">Dough</div>
-            <div class="item">Control</div>
-            <div class="item">Spirit</div>
-            <div class="item">Venom</div>
-            <div class="item">Gravity</div>
-            <div class="item">T-Rex</div>
-            <div class="item">Yeti</div>
-            <div class="item">Gas</div>
-            <div class="item">Pain</div>
+            <div class="item" onclick="selectItem('Dragon')">Dragon</div>
+            <div class="item" onclick="selectItem('Leopard')">Leopard</div>
+            <div class="item" onclick="selectItem('Kitsune')">Kitsune</div>
+            <div class="item" onclick="selectItem('Dough')">Dough</div>
+            <div class="item" onclick="selectItem('Control')">Control</div>
+            <div class="item" onclick="selectItem('Venom')">Venom</div>
         </div>
     </div>
 </div>
 
 <script>
-function openModal() {
+let currentSide = null;
+const slots = {
+    have: [],
+    want: []
+};
+
+function initGrid(side) {
+    const grid = document.querySelector(`.grid[data-side="${side}"]`);
+    grid.innerHTML = "";
+    slots[side] = [];
+
+    for (let i = 0; i < 4; i++) {
+        const slot = document.createElement("div");
+        slot.className = "slot";
+        slots[side].push(slot);
+        grid.appendChild(slot);
+    }
+
+    addPlus(side);
+}
+
+function addPlus(side) {
+    const emptyIndex = slots[side].findIndex(s => s.innerHTML === "");
+    if (emptyIndex === -1) return;
+
+    const slot = slots[side][emptyIndex];
+    slot.classList.add("add-btn");
+    slot.innerHTML = "<span>+</span>";
+    slot.onclick = () => openModal(side);
+}
+
+function openModal(side) {
+    currentSide = side;
     document.getElementById("modal").style.display = "flex";
 }
 
-function closeModal(e) {
-    if (e.target.id === "modal") {
-        document.getElementById("modal").style.display = "none";
-    }
+function selectItem(name) {
+    const sideSlots = slots[currentSide];
+    const plusIndex = sideSlots.findIndex(s => s.classList.contains("add-btn"));
+    if (plusIndex === -1) return;
+
+    const slot = sideSlots[plusIndex];
+    slot.classList.remove("add-btn");
+    slot.onclick = null;
+    slot.innerHTML = name;
+
+    document.getElementById("modal").style.display = "none";
+    addPlus(currentSide);
 }
+
+initGrid("have");
+initGrid("want");
 </script>
 
 </body>
