@@ -65,12 +65,43 @@ body {
     background: #0f0f0f;
     border-radius: 15px;
     display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
     text-align: center;
-    font-size: 13px;
+    font-size: 12px;
+    position: relative;
 }
 
+/* ITEM DANS LE TRADE */
+.slot.item {
+    cursor: pointer;
+    transition: box-shadow 0.3s ease;
+}
+
+/* OUTLINE ANIMÉE */
+.slot.item:hover {
+    box-shadow: 0 0 0 2px #000, 0 0 15px rgba(0,0,0,0.8);
+    animation: pulse 1.2s infinite;
+}
+
+@keyframes pulse {
+    0% { box-shadow: 0 0 0 2px #000; }
+    50% { box-shadow: 0 0 0 4px #000; }
+    100% { box-shadow: 0 0 0 2px #000; }
+}
+
+/* VALEUR SOUS LE FRUIT */
+.value-tag {
+    margin-top: 4px;
+    background: #1a1a1a;
+    padding: 2px 6px;
+    border-radius: 6px;
+    font-size: 10px;
+    color: #aaa;
+}
+
+/* BOUTON + */
 .add-btn {
     background: linear-gradient(145deg, #6d28d9, #8b5cf6);
     cursor: pointer;
@@ -205,10 +236,7 @@ body {
 
 <script>
 let currentSide = null;
-const slots = {
-    have: [],
-    want: []
-};
+const slots = { have: [], want: [] };
 
 function initGrid(side) {
     const grid = document.querySelector(`.grid[data-side="${side}"]`);
@@ -221,16 +249,15 @@ function initGrid(side) {
         slots[side].push(slot);
         grid.appendChild(slot);
     }
-
     addPlus(side);
 }
 
 function addPlus(side) {
-    const emptyIndex = slots[side].findIndex(s => s.innerHTML === "");
-    if (emptyIndex === -1) return;
+    const index = slots[side].findIndex(s => s.innerHTML === "");
+    if (index === -1) return;
 
-    const slot = slots[side][emptyIndex];
-    slot.classList.add("add-btn");
+    const slot = slots[side][index];
+    slot.className = "slot add-btn";
     slot.innerHTML = "<span>+</span>";
     slot.onclick = () => openModal(side);
 }
@@ -246,12 +273,34 @@ function selectItem(name) {
     if (plusIndex === -1) return;
 
     const slot = sideSlots[plusIndex];
-    slot.classList.remove("add-btn");
-    slot.onclick = null;
-    slot.innerHTML = name;
+    slot.className = "slot item";
+    slot.innerHTML = `
+        <div>${name}</div>
+        <div class="value-tag">???</div>
+    `;
+    slot.onclick = () => removeItem(currentSide, plusIndex);
 
     document.getElementById("modal").style.display = "none";
     addPlus(currentSide);
+}
+
+function removeItem(side, index) {
+    slots[side][index].innerHTML = "";
+    slots[side][index].className = "slot";
+    slots[side][index].onclick = null;
+
+    for (let i = index; i < slots[side].length - 1; i++) {
+        slots[side][i].innerHTML = slots[side][i + 1].innerHTML;
+        slots[side][i].className = slots[side][i + 1].className;
+        slots[side][i].onclick = slots[side][i + 1].onclick;
+    }
+
+    const last = slots[side][slots[side].length - 1];
+    last.innerHTML = "";
+    last.className = "slot";
+    last.onclick = null;
+
+    addPlus(side);
 }
 
 initGrid("have");
