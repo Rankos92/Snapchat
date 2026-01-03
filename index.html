@@ -75,7 +75,7 @@ body {
 .slot.item {
     cursor: pointer;
     transition: box-shadow 0.25s ease;
-    background-size: 70%; /* Image réduite */
+    background-size: 70% 70%; /* ajuste l'image */
     background-repeat: no-repeat;
     background-position: center;
 }
@@ -97,7 +97,7 @@ body {
     flex-direction: column;
     align-items: center;
     gap: 2px;
-    background: rgba(0,0,0,0.6); /* Fond pour texte lisible */
+    background: rgba(0,0,0,0.6);
     width: 100%;
 }
 
@@ -288,8 +288,9 @@ function selectItem(name) {
     const slot = sideSlots[plusIndex];
     slot.className = "slot item";
 
+    // ✅ Image Dragon corrigée
     if (name === "Dragon") {
-        slot.style.backgroundImage = "url('https://static.wikia.nocookie.net/roblox-blox-piece/images/4/40/Dragon_%28West%29_Fruit.png/revision/latest/scale-to-width/360?cb=20241222155217')";
+        slot.style.backgroundImage = "url('https://static.wikia.nocookie.net/roblox-blox-piece/images/4/40/Dragon_(West)_Fruit.png/revision/latest?cb=20241222155217')";
     }
 
     slot.innerHTML = `
@@ -304,11 +305,9 @@ function selectItem(name) {
     updatePlus(currentSide);
 }
 
-/* ✅ BUG CORRIGÉ ICI */
 function removeItem(side, index) {
     const sideSlots = slots[side];
 
-    // Récupérer tous les fruits sauf celui supprimé
     const items = [];
     sideSlots.forEach((slot, i) => {
         if (slot.classList.contains("item") && i !== index) {
@@ -319,7 +318,6 @@ function removeItem(side, index) {
         }
     });
 
-    // Reset total des slots
     sideSlots.forEach(slot => {
         slot.className = "slot";
         slot.innerHTML = "";
@@ -327,7 +325,6 @@ function removeItem(side, index) {
         slot.onclick = null;
     });
 
-    // Réinsérer les fruits décalés vers la gauche
     items.forEach((item, i) => {
         sideSlots[i].className = "slot item";
         sideSlots[i].innerHTML = item.html;
@@ -335,7 +332,6 @@ function removeItem(side, index) {
         sideSlots[i].onclick = () => removeItem(side, i);
     });
 
-    // Bouton + toujours après le dernier fruit
     updatePlus(side);
 }
 
