@@ -72,13 +72,11 @@ body {
     font-size: 12px;
 }
 
-/* FRUIT DANS LE TRADE */
 .slot.item {
     cursor: pointer;
     transition: box-shadow 0.25s ease;
 }
 
-/* OUTLINE ROUGE FINE */
 .slot.item:hover {
     box-shadow: 0 0 0 1px #ff0000;
     animation: redPulse 1.2s infinite;
@@ -90,7 +88,6 @@ body {
     100% { box-shadow: 0 0 0 1px #ff0000; }
 }
 
-/* TEXTE VALEUR */
 .value-box {
     margin-top: 6px;
     display: flex;
@@ -109,7 +106,6 @@ body {
     color: #666;
 }
 
-/* + VIOLET */
 .add-btn {
     background: linear-gradient(145deg, #6d28d9, #8b5cf6);
     cursor: pointer;
@@ -126,7 +122,6 @@ body {
     box-shadow: 0 0 20px rgba(139,92,246,0.7);
 }
 
-/* VALUES BAS */
 .values {
     margin-top: 30px;
     width: 100%;
@@ -155,7 +150,6 @@ body {
     opacity: 0.6;
 }
 
-/* MODAL */
 .modal {
     position: fixed;
     inset: 0;
@@ -199,7 +193,6 @@ body {
 <div class="title">BLOX FRUIT VALUE</div>
 
 <div class="trade-zone">
-
     <div class="trade-column">
         <h2>I Have</h2>
         <div class="grid" data-side="have"></div>
@@ -209,7 +202,6 @@ body {
         <h2>I Want</h2>
         <div class="grid" data-side="want"></div>
     </div>
-
 </div>
 
 <div class="values">
@@ -303,11 +295,33 @@ function selectItem(name) {
     updatePlus(currentSide);
 }
 
+/* ✅ BUG CORRIGÉ ICI */
 function removeItem(side, index) {
-    const slot = slots[side][index];
-    slot.className = "slot";
-    slot.innerHTML = "";
-    slot.onclick = null;
+    const sideSlots = slots[side];
+
+    // Récupérer tous les fruits sauf celui supprimé
+    const items = [];
+    sideSlots.forEach((slot, i) => {
+        if (slot.classList.contains("item") && i !== index) {
+            items.push(slot.innerHTML);
+        }
+    });
+
+    // Reset total des slots
+    sideSlots.forEach(slot => {
+        slot.className = "slot";
+        slot.innerHTML = "";
+        slot.onclick = null;
+    });
+
+    // Réinsérer les fruits décalés vers la gauche
+    items.forEach((html, i) => {
+        sideSlots[i].className = "slot item";
+        sideSlots[i].innerHTML = html;
+        sideSlots[i].onclick = () => removeItem(side, i);
+    });
+
+    // Bouton + toujours après le dernier fruit
     updatePlus(side);
 }
 
@@ -317,4 +331,3 @@ initGrid("want");
 
 </body>
 </html>
-
