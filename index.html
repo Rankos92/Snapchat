@@ -109,11 +109,45 @@ body {
 .add-btn {
     background: linear-gradient(145deg, #6d28d9, #8b5cf6);
     cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .add-btn span {
     font-size: 36px;
     font-weight: bold;
+}
+
+.add-btn:hover {
+    transform: scale(1.08);
+    box-shadow: 0 0 20px rgba(139,92,246,0.7);
+}
+
+.values {
+    margin-top: 30px;
+    width: 100%;
+    max-width: 600px;
+    background: #0b0b0b;
+    border-radius: 18px;
+    padding: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.value-block {
+    text-align: center;
+    flex: 1;
+}
+
+.value-number {
+    font-size: 32px;
+    font-weight: 700;
+    color: #8b5cf6;
+}
+
+.vs {
+    font-size: 18px;
+    opacity: 0.6;
 }
 
 .modal {
@@ -131,6 +165,7 @@ body {
     max-height: 70vh;
     border-radius: 18px;
     padding: 20px;
+    overflow-y: auto;
 }
 
 .items {
@@ -145,6 +180,10 @@ body {
     padding: 10px;
     text-align: center;
     cursor: pointer;
+}
+
+.item:hover {
+    background: #6d28d9;
 }
 </style>
 </head>
@@ -162,6 +201,22 @@ body {
     <div class="trade-column">
         <h2>I Want</h2>
         <div class="grid" data-side="want"></div>
+    </div>
+</div>
+
+<div class="values">
+    <div class="value-block">
+        <h3>YOUR OFFER</h3>
+        <div class="value-number">0</div>
+        <div>Demand: 0/10</div>
+    </div>
+
+    <div class="vs">VS</div>
+
+    <div class="value-block">
+        <h3>YOU WANT</h3>
+        <div class="value-number">0</div>
+        <div>Demand: 0/10</div>
     </div>
 </div>
 
@@ -191,7 +246,6 @@ function initGrid(side) {
     for (let i = 0; i < 4; i++) {
         const slot = document.createElement("div");
         slot.className = "slot";
-        slot.dataset.index = i;
         slots[side].push(slot);
         grid.appendChild(slot);
     }
@@ -224,40 +278,50 @@ function openModal(side) {
 function selectItem(name) {
     const sideSlots = slots[currentSide];
     const plusIndex = sideSlots.findIndex(s => s.classList.contains("add-btn"));
+    if (plusIndex === -1) return;
 
     const slot = sideSlots[plusIndex];
     slot.className = "slot item";
-    slot.innerHTML = `<div>${name}</div>`;
+    slot.innerHTML = `
+        <div>${name}</div>
+        <div class="value-box">
+            <div class="value-text">Value: ???</div>
+            <div class="demand-text">Demand: ?/?</div>
+        </div>
+    `;
     slot.onclick = () => removeItem(currentSide, plusIndex);
 
     document.getElementById("modal").style.display = "none";
     updatePlus(currentSide);
 }
 
-/* ✅ CORRECTION DÉFINITIVE : chaque côté reste indépendant */
+/* ✅ BUG CORRIGÉ ICI */
 function removeItem(side, index) {
     const sideSlots = slots[side];
-    const items = [];
 
+    // Récupérer tous les fruits sauf celui supprimé
+    const items = [];
     sideSlots.forEach((slot, i) => {
         if (slot.classList.contains("item") && i !== index) {
             items.push(slot.innerHTML);
         }
     });
 
+    // Reset total des slots
     sideSlots.forEach(slot => {
         slot.className = "slot";
         slot.innerHTML = "";
         slot.onclick = null;
     });
 
+    // Réinsérer les fruits décalés vers la gauche
     items.forEach((html, i) => {
-        const slot = sideSlots[i];
-        slot.className = "slot item";
-        slot.innerHTML = html;
-        slot.onclick = () => removeItem(side, i);
+        sideSlots[i].className = "slot item";
+        sideSlots[i].innerHTML = html;
+        sideSlots[i].onclick = () => removeItem(side, i);
     });
 
+    // Bouton + toujours après le dernier fruit
     updatePlus(side);
 }
 
@@ -267,3 +331,4 @@ initGrid("want");
 
 </body>
 </html>
+
