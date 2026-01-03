@@ -14,120 +14,110 @@
 
 body {
     background: #000;
-    color: #fff;
+    color: white;
     min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
 /* TITRE */
-.header {
-    text-align: center;
-    padding: 30px 0;
-}
-
-.header h1 {
+.title {
+    margin-top: 30px;
     font-size: 48px;
     font-weight: 800;
-    background: linear-gradient(90deg, #7c3aed, #a78bfa);
+    background: linear-gradient(90deg, #8b5cf6, #a78bfa);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
-    text-shadow: 0 0 25px rgba(124,58,237,0.6);
+    text-shadow: 0 0 25px rgba(139,92,246,0.5);
 }
 
-/* TRADE CONTAINER */
-.trade-container {
-    max-width: 1100px;
-    margin: auto;
+/* ZONE TRADE */
+.trade-zone {
+    margin-top: 40px;
+    background: #1a1a1a;
     padding: 30px;
-}
-
-/* COLUMNS */
-.trade-columns {
-    display: flex;
-    justify-content: space-between;
-    gap: 80px;
-}
-
-/* COLUMN */
-.trade-column {
-    flex: 1;
-}
-
-.trade-title {
-    display: inline-block;
-    padding: 6px 16px;
     border-radius: 20px;
-    background: rgba(124,58,237,0.15);
-    color: #c4b5fd;
-    margin-bottom: 20px;
-    font-size: 14px;
+    display: flex;
+    gap: 60px;
+    box-shadow: 0 0 30px rgba(0,0,0,0.8);
 }
 
-/* GRID */
+/* COLONNES */
+.trade-column {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.trade-column h2 {
+    text-align: center;
+    font-size: 20px;
+    color: #aaa;
+}
+
+/* GRILLE */
 .grid {
     display: grid;
-    grid-template-columns: repeat(3, 100px);
-    grid-template-rows: repeat(4, 100px);
-    gap: 16px;
+    grid-template-columns: repeat(3, 90px);
+    gap: 15px;
 }
 
-/* SLOT */
+/* CASE */
 .slot {
-    background: #0e0e0e;
-    border-radius: 18px;
+    width: 90px;
+    height: 90px;
+    background: #0f0f0f;
+    border-radius: 15px;
     display: flex;
     align-items: center;
     justify-content: center;
 }
 
-/* ADD ITEM */
-.add-item {
-    background: linear-gradient(145deg, #5b21b6, #7c3aed);
-    border: 2px dashed rgba(255,255,255,0.2);
+/* BOUTON + */
+.add-btn {
+    background: linear-gradient(145deg, #6d28d9, #8b5cf6);
     cursor: pointer;
-    flex-direction: column;
     transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
-.add-item span {
-    font-size: 36px;
+.add-btn span {
+    font-size: 40px;
     font-weight: bold;
 }
 
-.add-item p {
-    font-size: 12px;
-    opacity: 0.8;
+/* HOVER */
+.add-btn:hover {
+    transform: scale(1.08);
+    box-shadow: 0 0 20px rgba(139,92,246,0.7);
 }
 
-.add-item:hover {
-    transform: scale(1.07);
-    box-shadow: 0 0 25px rgba(124,58,237,0.7);
-}
-
-/* VALUE BOX */
-.value-box {
-    margin-top: 40px;
+/* ===== ZONE VALEURS (AJOUTÉE) ===== */
+.values {
+    margin-top: 30px;
+    width: 100%;
+    max-width: 600px;
     background: #0b0b0b;
-    border-radius: 20px;
-    padding: 25px;
+    border-radius: 18px;
+    padding: 20px;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    box-shadow: inset 0 0 20px rgba(255,255,255,0.03);
 }
 
-.value-section {
+.value-block {
     text-align: center;
     flex: 1;
 }
 
-.value-section h3 {
+.value-block h3 {
     font-size: 14px;
     color: #aaa;
-    margin-bottom: 10px;
+    margin-bottom: 6px;
 }
 
-.value {
-    font-size: 36px;
+.value-number {
+    font-size: 32px;
     font-weight: 700;
     color: #8b5cf6;
 }
@@ -135,11 +125,11 @@ body {
 .demand {
     font-size: 13px;
     color: #777;
-    margin-top: 5px;
+    margin-top: 4px;
 }
 
 .vs {
-    font-size: 20px;
+    font-size: 18px;
     opacity: 0.6;
 }
 </style>
@@ -147,71 +137,53 @@ body {
 
 <body>
 
-<div class="header">
-    <h1>BLOX FRUIT VALUE</h1>
+<div class="title">BLOX FRUIT VALUE</div>
+
+<div class="trade-zone">
+
+    <!-- I HAVE -->
+    <div class="trade-column">
+        <h2>I Have</h2>
+        <div class="grid">
+            <div class="slot add-btn"><span>+</span></div>
+            <div class="slot"></div>
+            <div class="slot"></div>
+            <div class="slot"></div>
+            <div class="slot"></div>
+            <div class="slot"></div>
+        </div>
+    </div>
+
+    <!-- I WANT -->
+    <div class="trade-column">
+        <h2>I Want</h2>
+        <div class="grid">
+            <div class="slot add-btn"><span>+</span></div>
+            <div class="slot"></div>
+            <div class="slot"></div>
+            <div class="slot"></div>
+            <div class="slot"></div>
+            <div class="slot"></div>
+        </div>
+    </div>
+
 </div>
 
-<div class="trade-container">
-
-    <div class="trade-columns">
-
-        <!-- I HAVE -->
-        <div class="trade-column">
-            <div class="trade-title">I Have</div>
-            <div class="grid">
-                <div class="slot add-item"><span>+</span><p>Add Item</p></div>
-                <div class="slot"></div>
-                <div class="slot"></div>
-                <div class="slot"></div>
-                <div class="slot"></div>
-                <div class="slot"></div>
-                <div class="slot"></div>
-                <div class="slot"></div>
-                <div class="slot"></div>
-                <div class="slot"></div>
-                <div class="slot"></div>
-                <div class="slot"></div>
-            </div>
-        </div>
-
-        <!-- I WANT -->
-        <div class="trade-column">
-            <div class="trade-title">I Want</div>
-            <div class="grid">
-                <div class="slot add-item"><span>+</span><p>Add Item</p></div>
-                <div class="slot"></div>
-                <div class="slot"></div>
-                <div class="slot"></div>
-                <div class="slot"></div>
-                <div class="slot"></div>
-                <div class="slot"></div>
-                <div class="slot"></div>
-                <div class="slot"></div>
-                <div class="slot"></div>
-                <div class="slot"></div>
-                <div class="slot"></div>
-            </div>
-        </div>
-
+<!-- ===== TEXTES EN BAS ===== -->
+<div class="values">
+    <div class="value-block">
+        <h3>YOUR OFFER</h3>
+        <div class="value-number">0</div>
+        <div class="demand">Demand: 0/10</div>
     </div>
 
-    <!-- VALUES -->
-    <div class="value-box">
-        <div class="value-section">
-            <h3>YOUR OFFER</h3>
-            <div class="value">0</div>
-            <div class="demand">Demand: 0/10</div>
-        </div>
+    <div class="vs">VS</div>
 
-        <div class="vs">VS</div>
-
-        <div class="value-section">
-            <h3>YOU WANT</h3>
-            <div class="value">0</div>
-            <div class="demand">Demand: 0/10</div>
-        </div>
+    <div class="value-block">
+        <h3>YOU WANT</h3>
+        <div class="value-number">0</div>
+        <div class="demand">Demand: 0/10</div>
     </div>
-
 </div>
 
 </body>
