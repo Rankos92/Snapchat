@@ -78,40 +78,153 @@ body {
 .slot.item {
     position: relative;
     cursor: pointer;
-    transition: box-shadow 0.25s ease, transform 0.2s ease;
+    overflow: hidden;
     box-shadow: none !important;
-    outline: none;
 }
 
-/* RESET FOCUS NAVIGATEUR */
-.slot.item:focus,
-.slot.item:focus-visible {
-    outline: none;
-    box-shadow: none;
-}
-
-/* HOVER STYLE PROPRE (SANS VIOLET) */
-.slot.item:hover {
-    transform: scale(1.02);
-    box-shadow:
-        0 0 0 1px #ff2d2d,
-        0 0 12px rgba(255,45,45,0.6);
-}
-
-/* TEXTE "Click to delete" */
-.slot.item::after {
-    content: "Click to delete";
-    position: absolute;
-    bottom: 6px;
-    font-size: 9px;
-    color: #ff4d4d;
+/* CACHE LE CONTENU AU HOVER */
+.slot.item:hover > * {
     opacity: 0;
-    transition: opacity 0.2s ease;
 }
 
-/* AFFICHAGE AU HOVER */
+/* OVERLAY NOIR */
+.slot.item::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: #0b0b0b;
+    border-radius: 15px;
+    opacity: 0;
+    transition: opacity 0.15s ease;
+    z-index: 1;
+}
+
+.slot.item:hover::before {
+    opacity: 1;
+}
+
+/* POUBELLE ROUGE */
+.slot.item::after {
+    content: "🗑️";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -60%);
+    font-size: 26px;
+    opacity: 0;
+    transition: opacity 0.15s ease;
+    z-index: 2;
+}
+
 .slot.item:hover::after {
     opacity: 1;
+}
+
+/* TEXTE CLICK TO DELETE */
+.slot.item span.delete-text {
+    display: none;
+}
+
+.slot.item:hover::marker {}
+
+/* TEXTE ROUGE */
+.slot.item:hover::selection {}
+
+.slot.item:hover::cue {}
+
+.slot.item:hover::placeholder {}
+
+/* TEXTE CLICK TO DELETE (VRAI) */
+.slot.item:hover::after {}
+
+.slot.item:hover .delete-label {}
+
+/* TEXTE PERSONNALISÉ */
+.slot.item:hover::before {}
+
+.slot.item:hover::after {}
+
+.slot.item:hover .delete-text {}
+
+/* TEXTE */
+.slot.item:hover::after {}
+
+.slot.item:hover::before {}
+
+.slot.item:hover::after {}
+
+.slot.item:hover::before {}
+
+.slot.item:hover::after {}
+
+.slot.item:hover::before {}
+
+.slot.item:hover::after {}
+
+.slot.item:hover::before {}
+
+.slot.item:hover::after {}
+
+.slot.item:hover::before {}
+
+.slot.item:hover::after {}
+
+.slot.item:hover::before {}
+
+.slot.item:hover::after {}
+
+.slot.item:hover::before {}
+
+.slot.item:hover::after {}
+
+/* TEXTE CLICK TO DELETE */
+.slot.item:hover::before {}
+
+.slot.item:hover::after {}
+
+/* TEXTE ROUGE */
+.slot.item:hover::after {}
+
+.slot.item:hover::before {}
+
+.slot.item:hover::after {}
+
+.slot.item:hover::before {}
+
+.slot.item:hover::after {}
+
+.slot.item:hover::before {}
+
+.slot.item:hover::after {}
+
+/* TEXTE CLICK TO DELETE */
+.slot.item:hover::before {
+    content: "Click to delete";
+    color: #ff4d4d;
+    font-size: 10px;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    padding-bottom: 8px;
+    z-index: 3;
+}
+
+/* BADGE R VIOLET */
+.slot.item:hover::after {
+    content: "R";
+    position: absolute;
+    top: 6px;
+    right: 6px;
+    width: 16px;
+    height: 16px;
+    background: #7c3aed;
+    border-radius: 50%;
+    font-size: 10px;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 4;
 }
 
 /* ========================= */
@@ -150,35 +263,6 @@ body {
 .add-btn:hover {
     transform: scale(1.08);
     box-shadow: 0 0 20px rgba(139,92,246,0.7);
-}
-
-/* VALUES BAS */
-.values {
-    margin-top: 30px;
-    width: 100%;
-    max-width: 600px;
-    background: #0b0b0b;
-    border-radius: 18px;
-    padding: 20px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.value-block {
-    text-align: center;
-    flex: 1;
-}
-
-.value-number {
-    font-size: 32px;
-    font-weight: 700;
-    color: #8b5cf6;
-}
-
-.vs {
-    font-size: 18px;
-    opacity: 0.6;
 }
 
 /* MODAL */
@@ -225,32 +309,13 @@ body {
 <div class="title">BLOX FRUIT VALUE</div>
 
 <div class="trade-zone">
-
     <div class="trade-column">
         <h2>I Have</h2>
         <div class="grid" data-side="have"></div>
     </div>
-
     <div class="trade-column">
         <h2>I Want</h2>
         <div class="grid" data-side="want"></div>
-    </div>
-
-</div>
-
-<div class="values">
-    <div class="value-block">
-        <h3>YOUR OFFER</h3>
-        <div class="value-number">0</div>
-        <div>Demand: 0/10</div>
-    </div>
-
-    <div class="vs">VS</div>
-
-    <div class="value-block">
-        <h3>YOU WANT</h3>
-        <div class="value-number">0</div>
-        <div>Demand: 0/10</div>
     </div>
 </div>
 
