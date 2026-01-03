@@ -56,10 +56,11 @@ body {
     color: #aaa;
 }
 
-/* GRILLE */
+/* GRILLE (4 CASES) */
 .grid {
     display: grid;
-    grid-template-columns: repeat(3, 90px);
+    grid-template-columns: repeat(2, 90px);
+    grid-template-rows: repeat(2, 90px);
     gap: 15px;
 }
 
@@ -79,20 +80,20 @@ body {
     background: linear-gradient(145deg, #6d28d9, #8b5cf6);
     cursor: pointer;
     transition: transform 0.2s ease, box-shadow 0.2s ease;
+    flex-direction: column;
 }
 
 .add-btn span {
-    font-size: 40px;
+    font-size: 36px;
     font-weight: bold;
 }
 
-/* HOVER */
 .add-btn:hover {
     transform: scale(1.08);
     box-shadow: 0 0 20px rgba(139,92,246,0.7);
 }
 
-/* ===== ZONE VALEURS (AJOUTÉE) ===== */
+/* ===== VALEURS BAS ===== */
 .values {
     margin-top: 30px;
     width: 100%;
@@ -113,7 +114,6 @@ body {
 .value-block h3 {
     font-size: 14px;
     color: #aaa;
-    margin-bottom: 6px;
 }
 
 .value-number {
@@ -125,12 +125,65 @@ body {
 .demand {
     font-size: 13px;
     color: #777;
-    margin-top: 4px;
 }
 
 .vs {
     font-size: 18px;
     opacity: 0.6;
+}
+
+/* ===== MODAL SCROLL ===== */
+.modal {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.85);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 100;
+}
+
+.modal-content {
+    background: #0f0f0f;
+    width: 520px;
+    max-height: 70vh;
+    border-radius: 18px;
+    padding: 20px;
+    overflow-y: auto;
+}
+
+.modal-content h3 {
+    margin-bottom: 15px;
+    color: #aaa;
+}
+
+/* ITEMS GRID */
+.items {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 14px;
+}
+
+.item {
+    background: #141414;
+    border-radius: 12px;
+    padding: 10px;
+    text-align: center;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.item:hover {
+    background: #6d28d9;
+}
+
+/* SCROLL BAR */
+.modal-content::-webkit-scrollbar {
+    width: 6px;
+}
+.modal-content::-webkit-scrollbar-thumb {
+    background: #6d28d9;
+    border-radius: 10px;
 }
 </style>
 </head>
@@ -145,9 +198,7 @@ body {
     <div class="trade-column">
         <h2>I Have</h2>
         <div class="grid">
-            <div class="slot add-btn"><span>+</span></div>
-            <div class="slot"></div>
-            <div class="slot"></div>
+            <div class="slot add-btn" onclick="openModal()"><span>+</span></div>
             <div class="slot"></div>
             <div class="slot"></div>
             <div class="slot"></div>
@@ -158,9 +209,7 @@ body {
     <div class="trade-column">
         <h2>I Want</h2>
         <div class="grid">
-            <div class="slot add-btn"><span>+</span></div>
-            <div class="slot"></div>
-            <div class="slot"></div>
+            <div class="slot add-btn" onclick="openModal()"><span>+</span></div>
             <div class="slot"></div>
             <div class="slot"></div>
             <div class="slot"></div>
@@ -169,7 +218,7 @@ body {
 
 </div>
 
-<!-- ===== TEXTES EN BAS ===== -->
+<!-- VALEURS -->
 <div class="values">
     <div class="value-block">
         <h3>YOUR OFFER</h3>
@@ -185,6 +234,39 @@ body {
         <div class="demand">Demand: 0/10</div>
     </div>
 </div>
+
+<!-- MODAL -->
+<div class="modal" id="modal" onclick="closeModal(event)">
+    <div class="modal-content">
+        <h3>Available Items</h3>
+        <div class="items">
+            <div class="item">Dragon</div>
+            <div class="item">Leopard</div>
+            <div class="item">Kitsune</div>
+            <div class="item">Dough</div>
+            <div class="item">Control</div>
+            <div class="item">Spirit</div>
+            <div class="item">Venom</div>
+            <div class="item">Gravity</div>
+            <div class="item">T-Rex</div>
+            <div class="item">Yeti</div>
+            <div class="item">Gas</div>
+            <div class="item">Pain</div>
+        </div>
+    </div>
+</div>
+
+<script>
+function openModal() {
+    document.getElementById("modal").style.display = "flex";
+}
+
+function closeModal(e) {
+    if (e.target.id === "modal") {
+        document.getElementById("modal").style.display = "none";
+    }
+}
+</script>
 
 </body>
 </html>
