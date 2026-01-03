@@ -75,7 +75,7 @@ body {
     cursor: pointer;
     background-repeat: no-repeat;
     background-position: center;
-    background-size: 70%; /* image réduit à 70% du slot */
+    background-size: 70%;
 }
 
 .value-box {
@@ -107,22 +107,57 @@ body {
     color: white;
 }
 
+/* Nouveau design pour le bloc YOUR OFFER / YOU WANT */
 .values {
-    margin-top: 30px;
-    width: 100%;
-    max-width: 400px;
+    margin-top: 40px;
+    width: 90%;
+    max-width: 600px;
     display: flex;
-    justify-content: space-around;
-    align-items: center;
-    font-size: 28px;
+    justify-content: space-between;
+    gap: 20px;
+}
+
+.value-block {
+    flex: 1;
+    background: linear-gradient(145deg, #1a1a1a, #111);
+    border-radius: 18px;
+    padding: 20px;
+    text-align: center;
+    box-shadow: 0 0 20px rgba(139,92,246,0.5);
+    transition: transform 0.2s ease;
+}
+
+.value-block:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 30px rgba(139,92,246,0.8);
+}
+
+.value-block h3 {
+    font-size: 18px;
+    margin-bottom: 10px;
+    background: linear-gradient(90deg, #8b5cf6, #a78bfa);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    font-weight: 800;
+}
+
+.value-number {
+    font-size: 36px;
+    font-weight: 700;
     color: #8b5cf6;
+}
+
+.demand {
+    font-size: 14px;
+    color: #ccc;
+    margin-top: 4px;
 }
 
 .vs {
     font-size: 24px;
     opacity: 0.6;
+    align-self: center;
 }
-
 .modal {
     position: fixed;
     inset: 0;
@@ -152,6 +187,10 @@ body {
     text-align: center;
     cursor: pointer;
 }
+
+.item:hover {
+    background: #6d28d9;
+}
 </style>
 </head>
 
@@ -172,9 +211,19 @@ body {
 </div>
 
 <div class="values">
-    <div class="value-number" id="offer-value">0</div>
+    <div class="value-block">
+        <h3>YOUR OFFER</h3>
+        <div class="value-number" id="offer-value">0</div>
+        <div class="demand">Demand: 0/10</div>
+    </div>
+
     <div class="vs">VS</div>
-    <div class="value-number" id="want-value">0</div>
+
+    <div class="value-block">
+        <h3>YOU WANT</h3>
+        <div class="value-number" id="want-value">0</div>
+        <div class="demand">Demand: 0/10</div>
+    </div>
 </div>
 
 <div class="modal" id="modal">
@@ -228,7 +277,7 @@ function selectItem(name) {
 
     slot.className = "slot item";
 
-    // ✅ Dragon image
+    // Image Dragon
     if (name === "Dragon") {
         slot.style.backgroundImage =
         "url('https://static.wikia.nocookie.net/roblox-blox-piece/images/4/40/Dragon_%28West%29_Fruit.png')";
