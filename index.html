@@ -79,9 +79,18 @@ body {
     position: relative;
     cursor: pointer;
     transition: box-shadow 0.25s ease, transform 0.2s ease;
+    box-shadow: none !important;
+    outline: none;
 }
 
-/* HOVER STYLE (COMME L'IMAGE) */
+/* RESET FOCUS NAVIGATEUR */
+.slot.item:focus,
+.slot.item:focus-visible {
+    outline: none;
+    box-shadow: none;
+}
+
+/* HOVER STYLE PROPRE (SANS VIOLET) */
 .slot.item:hover {
     transform: scale(1.02);
     box-shadow:
