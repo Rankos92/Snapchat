@@ -28,7 +28,6 @@ body {
     background: linear-gradient(90deg, #8b5cf6, #a78bfa);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
-    text-shadow: 0 0 25px rgba(139,92,246,0.5);
 }
 
 .trade-zone {
@@ -65,53 +64,36 @@ body {
     background: #0f0f0f;
     border-radius: 15px;
     display: flex;
-    align-items: center;
-    justify-content: center;
+    flex-direction: column;
+    justify-content: flex-end;
     text-align: center;
     font-size: 12px;
-}
-
-.slot.item {
-    position: relative;
-    cursor: pointer;
     overflow: hidden;
 }
 
-.slot.item:hover {
-    box-shadow: 0 0 0 1px #ff0000;
-}
-
-.fruit-img {
-    position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    pointer-events: none;
+.slot.item {
+    cursor: pointer;
 }
 
 .value-box {
-    position: absolute;
-    bottom: 4px;
-    left: 0;
-    right: 0;
-    font-size: 10px;
-    background: rgba(0,0,0,0.55);
-    padding: 2px 0;
+    background: rgba(0,0,0,0.65);
+    padding: 4px 0;
 }
 
 .value-text {
-    color: #fff;
+    font-size: 11px;
+    color: #ccc;
 }
 
 .demand-text {
-    color: #aaa;
     font-size: 9px;
+    color: #666;
 }
 
 .add-btn {
     background: linear-gradient(145deg, #6d28d9, #8b5cf6);
     cursor: pointer;
+    justify-content: center;
 }
 
 .add-btn span {
@@ -185,6 +167,20 @@ body {
     </div>
 </div>
 
+<div class="values">
+    <div>
+        <h3>YOUR OFFER</h3>
+        <div class="value-number">0</div>
+        <div>Demand: 0/10</div>
+    </div>
+    <div>VS</div>
+    <div>
+        <h3>YOU WANT</h3>
+        <div class="value-number">0</div>
+        <div>Demand: 0/10</div>
+    </div>
+</div>
+
 <div class="modal" id="modal">
     <div class="modal-content">
         <h3>Available Items</h3>
@@ -203,8 +199,8 @@ const slots = { have: [], want: [] };
 
 function initGrid(side) {
     const grid = document.querySelector(`.grid[data-side="${side}"]`);
-    slots[side] = [];
     grid.innerHTML = "";
+    slots[side] = [];
 
     for (let i = 0; i < 4; i++) {
         const slot = document.createElement("div");
@@ -237,17 +233,18 @@ function selectItem(name) {
     slot.className = "slot item";
 
     if (name === "Dragon") {
-        slot.innerHTML = `
-            <img class="fruit-img"
-                 src="https://static.wikia.nocookie.net/roblox-blox-piece/images/4/40/Dragon_%28West%29_Fruit.png/revision/latest/scale-to-width/360?cb=20241222155217">
-            <div class="value-box">
-                <div class="value-text">Value: ???</div>
-                <div class="demand-text">Demand: ?/?</div>
-            </div>
-        `;
-    } else {
-        slot.innerHTML = `<div>${name}</div>`;
+        slot.style.backgroundImage =
+        "url('https://static.wikia.nocookie.net/roblox-blox-piece/images/4/40/Dragon_%28West%29_Fruit.png')";
+        slot.style.backgroundSize = "cover";
+        slot.style.backgroundPosition = "center";
     }
+
+    slot.innerHTML += `
+        <div class="value-box">
+            <div class="value-text">Value: ???</div>
+            <div class="demand-text">Demand: ?/?</div>
+        </div>
+    `;
 
     const index = slots[side].indexOf(slot);
     slot.onclick = () => removeItem(side, index);
@@ -259,17 +256,22 @@ function selectItem(name) {
 function removeItem(side, index) {
     const items = slots[side]
         .filter((s, i) => s.classList.contains("item") && i !== index)
-        .map(s => s.innerHTML);
+        .map(s => ({
+            html: s.innerHTML,
+            bg: s.style.backgroundImage
+        }));
 
     slots[side].forEach(s => {
         s.className = "slot";
         s.innerHTML = "";
+        s.style.backgroundImage = "";
         s.onclick = null;
     });
 
-    items.forEach((html, i) => {
+    items.forEach((item, i) => {
         slots[side][i].className = "slot item";
-        slots[side][i].innerHTML = html;
+        slots[side][i].innerHTML = item.html;
+        slots[side][i].style.backgroundImage = item.bg;
         slots[side][i].onclick = () => removeItem(side, i);
     });
 
