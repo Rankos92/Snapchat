@@ -28,7 +28,6 @@ body {
     background: linear-gradient(90deg, #8b5cf6, #a78bfa);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
-    text-shadow: 0 0 25px rgba(139,92,246,0.5);
 }
 
 .trade-zone {
@@ -66,39 +65,22 @@ body {
     border-radius: 15px;
     display: flex;
     flex-direction: column;
-    align-items: center;
-    justify-content: center;
+    justify-content: flex-end;
     text-align: center;
     font-size: 12px;
+    overflow: hidden;
 }
 
 .slot.item {
     cursor: pointer;
-    transition: box-shadow 0.25s ease;
-    background-size: 70% 70%;
     background-repeat: no-repeat;
     background-position: center;
-}
-
-.slot.item:hover {
-    box-shadow: 0 0 0 1px #ff0000;
-    animation: redPulse 1.2s infinite;
-}
-
-@keyframes redPulse {
-    0%   { box-shadow: 0 0 0 1px #ff0000; }
-    50%  { box-shadow: 0 0 0 2px #ff0000; }
-    100% { box-shadow: 0 0 0 1px #ff0000; }
+    background-size: 70%; /* image réduit à 70% du slot */
 }
 
 .value-box {
-    margin-top: 6px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 2px;
-    background: rgba(0,0,0,0.6);
-    width: 100%;
+    background: rgba(0,0,0,0.65);
+    padding: 4px 0;
 }
 
 .value-text {
@@ -114,44 +96,30 @@ body {
 .add-btn {
     background: linear-gradient(145deg, #6d28d9, #8b5cf6);
     cursor: pointer;
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    justify-content: center;
+    display: flex;
+    align-items: center;
 }
 
 .add-btn span {
     font-size: 36px;
     font-weight: bold;
-}
-
-.add-btn:hover {
-    transform: scale(1.08);
-    box-shadow: 0 0 20px rgba(139,92,246,0.7);
+    color: white;
 }
 
 .values {
     margin-top: 30px;
     width: 100%;
-    max-width: 600px;
-    background: #0b0b0b;
-    border-radius: 18px;
-    padding: 20px;
+    max-width: 400px;
     display: flex;
-    justify-content: space-between;
+    justify-content: space-around;
     align-items: center;
-}
-
-.value-block {
-    text-align: center;
-    flex: 1;
-}
-
-.value-number {
-    font-size: 32px;
-    font-weight: 700;
+    font-size: 28px;
     color: #8b5cf6;
 }
 
 .vs {
-    font-size: 18px;
+    font-size: 24px;
     opacity: 0.6;
 }
 
@@ -167,10 +135,8 @@ body {
 .modal-content {
     background: #0f0f0f;
     width: 520px;
-    max-height: 70vh;
     border-radius: 18px;
     padding: 20px;
-    overflow-y: auto;
 }
 
 .items {
@@ -185,10 +151,6 @@ body {
     padding: 10px;
     text-align: center;
     cursor: pointer;
-}
-
-.item:hover {
-    background: #6d28d9;
 }
 </style>
 </head>
@@ -210,19 +172,9 @@ body {
 </div>
 
 <div class="values">
-    <div class="value-block">
-        <h3>YOUR OFFER</h3>
-        <div class="value-number">0</div>
-        <div>Demand: 0/10</div>
-    </div>
-
+    <div class="value-number" id="offer-value">0</div>
     <div class="vs">VS</div>
-
-    <div class="value-block">
-        <h3>YOU WANT</h3>
-        <div class="value-number">0</div>
-        <div>Demand: 0/10</div>
-    </div>
+    <div class="value-number" id="want-value">0</div>
 </div>
 
 <div class="modal" id="modal">
@@ -233,8 +185,6 @@ body {
             <div class="item" onclick="selectItem('Leopard')">Leopard</div>
             <div class="item" onclick="selectItem('Kitsune')">Kitsune</div>
             <div class="item" onclick="selectItem('Dough')">Dough</div>
-            <div class="item" onclick="selectItem('Control')">Control</div>
-            <div class="item" onclick="selectItem('Venom')">Venom</div>
         </div>
     </div>
 </div>
@@ -258,21 +208,12 @@ function initGrid(side) {
 }
 
 function updatePlus(side) {
-    slots[side].forEach(slot => {
-        if (slot.classList.contains("add-btn")) {
-            slot.className = "slot";
-            slot.innerHTML = "";
-            slot.onclick = null;
-        }
-    });
+    const empty = slots[side].find(s => s.innerHTML === "");
+    if (!empty) return;
 
-    const emptyIndex = slots[side].findIndex(s => s.innerHTML === "");
-    if (emptyIndex === -1) return;
-
-    const slot = slots[side][emptyIndex];
-    slot.className = "slot add-btn";
-    slot.innerHTML = "<span>+</span>";
-    slot.onclick = () => openModal(side);
+    empty.className = "slot add-btn";
+    empty.innerHTML = "<span>+</span>";
+    empty.onclick = () => openModal(side);
 }
 
 function openModal(side) {
@@ -281,55 +222,56 @@ function openModal(side) {
 }
 
 function selectItem(name) {
-    const sideSlots = slots[currentSide];
-    const plusIndex = sideSlots.findIndex(s => s.classList.contains("add-btn"));
-    if (plusIndex === -1) return;
+    const side = currentSide;
+    const slot = slots[side].find(s => s.classList.contains("add-btn"));
+    if (!slot) return;
 
-    const slot = sideSlots[plusIndex];
     slot.className = "slot item";
 
-    // ✅ Image Dragon corrigée (URL encodée pour parenthèses)
+    // ✅ Dragon image
     if (name === "Dragon") {
-        slot.style.backgroundImage = "url('https://static.wikia.nocookie.net/roblox-blox-piece/images/4/40/Dragon_%28West%29_Fruit.png/revision/latest?cb=20241222155217')";
+        slot.style.backgroundImage =
+        "url('https://static.wikia.nocookie.net/roblox-blox-piece/images/4/40/Dragon_%28West%29_Fruit.png')";
+        slot.style.backgroundSize = "70%";
+        slot.style.backgroundPosition = "center";
+    } else {
+        slot.style.backgroundImage = "";
     }
 
-    slot.innerHTML = `
+    slot.innerHTML += `
         <div class="value-box">
             <div class="value-text">Value: ???</div>
             <div class="demand-text">Demand: ?/?</div>
         </div>
     `;
 
-    slot.onclick = () => removeItem(currentSide, plusIndex);
+    const index = slots[side].indexOf(slot);
+    slot.onclick = () => removeItem(side, index);
+
     document.getElementById("modal").style.display = "none";
-    updatePlus(currentSide);
+    updatePlus(side);
 }
 
 function removeItem(side, index) {
-    const sideSlots = slots[side];
+    const items = slots[side]
+        .filter((s, i) => s.classList.contains("item") && i !== index)
+        .map(s => ({
+            html: s.innerHTML,
+            bg: s.style.backgroundImage
+        }));
 
-    const items = [];
-    sideSlots.forEach((slot, i) => {
-        if (slot.classList.contains("item") && i !== index) {
-            items.push({
-                html: slot.innerHTML,
-                bg: slot.style.backgroundImage
-            });
-        }
-    });
-
-    sideSlots.forEach(slot => {
-        slot.className = "slot";
-        slot.innerHTML = "";
-        slot.style.backgroundImage = "";
-        slot.onclick = null;
+    slots[side].forEach(s => {
+        s.className = "slot";
+        s.innerHTML = "";
+        s.style.backgroundImage = "";
+        s.onclick = null;
     });
 
     items.forEach((item, i) => {
-        sideSlots[i].className = "slot item";
-        sideSlots[i].innerHTML = item.html;
-        sideSlots[i].style.backgroundImage = item.bg;
-        sideSlots[i].onclick = () => removeItem(side, i);
+        slots[side][i].className = "slot item";
+        slots[side][i].innerHTML = item.html;
+        slots[side][i].style.backgroundImage = item.bg;
+        slots[side][i].onclick = () => removeItem(side, i);
     });
 
     updatePlus(side);
