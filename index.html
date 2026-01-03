@@ -70,28 +70,27 @@ body {
     justify-content: center;
     text-align: center;
     font-size: 12px;
-    position: relative;
 }
 
-/* ITEM DANS LE TRADE */
+/* FRUIT DANS LE TRADE */
 .slot.item {
     cursor: pointer;
-    transition: box-shadow 0.3s ease;
+    transition: box-shadow 0.25s ease;
 }
 
-/* OUTLINE ANIMÉE */
+/* OUTLINE ROUGE AU HOVER */
 .slot.item:hover {
-    box-shadow: 0 0 0 2px #000, 0 0 15px rgba(0,0,0,0.8);
-    animation: pulse 1.2s infinite;
+    box-shadow: 0 0 0 2px #ff0000;
+    animation: redPulse 1s infinite;
 }
 
-@keyframes pulse {
-    0% { box-shadow: 0 0 0 2px #000; }
-    50% { box-shadow: 0 0 0 4px #000; }
-    100% { box-shadow: 0 0 0 2px #000; }
+@keyframes redPulse {
+    0% { box-shadow: 0 0 0 2px #ff0000; }
+    50% { box-shadow: 0 0 0 4px #ff0000; }
+    100% { box-shadow: 0 0 0 2px #ff0000; }
 }
 
-/* VALEUR SOUS LE FRUIT */
+/* VALEUR */
 .value-tag {
     margin-top: 4px;
     background: #1a1a1a;
@@ -101,7 +100,7 @@ body {
     color: #aaa;
 }
 
-/* BOUTON + */
+/* + VIOLET */
 .add-btn {
     background: linear-gradient(145deg, #6d28d9, #8b5cf6);
     cursor: pointer;
@@ -249,14 +248,22 @@ function initGrid(side) {
         slots[side].push(slot);
         grid.appendChild(slot);
     }
-    addPlus(side);
+    updatePlus(side);
 }
 
-function addPlus(side) {
-    const index = slots[side].findIndex(s => s.innerHTML === "");
-    if (index === -1) return;
+function updatePlus(side) {
+    slots[side].forEach(slot => {
+        if (slot.classList.contains("add-btn")) {
+            slot.className = "slot";
+            slot.innerHTML = "";
+            slot.onclick = null;
+        }
+    });
 
-    const slot = slots[side][index];
+    const emptyIndex = slots[side].findIndex(s => s.innerHTML === "");
+    if (emptyIndex === -1) return;
+
+    const slot = slots[side][emptyIndex];
     slot.className = "slot add-btn";
     slot.innerHTML = "<span>+</span>";
     slot.onclick = () => openModal(side);
@@ -281,26 +288,15 @@ function selectItem(name) {
     slot.onclick = () => removeItem(currentSide, plusIndex);
 
     document.getElementById("modal").style.display = "none";
-    addPlus(currentSide);
+    updatePlus(currentSide);
 }
 
 function removeItem(side, index) {
-    slots[side][index].innerHTML = "";
-    slots[side][index].className = "slot";
-    slots[side][index].onclick = null;
-
-    for (let i = index; i < slots[side].length - 1; i++) {
-        slots[side][i].innerHTML = slots[side][i + 1].innerHTML;
-        slots[side][i].className = slots[side][i + 1].className;
-        slots[side][i].onclick = slots[side][i + 1].onclick;
-    }
-
-    const last = slots[side][slots[side].length - 1];
-    last.innerHTML = "";
-    last.className = "slot";
-    last.onclick = null;
-
-    addPlus(side);
+    const slot = slots[side][index];
+    slot.className = "slot";
+    slot.innerHTML = "";
+    slot.onclick = null;
+    updatePlus(side);
 }
 
 initGrid("have");
