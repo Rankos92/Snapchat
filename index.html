@@ -78,26 +78,35 @@ body {
     transition: box-shadow 0.25s ease;
 }
 
-/* OUTLINE ROUGE AU HOVER */
+/* OUTLINE ROUGE FINE */
 .slot.item:hover {
-    box-shadow: 0 0 0 2px #ff0000;
-    animation: redPulse 1s infinite;
+    box-shadow: 0 0 0 1px #ff0000;
+    animation: redPulse 1.2s infinite;
 }
 
 @keyframes redPulse {
-    0% { box-shadow: 0 0 0 2px #ff0000; }
-    50% { box-shadow: 0 0 0 4px #ff0000; }
-    100% { box-shadow: 0 0 0 2px #ff0000; }
+    0%   { box-shadow: 0 0 0 1px #ff0000; }
+    50%  { box-shadow: 0 0 0 2px #ff0000; }
+    100% { box-shadow: 0 0 0 1px #ff0000; }
 }
 
-/* VALEUR */
-.value-tag {
-    margin-top: 4px;
-    background: #1a1a1a;
-    padding: 2px 6px;
-    border-radius: 6px;
-    font-size: 10px;
-    color: #aaa;
+/* TEXTE VALEUR */
+.value-box {
+    margin-top: 6px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+}
+
+.value-text {
+    font-size: 11px;
+    color: #ccc;
+}
+
+.demand-text {
+    font-size: 9px;
+    color: #666;
 }
 
 /* + VIOLET */
@@ -117,7 +126,7 @@ body {
     box-shadow: 0 0 20px rgba(139,92,246,0.7);
 }
 
-/* VALUES */
+/* VALUES BAS */
 .values {
     margin-top: 30px;
     width: 100%;
@@ -283,7 +292,10 @@ function selectItem(name) {
     slot.className = "slot item";
     slot.innerHTML = `
         <div>${name}</div>
-        <div class="value-tag">???</div>
+        <div class="value-box">
+            <div class="value-text">Value: ???</div>
+            <div class="demand-text">Demand: ?/?</div>
+        </div>
     `;
     slot.onclick = () => removeItem(currentSide, plusIndex);
 
