@@ -59,21 +59,40 @@
     }
 
     .slot {
-      width: 100%;
-      aspect-ratio: 1 / 1;
-      background: #1a1a1a;
+      background: #7a4dff;
       border-radius: 12px;
       display: flex;
-      justify-content: center;
       align-items: center;
+      justify-content: center;
+      font-size: 48px;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
     }
 
-    .add-btn {
-      background: linear-gradient(135deg, #7a4dff, #9b6bff);
-      cursor: pointer;
-      transition: transform 0.15s ease, box-shadow 0.15s ease;
-      font-size: 32px;
-      color: #fff;
+    .slot.filled {
+      background: #1a1a1a;
+      padding: 8px;
+    }
+
+    .slot.filled img {
+      width: 100%;
+      height: auto;
+      border-radius: 8px;
+    }
+
+    .slot.filled .value {
+      position: absolute;
+      bottom: 6px;
+      left: 6px;
+      right: 6px;
+      background: rgba(0,0,0,0.75);
+      border-radius: 6px;
+      font-size: 12px;
+      padding: 4px;
+      text-align: center;
+      color: #c39bff;
+      font-weight: bold;
     }
 
     .add-btn:hover {
@@ -153,7 +172,10 @@
         <h2>I Have</h2>
         <div class="grid">
           <div class="slot add-btn" onclick="openModal()">+</div>
-          <div class="slot"></div>
+          <div class="slot filled">
+        <img src="https://static.wikia.nocookie.net/roblox-blox-piece/images/4/40/Dragon_%28West%29_Fruit.png/revision/latest/scale-to-width/360?cb=20241222155217" alt="Dragon">
+        <div class="value">Valeur : ???</div>
+      </div>
           <div class="slot"></div>
           <div class="slot"></div>
           <div class="slot"></div>
