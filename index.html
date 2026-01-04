@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <title>Blox Fruit Value</title>
+
 <style>
 * { margin:0; padding:0; box-sizing:border-box; font-family:'Poppins', sans-serif; }
 body { background:#000; color:white; min-height:100vh; display:flex; flex-direction:column; align-items:center; }
@@ -41,6 +42,10 @@ body { background:#000; color:white; min-height:100vh; display:flex; flex-direct
 .item { border-radius:12px; padding:10px; text-align:center; cursor:pointer; transition:all 0.2s; font-weight:600; display:flex; flex-direction:column; align-items:center; font-size:13px; }
 .item img { width:60px; height:60px; margin-bottom:5px; }
 .item:hover { background:#6d28d9; box-shadow:0 0 15px #8b5cf6; }
+
+.mythic { color:white; }
+.legendary { color:white; }
+.uncommon { color:white; }
 </style>
 </head>
 <body>
@@ -85,14 +90,17 @@ body { background:#000; color:white; min-height:100vh; display:flex; flex-direct
 let currentSide = null;
 const slots = { have: [], want: [] };
 
-// Liste des fruits (rare au commun)
+// Fruits avec image + rareté
 const fruits = [
+
+/* ================= MYTHIC ================= */
 { name:"Dragon (West)", rarity:"mythic", img:"https://static.wikia.nocookie.net/roblox-blox-piece/images/4/40/Dragon_%28West%29_Fruit.png" },
 { name:"Dragon (East)", rarity:"mythic", img:"https://static.wikia.nocookie.net/roblox-blox-piece/images/4/4b/Dragon_%28East%29_Fruit.png" },
 { name:"Kitsune", rarity:"mythic", img:"https://static.wikia.nocookie.net/roblox-blox-piece/images/6/65/Kitsune_Fruit.png" },
 { name:"Control", rarity:"mythic", img:"https://static.wikia.nocookie.net/roblox-blox-piece/images/c/cb/OldControlFruit.png" },
 { name:"Tiger", rarity:"mythic", img:"https://static.wikia.nocookie.net/roblox-blox-piece/images/1/14/Tiger_Fruit.png" },
 { name:"Yeti", rarity:"mythic", img:"https://static.wikia.nocookie.net/roblox-blox-piece/images/2/2f/Yeti_Fruit.png" },
+{ name:"Rumble", rarity:"legendary", img:"https://static.wikia.nocookie.net/roblox-blox-piece/images/7/78/Lightning_Fruit.png" },
 { name:"Dough", rarity:"mythic", img:"https://static.wikia.nocookie.net/roblox-blox-piece/images/0/02/Dough_Fruit.png" },
 { name:"Venom", rarity:"mythic", img:"https://static.wikia.nocookie.net/roblox-blox-piece/images/d/d2/Venom_Fruit.png" },
 { name:"Spirit", rarity:"mythic", img:"https://static.wikia.nocookie.net/roblox-blox-piece/images/6/66/Spirit_Fruit.png" },
@@ -100,21 +108,27 @@ const fruits = [
 { name:"Gravity", rarity:"mythic", img:"https://static.wikia.nocookie.net/roblox-blox-piece/images/5/5f/Gravity_Fruit.png" },
 { name:"Mammoth", rarity:"mythic", img:"https://static.wikia.nocookie.net/roblox-blox-piece/images/9/95/Mammoth_Fruit.png" },
 { name:"T-Rex", rarity:"mythic", img:"https://cdn.nookazon.com/bloxfruits/Fruits/T-RexFruit.svg" },
+
+/* ================= LEGENDARY ================= */
 { name:"Sound", rarity:"legendary", img:"https://static.wikia.nocookie.net/roblox-blox-piece/images/b/ba/Sound_Fruit.png" },
 { name:"Quake", rarity:"legendary", img:"https://static.wikia.nocookie.net/roblox-blox-piece/images/4/42/Quake_Fruit.png" },
 { name:"Buddha", rarity:"legendary", img:"https://static.wikia.nocookie.net/roblox-blox-piece/images/d/df/Buddha_Fruit.png" },
 { name:"Portal", rarity:"legendary", img:"https://static.wikia.nocookie.net/roblox-blox-piece/images/8/8a/Portal_Fruit.png" },
 { name:"Phoenix", rarity:"legendary", img:"https://static.wikia.nocookie.net/roblox-blox-piece/images/f/fc/Phoenix_Fruit.png" },
 { name:"Blizzard", rarity:"legendary", img:"https://static.wikia.nocookie.net/roblox-blox-piece/images/c/c9/Blizzard_Fruit.png" },
+
+/* ================= UNCOMMON ================= */
 { name:"Light", rarity:"uncommon", img:"https://static.wikia.nocookie.net/roblox-blox-piece/images/8/83/Light_Fruit.png" },
 { name:"Rubber", rarity:"uncommon", img:"https://static.wikia.nocookie.net/roblox-blox-piece/images/5/5c/Rubber_Fruit.png" },
 { name:"Ghost", rarity:"uncommon", img:"https://static.wikia.nocookie.net/roblox-blox-piece/images/8/8c/Ghost_Fruit.png" },
 { name:"Magma", rarity:"uncommon", img:"https://static.wikia.nocookie.net/roblox-blox-piece/images/2/27/Magma_Fruit.png" },
 { name:"Flame", rarity:"uncommon", img:"https://static.wikia.nocookie.net/roblox-blox-piece/images/c/c4/Flame_Fruit.png" },
 { name:"Ice", rarity:"uncommon", img:"https://static.wikia.nocookie.net/roblox-blox-piece/images/c/c5/Ice_Fruit.png" }
+
 ];
 
-// Initialisation des grids
+
+
 function initGrid(side){
     const grid = document.querySelector(`.grid[data-side="${side}"]`);
     grid.innerHTML = "";
@@ -158,83 +172,34 @@ document.getElementById("search").addEventListener("input", e=>{
     renderItems(e.target.value);
 });
 
-// Sélection d’un fruit avec valeur et demande personnalisée
 function selectItem(fruit){
     const side = currentSide;
     const slot = slots[side].find(s=>s.classList.contains("add-btn"));
     if(!slot) return;
-
-    let valueText = prompt(`Entrez la valeur pour ${fruit.name} (ex: 1M, 500K, 2B):`, "1M");
-    if(!valueText) valueText = "1M";
-    let demandText = prompt(`Entrez la demande pour ${fruit.name} (ex: 7/10):`, "5/10");
-    if(!demandText) demandText = "5/10";
-
-    let valueNumber = parseValue(valueText);
-
     slot.className="slot item";
     slot.style.backgroundImage=`url('${fruit.img}')`;
     slot.style.backgroundSize="70%";
     slot.style.backgroundPosition="center";
-    slot.dataset.valueNumber = valueNumber;
-    slot.dataset.valueText = valueText;
-    slot.dataset.demand = demandText;
-
     slot.innerHTML += `<div class="value-box">
-        <div class="value-text">Value: ${valueText}</div>
-        <div class="demand-text">Demand: ${demandText}</div>
+        <div class="value-text">Value: ???</div>
+        <div class="demand-text">Demand: ?/?</div>
     </div>`;
-
     const index = slots[side].indexOf(slot);
     slot.onclick = ()=> removeItem(side,index);
     document.getElementById("modal").style.display="none";
-    updateTradeValues();
+    updatePlus(side);
 }
 
 function removeItem(side,index){
-    const items = slots[side].filter((s,i)=>s.classList.contains("item") && i!==index).map(s=>({html:s.innerHTML,bg:s.style.backgroundImage,valueNumber:s.dataset.valueNumber,valueText:s.dataset.valueText,demand:s.dataset.demand}));
-    slots[side].forEach(s=>{ s.className="slot"; s.innerHTML=""; s.style.backgroundImage=""; s.onclick=null; s.dataset.valueNumber=""; s.dataset.valueText=""; s.dataset.demand=""; });
+    const items = slots[side].filter((s,i)=>s.classList.contains("item") && i!==index).map(s=>({html:s.innerHTML,bg:s.style.backgroundImage}));
+    slots[side].forEach(s=>{ s.className="slot"; s.innerHTML=""; s.style.backgroundImage=""; s.onclick=null; });
     items.forEach((item,i)=>{
         slots[side][i].className="slot item";
         slots[side][i].innerHTML=item.html;
         slots[side][i].style.backgroundImage=item.bg;
-        slots[side][i].dataset.valueNumber = item.valueNumber;
-        slots[side][i].dataset.valueText = item.valueText;
-        slots[side][i].dataset.demand = item.demand;
         slots[side][i].onclick=()=>removeItem(side,i);
     });
     updatePlus(side);
-    updateTradeValues();
-}
-
-function updateTradeValues(){
-    const offerValue = slots['have'].reduce((sum,s)=> s.dataset.valueNumber ? sum + parseFloat(s.dataset.valueNumber) : sum ,0);
-    const wantValue = slots['want'].reduce((sum,s)=> s.dataset.valueNumber ? sum + parseFloat(s.dataset.valueNumber) : sum ,0);
-    document.getElementById('offer-value').textContent = formatValue(offerValue);
-    document.getElementById('want-value').textContent = formatValue(wantValue);
-
-    const offerDemand = slots['have'].reduce((max,s)=> s.dataset.demand && parseInt(s.dataset.demand.split('/')[0])>max ? parseInt(s.dataset.demand.split('/')[0]) : max ,0);
-    const wantDemand = slots['want'].reduce((max,s)=> s.dataset.demand && parseInt(s.dataset.demand.split('/')[0])>max ? parseInt(s.dataset.demand.split('/')[0]) : max ,0);
-    document.getElementById('offer-demand').textContent = `Demand: ${offerDemand}/10`;
-    document.getElementById('want-demand').textContent = `Demand: ${wantDemand}/10`;
-}
-
-// Convertit M/K/B en nombre
-function parseValue(val){
-    val = val.toUpperCase().trim();
-    let number = 0;
-    if(val.endsWith("K")) number = parseFloat(val)*1e3;
-    else if(val.endsWith("M")) number = parseFloat(val)*1e6;
-    else if(val.endsWith("B")) number = parseFloat(val)*1e9;
-    else number = parseFloat(val);
-    return isNaN(number)?0:number;
-}
-
-// Affiche les totaux en M/K/B
-function formatValue(val){
-    if(val>=1e9) return (val/1e9)+"B";
-    else if(val>=1e6) return (val/1e6)+"M";
-    else if(val>=1e3) return (val/1e3)+"K";
-    else return val;
 }
 
 initGrid("have");
@@ -242,3 +207,17 @@ initGrid("want");
 </script>
 </body>
 </html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
