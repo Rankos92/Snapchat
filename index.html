@@ -19,7 +19,6 @@ body { background:#000; color:white; min-height:100vh; display:flex; flex-direct
 .slot.item:hover { transform:scale(1.05); box-shadow:0 0 15px #ff00ff,0 0 30px #8b5cf6; }
 .slot.add-btn { background:#141414; display:flex; justify-content:center; align-items:center; font-size:36px; font-weight:bold; color:#fff; cursor:pointer; transition:all 0.2s ease; border-radius:12px; }
 .slot.add-btn:hover { background:#6d28d9; box-shadow:0 0 15px #8b5cf6; transform:scale(1.08); }
-
 .value-box { background: rgba(0,0,0,0.65); padding: 4px 0; position:absolute; bottom:0; width:100%; display:flex; flex-direction:column; align-items:center; }
 .value-text { font-size:11px; color:#ccc; }
 .demand-text { font-size:9px; color:#ffcc00; }
@@ -34,29 +33,21 @@ body { background:#000; color:white; min-height:100vh; display:flex; flex-direct
 
 .modal { position:fixed; inset:0; background:rgba(0,0,0,0.85); display:none; justify-content:center; align-items:center; z-index:999; }
 .modal-content { background:#0f0f0f; width:520px; max-height:70vh; border-radius:18px; padding:20px; display:flex; flex-direction:column; overflow-y:auto; }
+.modal-content h3 { margin-bottom:10px; }
 
 #search { margin-bottom:10px; padding:6px 10px; border-radius:8px; border:none; outline:none; font-size:14px; }
 
 .items { display:grid; grid-template-columns:repeat(4,1fr); gap:14px; max-height:400px; overflow-y:auto; }
 
-.item {
-    border-radius:12px;
-    padding:10px;
-    text-align:center;
-    cursor:pointer;
-    transition:all 0.2s;
-    font-weight:600;
-    display:flex;
-    flex-direction:column;
-    align-items:center;
-    color:white !important;
-}
+.item { border-radius:12px; padding:10px; text-align:center; cursor:pointer; transition:all 0.2s; font-weight:600; display:flex; flex-direction:column; align-items:center; }
 .item img { width:60px; height:60px; margin-bottom:5px; }
 .item:hover { background:#6d28d9; box-shadow:0 0 15px #8b5cf6; }
-.item .sub { font-size:10px; color:#888; font-weight:400; }
+
+.mythic { color:red; }
+.legendary { color:gold; }
+.uncommon { color:#3ab7ff; }
 </style>
 </head>
-
 <body>
 
 <div class="title">BLOX FRUIT VALUE</div>
@@ -66,9 +57,24 @@ body { background:#000; color:white; min-height:100vh; display:flex; flex-direct
         <h2>I Have</h2>
         <div class="grid" data-side="have"></div>
     </div>
+
     <div class="trade-column">
         <h2>I Want</h2>
         <div class="grid" data-side="want"></div>
+    </div>
+</div>
+
+<div class="values">
+    <div class="value-block">
+        <h3>YOUR OFFER</h3>
+        <div class="value-number" id="offer-value">0</div>
+        <div class="demand" id="offer-demand">Demand: 0/10</div>
+    </div>
+    <div class="vs">VS</div>
+    <div class="value-block">
+        <h3>YOU WANT</h3>
+        <div class="value-number" id="want-value">0</div>
+        <div class="demand" id="want-demand">Demand: 0/10</div>
     </div>
 </div>
 
@@ -84,9 +90,44 @@ body { background:#000; color:white; min-height:100vh; display:flex; flex-direct
 let currentSide = null;
 const slots = { have: [], want: [] };
 
+// Fruits avec image + rareté
 const fruits = [
-{ name:"Dragon (West)", rarity:"mythic", img:"https://static.wikia.nocookie.net/roblox-blox-piece/images/4/40/Dragon_%28West%29_Fruit.png" }
+
+/* ================= MYTHIC ================= */
+{ name:"Dragon (West)", rarity:"mythic", img:"https://static.wikia.nocookie.net/roblox-blox-piece/images/4/40/Dragon_%28West%29_Fruit.png" },
+{ name:"Dragon (East)", rarity:"mythic", img:"https://static.wikia.nocookie.net/roblox-blox-piece/images/4/4b/Dragon_%28East%29_Fruit.png" },
+{ name:"Kitsune", rarity:"mythic", img:"https://static.wikia.nocookie.net/roblox-blox-piece/images/6/65/Kitsune_Fruit.png" },
+{ name:"Leopard", rarity:"mythic", img:"https://static.wikia.nocookie.net/roblox-blox-piece/images/7/79/Leopard_Fruit.png" },
+{ name:"Dough", rarity:"mythic", img:"https://static.wikia.nocookie.net/roblox-blox-piece/images/0/02/Dough_Fruit.png" },
+{ name:"Venom", rarity:"mythic", img:"https://static.wikia.nocookie.net/roblox-blox-piece/images/d/d2/Venom_Fruit.png" },
+{ name:"Spirit", rarity:"mythic", img:"https://static.wikia.nocookie.net/roblox-blox-piece/images/6/66/Spirit_Fruit.png" },
+{ name:"Shadow", rarity:"mythic", img:"https://static.wikia.nocookie.net/roblox-blox-piece/images/5/58/Shadow_Fruit.png" },
+{ name:"Gravity", rarity:"mythic", img:"https://static.wikia.nocookie.net/roblox-blox-piece/images/5/5f/Gravity_Fruit.png" },
+{ name:"Mammoth", rarity:"mythic", img:"https://static.wikia.nocookie.net/roblox-blox-piece/images/9/95/Mammoth_Fruit.png" },
+{ name:"T-Rex", rarity:"mythic", img:"https://cdn.nookazon.com/bloxfruits/Fruits/T-RexFruit.svg" },
+{ name:"Control", rarity:"mythic", img:"https://static.wikia.nocookie.net/roblox-blox-piece/images/c/cb/OldControlFruit.png" },
+{ name:"Yeti", rarity:"mythic", img:"https://static.wikia.nocookie.net/roblox-blox-piece/images/2/2f/Yeti_Fruit.png" },
+{ name:"Tiger", rarity:"mythic", img:"https://static.wikia.nocookie.net/roblox-blox-piece/images/1/14/Tiger_Fruit.png" },
+
+/* ================= LEGENDARY ================= */
+{ name:"Sound", rarity:"legendary", img:"https://static.wikia.nocookie.net/roblox-blox-piece/images/b/ba/Sound_Fruit.png" },
+{ name:"Quake", rarity:"legendary", img:"https://static.wikia.nocookie.net/roblox-blox-piece/images/4/42/Quake_Fruit.png" },
+{ name:"Buddha", rarity:"legendary", img:"https://static.wikia.nocookie.net/roblox-blox-piece/images/d/df/Buddha_Fruit.png" },
+{ name:"Portal", rarity:"legendary", img:"https://static.wikia.nocookie.net/roblox-blox-piece/images/8/8a/Portal_Fruit.png" },
+{ name:"Phoenix", rarity:"legendary", img:"https://static.wikia.nocookie.net/roblox-blox-piece/images/f/fc/Phoenix_Fruit.png" },
+{ name:"Blizzard", rarity:"legendary", img:"https://static.wikia.nocookie.net/roblox-blox-piece/images/c/c9/Blizzard_Fruit.png" },
+
+/* ================= UNCOMMON ================= */
+{ name:"Light", rarity:"uncommon", img:"https://static.wikia.nocookie.net/roblox-blox-piece/images/8/83/Light_Fruit.png" },
+{ name:"Rubber", rarity:"uncommon", img:"https://static.wikia.nocookie.net/roblox-blox-piece/images/5/5c/Rubber_Fruit.png" },
+{ name:"Ghost", rarity:"uncommon", img:"https://static.wikia.nocookie.net/roblox-blox-piece/images/8/8c/Ghost_Fruit.png" },
+{ name:"Magma", rarity:"uncommon", img:"https://static.wikia.nocookie.net/roblox-blox-piece/images/2/27/Magma_Fruit.png" },
+{ name:"Flame", rarity:"uncommon", img:"https://static.wikia.nocookie.net/roblox-blox-piece/images/c/c4/Flame_Fruit.png" },
+{ name:"Ice", rarity:"uncommon", img:"https://static.wikia.nocookie.net/roblox-blox-piece/images/c/c5/Ice_Fruit.png" }
+
 ];
+
+
 
 function initGrid(side){
     const grid = document.querySelector(`.grid[data-side="${side}"]`);
@@ -121,11 +162,7 @@ function renderItems(filter){
     fruits.filter(f=>f.name.toLowerCase().includes(filter.toLowerCase())).forEach(f=>{
         const div = document.createElement("div");
         div.className=`item ${f.rarity}`;
-        div.innerHTML = `
-            <img src="${f.img}">
-            <div>${f.name}</div>
-            <div class="sub">Fruit</div>
-        `;
+        div.innerHTML = `<img src="${f.img}" alt="${f.name}">${f.name}`;
         div.onclick = ()=> selectItem(f);
         list.appendChild(div);
     });
@@ -141,17 +178,40 @@ function selectItem(fruit){
     if(!slot) return;
     slot.className="slot item";
     slot.style.backgroundImage=`url('${fruit.img}')`;
+    slot.style.backgroundSize="70%";
+    slot.style.backgroundPosition="center";
     slot.innerHTML += `<div class="value-box">
         <div class="value-text">Value: ???</div>
         <div class="demand-text">Demand: ?/?</div>
     </div>`;
+    const index = slots[side].indexOf(slot);
+    slot.onclick = ()=> removeItem(side,index);
     document.getElementById("modal").style.display="none";
+    updatePlus(side);
+}
+
+function removeItem(side,index){
+    const items = slots[side].filter((s,i)=>s.classList.contains("item") && i!==index).map(s=>({html:s.innerHTML,bg:s.style.backgroundImage}));
+    slots[side].forEach(s=>{ s.className="slot"; s.innerHTML=""; s.style.backgroundImage=""; s.onclick=null; });
+    items.forEach((item,i)=>{
+        slots[side][i].className="slot item";
+        slots[side][i].innerHTML=item.html;
+        slots[side][i].style.backgroundImage=item.bg;
+        slots[side][i].onclick=()=>removeItem(side,i);
+    });
     updatePlus(side);
 }
 
 initGrid("have");
 initGrid("want");
 </script>
-
 </body>
 </html>
+
+
+
+
+
+
+
+
