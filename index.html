@@ -32,7 +32,35 @@ body {
 
 
 
-.title { margin-top:30px; font-size:48px; font-weight:800; background:linear-gradient(90deg,#8b5cf6,#a78bfa); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
+.title {
+    margin-top: 30px;
+    font-size: 64px; /* plus grand */
+    font-weight: 900;
+    font-family: 'Orbitron', sans-serif;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+
+    /* Dégradé animé */
+    background: linear-gradient(90deg, #ff00ff, #8b5cf6, #00ffff, #ff00ff);
+    background-size: 400% 400%;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+
+    /* Ombre glow */
+    text-shadow: 
+        0 0 10px #ff00ff,
+        0 0 20px #8b5cf6,
+        0 0 30px #00ffff;
+
+    animation: gradientGlow 5s ease infinite;
+}
+
+@keyframes gradientGlow {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
 
 .trade-zone {
   margin-top: 40px;
@@ -382,6 +410,7 @@ document.getElementById('close-modal').onclick = () => {
 </script>
 </body>
 </html>
+
 
 
 
