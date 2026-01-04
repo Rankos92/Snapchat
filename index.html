@@ -188,12 +188,15 @@ body {
 
 <div class="modal" id="modal">
     <div class="modal-content">
-        <button id="close-modal">&times;</button>
-        <h3>Available Items</h3>
+        <div class="modal-header">
+            <h3>Available Items</h3>
+            <button id="close-modal">&times;</button>
+        </div>
         <input type="text" id="search" placeholder="Search fruit...">
         <div class="items" id="item-list"></div>
     </div>
 </div>
+
 
 
 <script>
@@ -344,6 +347,7 @@ initGrid("want");
 </script>
 </body>
 </html>
+
 
 
 
