@@ -2,6 +2,7 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Blox Fruit Value</title>
 <link href="https://fonts.googleapis.com/css2?family=Butler:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
@@ -196,6 +197,50 @@ body {
 .item:hover { background:#6d28d9; box-shadow:0 0 15px #8b5cf6; }
 
 
+@media (max-width: 768px) {
+
+  .title {
+    font-size: 28px;
+    text-align: center;
+  }
+
+  .trade-zone {
+    flex-direction: column;
+    gap: 30px;
+    padding: 20px;
+    width: 95%;
+  }
+
+  .grid {
+    grid-template-columns: repeat(2, 70px);
+    grid-template-rows: repeat(2, 70px);
+    gap: 12px;
+    justify-content: center;
+  }
+
+  .slot {
+    width: 70px;
+    height: 70px;
+  }
+
+  .values {
+    flex-direction: column;
+    gap: 15px;
+  }
+
+  .vs {
+    display: none;
+  }
+
+  .modal-content {
+    width: 90%;
+    max-height: 80vh;
+  }
+
+  .items {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
 
 </style>
 </head>
@@ -395,6 +440,7 @@ document.getElementById('close-modal').onclick = () => {
 </script>
 </body>
 </html>
+
 
 
 
