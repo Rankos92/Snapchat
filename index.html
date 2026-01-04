@@ -3,7 +3,6 @@
 <head>
 <meta charset="UTF-8">
 <title>Blox Fruit Value</title>
-
 <style>
 * {
     margin: 0;
@@ -67,9 +66,12 @@ body {
     display: flex;
     flex-direction: column;
     justify-content: flex-end;
+    align-items: center;
+    overflow: hidden;
     text-align: center;
     font-size: 12px;
-    overflow: hidden;
+    position: relative;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .slot.item {
@@ -77,11 +79,23 @@ body {
     background-repeat: no-repeat;
     background-position: center;
     background-size: 70%;
+    box-shadow: 0 0 8px #8b5cf6;
+}
+
+.slot.item:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 15px #ff00ff, 0 0 30px #8b5cf6;
 }
 
 .value-box {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
     background: rgba(0,0,0,0.65);
-    padding: 4px 0;
+    padding: 3px 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
 .value-text {
@@ -91,7 +105,7 @@ body {
 
 .demand-text {
     font-size: 9px;
-    color: #666;
+    color: #ffcc00;
 }
 
 .add-btn {
@@ -100,19 +114,57 @@ body {
     justify-content: center;
     display: flex;
     align-items: center;
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
     border-radius: 15px;
-}
-
-.add-btn span {
     font-size: 36px;
-    font-weight: bold;
     color: white;
 }
 
 .add-btn:hover {
     transform: scale(1.08);
     box-shadow: 0 0 20px rgba(139,92,246,0.7);
+}
+
+.values {
+    margin-top: 30px;
+    width: 100%;
+    max-width: 600px;
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+}
+
+.value-block {
+    flex: 1;
+    text-align: center;
+    background: linear-gradient(145deg, #1a1a1a, #222);
+    padding: 20px;
+    border-radius: 18px;
+    box-shadow: 0 0 20px rgba(139,92,246,0.5);
+}
+
+.value-block h3 {
+    font-size: 18px;
+    color: #aaa;
+    margin-bottom: 10px;
+}
+
+.value-number {
+    font-size: 32px;
+    font-weight: 700;
+    color: #8b5cf6;
+    text-shadow: 0 0 10px #8b5cf6;
+}
+
+.demand {
+    font-size: 12px;
+    color: #ffcc00;
+    margin-top: 5px;
+}
+
+.vs {
+    font-size: 24px;
+    opacity: 0.6;
+    align-self: center;
 }
 
 .modal {
@@ -122,15 +174,19 @@ body {
     display: none;
     justify-content: center;
     align-items: center;
+    z-index: 999;
 }
 
 .modal-content {
     background: #0f0f0f;
-    width: 520px;
+    width: 550px;
+    max-height: 70vh;
     border-radius: 18px;
     padding: 20px;
-    max-height: 70vh;
     overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
 }
 
 .items {
@@ -145,78 +201,24 @@ body {
     padding: 10px;
     text-align: center;
     cursor: pointer;
-    transition: all 0.2s ease;
-}
-
-.item:hover {
-    background: #6d28d9;
-    box-shadow: 0 0 15px #8b5cf6;
-}
-
-/* DESIGN INCROYABLE pour YOUR OFFER / YOU WANT */
-.values {
-    margin-top: 30px;
-    width: 100%;
-    max-width: 600px;
     display: flex;
-    justify-content: space-between;
+    flex-direction: column;
     align-items: center;
 }
 
-.value-block {
-    background: #1a1a1a;
-    padding: 20px;
-    border-radius: 18px;
-    flex: 1;
-    margin: 0 10px;
-    text-align: center;
-    position: relative;
-    overflow: hidden;
+.item img {
+    width: 60px;
+    height: 60px;
+    margin-bottom: 5px;
 }
 
-.value-block::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(145deg, #6d28d9, #8b5cf6);
-    opacity: 0.4;
-    filter: blur(15px);
-    z-index: 0;
-    border-radius: 18px;
-}
+.item.mythic { border: 2px solid #ff0000; } /* Rouge */
+.item.legendary { border: 2px solid #FFD700; } /* Or */
+.item.uncommon { border: 2px solid #00ffff; } /* Cyan */
 
-.value-block h3 {
-    color: white;
-    font-size: 18px;
-    margin-bottom: 10px;
-    position: relative;
-    z-index: 1;
-}
-
-.value-number {
-    font-size: 32px;
-    font-weight: 700;
-    color: #fff;
-    position: relative;
-    z-index: 1;
-}
-
-.demand {
-    font-size: 14px;
-    color: #ddd;
-    margin-top: 5px;
-    position: relative;
-    z-index: 1;
-}
-
-.vs {
-    font-size: 24px;
-    opacity: 0.6;
-    margin: 0 10px;
-}
+.item:hover { background: #6d28d9; transform: scale(1.05); }
 </style>
 </head>
-
 <body>
 
 <div class="title">BLOX FRUIT VALUE</div>
@@ -226,38 +228,36 @@ body {
         <h2>I Have</h2>
         <div class="grid" data-side="have"></div>
     </div>
-
     <div class="trade-column">
         <h2>I Want</h2>
         <div class="grid" data-side="want"></div>
     </div>
 </div>
 
-<!-- YOUR OFFER / YOU WANT design lumineux -->
 <div class="values">
     <div class="value-block">
         <h3>YOUR OFFER</h3>
         <div class="value-number" id="offer-value">0</div>
-        <div class="demand">Demand: 0/10</div>
+        <div class="demand" id="offer-demand">Demand: 0/10</div>
     </div>
-
     <div class="vs">VS</div>
-
     <div class="value-block">
         <h3>YOU WANT</h3>
         <div class="value-number" id="want-value">0</div>
-        <div class="demand">Demand: 0/10</div>
+        <div class="demand" id="want-demand">Demand: 0/10</div>
     </div>
 </div>
 
 <div class="modal" id="modal">
     <div class="modal-content">
         <h3>Available Items</h3>
-        <div class="items">
-            <div class="item" onclick="selectItem('Dragon')">Dragon</div>
-            <div class="item" onclick="selectItem('Leopard')">Leopard</div>
-            <div class="item" onclick="selectItem('Kitsune')">Kitsune</div>
-            <div class="item" onclick="selectItem('Dough')">Dough</div>
+        <input type="text" id="search" placeholder="Search fruit..." style="padding:5px;border-radius:10px;margin-bottom:10px;">
+        <div class="items" id="item-list">
+            <!-- Exemple avec Dragon -->
+            <div class="item mythic" onclick="selectItem('Dragon', 'mythic')">
+                <img src="https://static.wikia.nocookie.net/roblox-blox-piece/images/4/40/Dragon_%28West%29_Fruit.png" alt="Dragon">
+                Dragon
+            </div>
         </div>
     </div>
 </div>
@@ -266,86 +266,63 @@ body {
 let currentSide = null;
 const slots = { have: [], want: [] };
 
-function initGrid(side) {
+function initGrid(side){
     const grid = document.querySelector(`.grid[data-side="${side}"]`);
     grid.innerHTML = "";
     slots[side] = [];
-
-    for (let i = 0; i < 4; i++) {
+    for(let i=0;i<4;i++){
         const slot = document.createElement("div");
-        slot.className = "slot";
+        slot.className="slot";
         slots[side].push(slot);
         grid.appendChild(slot);
     }
     updatePlus(side);
 }
 
-function updatePlus(side) {
-    const empty = slots[side].find(s => s.innerHTML === "");
-    if (!empty) return;
-
-    empty.className = "slot add-btn";
-    empty.innerHTML = "<span>+</span>";
-    empty.onclick = () => openModal(side);
+function updatePlus(side){
+    const empty = slots[side].find(s=>s.innerHTML==="");
+    if(!empty) return;
+    empty.className="slot add-btn";
+    empty.innerHTML="<span>+</span>";
+    empty.onclick=()=>openModal(side);
 }
 
-function openModal(side) {
+function openModal(side){
     currentSide = side;
-    document.getElementById("modal").style.display = "flex";
+    document.getElementById("modal").style.display="flex";
 }
 
-function selectItem(name) {
+function selectItem(name, rarity){
     const side = currentSide;
-    const slot = slots[side].find(s => s.classList.contains("add-btn"));
-    if (!slot) return;
+    const slot = slots[side].find(s=>s.classList.contains("add-btn"));
+    if(!slot) return;
 
-    slot.className = "slot item";
-
-    if (name === "Dragon") {
-        slot.style.backgroundImage =
-        "url('https://static.wikia.nocookie.net/roblox-blox-piece/images/4/40/Dragon_%28West%29_Fruit.png')";
-        slot.style.backgroundSize = "70%";
-        slot.style.backgroundPosition = "center";
-    } else {
-        slot.style.backgroundImage = "";
-    }
-
-    slot.innerHTML += `
+    slot.className="slot item";
+    slot.style.backgroundImage="url('https://static.wikia.nocookie.net/roblox-blox-piece/images/4/40/Dragon_%28West%29_Fruit.png')";
+    slot.style.backgroundSize="70%";
+    slot.style.backgroundPosition="center";
+    slot.innerHTML = `
         <div class="value-box">
             <div class="value-text">Value: ???</div>
             <div class="demand-text">Demand: ?/?</div>
         </div>
     `;
-
     const index = slots[side].indexOf(slot);
-    slot.onclick = () => removeItem(side, index);
-
-    document.getElementById("modal").style.display = "none";
+    slot.onclick = ()=>removeItem(side,index);
+    document.getElementById("modal").style.display="none";
     updatePlus(side);
 }
 
-function removeItem(side, index) {
-    const items = slots[side]
-        .filter((s, i) => s.classList.contains("item") && i !== index)
-        .map(s => ({
-            html: s.innerHTML,
-            bg: s.style.backgroundImage
-        }));
-
-    slots[side].forEach(s => {
-        s.className = "slot";
-        s.innerHTML = "";
-        s.style.backgroundImage = "";
-        s.onclick = null;
+function removeItem(side,index){
+    const items = slots[side].filter((s,i)=>s.classList.contains("item") && i!==index)
+        .map(s=>({html:s.innerHTML,bg:s.style.backgroundImage}));
+    slots[side].forEach(s=>{s.className="slot";s.innerHTML="";s.style.backgroundImage="";s.onclick=null;});
+    items.forEach((item,i)=>{
+        slots[side][i].className="slot item";
+        slots[side][i].innerHTML=item.html;
+        slots[side][i].style.backgroundImage=item.bg;
+        slots[side][i].onclick=()=>removeItem(side,i);
     });
-
-    items.forEach((item, i) => {
-        slots[side][i].className = "slot item";
-        slots[side][i].innerHTML = item.html;
-        slots[side][i].style.backgroundImage = item.bg;
-        slots[side][i].onclick = () => removeItem(side, i);
-    });
-
     updatePlus(side);
 }
 
