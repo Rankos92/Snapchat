@@ -195,55 +195,6 @@ body {
 .item img { width:60px; height:60px; margin-bottom:5px; }
 .item:hover { background:#6d28d9; box-shadow:0 0 15px #8b5cf6; }
 
-/* === Mobile / Tablette responsive === */
-@media (max-width: 768px) {
-    .title {
-        font-size: 32px; /* titre plus petit */
-    }
-
-    .trade-zone {
-        flex-direction: column; /* colonnes empilées */
-        gap: 30px;
-        padding: 20px;
-    }
-
-    .grid {
-        grid-template-columns: repeat(2, 1fr); /* 2 slots par ligne */
-    }
-
-    .slot {
-        width: 100%;      /* prend toute la largeur de sa colonne */
-        aspect-ratio: 1;  /* carré parfait */
-    }
-
-    .values {
-        flex-direction: column; /* blocs empilés */
-        gap: 20px;
-        width: 90%;
-    }
-
-    .value-block h3 {
-        font-size: 16px; /* texte plus petit */
-    }
-
-    .value-number {
-        font-size: 28px; /* valeur plus petite */
-    }
-
-    .item img {
-        width: 40px; /* image plus petite */
-        height: 40px;
-    }
-
-    .item {
-        font-size: 12px; /* texte plus petit */
-    }
-
-    .items {
-        grid-template-columns: repeat(auto-fit, minmax(70px, 1fr)); /* modal responsive */
-        max-height: 50vh; /* modal pas trop grand */
-    }
-}
 
 
 </style>
@@ -444,6 +395,7 @@ document.getElementById('close-modal').onclick = () => {
 </script>
 </body>
 </html>
+
 
 
 
