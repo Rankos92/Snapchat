@@ -162,7 +162,12 @@ function renderItems(filter){
     fruits.filter(f=>f.name.toLowerCase().includes(filter.toLowerCase())).forEach(f=>{
         const div = document.createElement("div");
         div.className=`item ${f.rarity}`;
-        div.innerHTML = `<img src="${f.img}" alt="${f.name}">${f.name}`;
+        div.innerHTML = `
+    <img src="${f.img}" alt="${f.name}">
+    <div class="fruit-name">${f.name}</div>
+    <div class="fruit-sub">Fruit</div>
+`;
+}`;
         div.onclick = ()=> selectItem(f);
         list.appendChild(div);
     });
@@ -207,6 +212,7 @@ initGrid("want");
 </script>
 </body>
 </html>
+
 
 
 
