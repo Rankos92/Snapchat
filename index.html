@@ -100,12 +100,19 @@ body {
     justify-content: center;
     display: flex;
     align-items: center;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    border-radius: 15px;
 }
 
 .add-btn span {
     font-size: 36px;
     font-weight: bold;
     color: white;
+}
+
+.add-btn:hover {
+    transform: scale(1.08);
+    box-shadow: 0 0 20px rgba(139,92,246,0.7);
 }
 
 .modal {
@@ -138,48 +145,68 @@ body {
     padding: 10px;
     text-align: center;
     cursor: pointer;
+    transition: all 0.2s ease;
 }
 
 .item:hover {
     background: #6d28d9;
+    box-shadow: 0 0 15px #8b5cf6;
 }
 
-/* DESIGN INCROYABLE POUR YOUR OFFER / YOU WANT */
+/* DESIGN INCROYABLE pour YOUR OFFER / YOU WANT */
 .values {
     margin-top: 30px;
     width: 100%;
-    max-width: 500px;
+    max-width: 600px;
     display: flex;
     justify-content: space-between;
     align-items: center;
 }
 
 .value-block {
-    background: linear-gradient(145deg, #6d28d9, #8b5cf6);
+    background: #1a1a1a;
     padding: 20px;
     border-radius: 18px;
     flex: 1;
     margin: 0 10px;
-    box-shadow: 0 0 20px rgba(139,92,246,0.7);
     text-align: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.value-block::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(145deg, #6d28d9, #8b5cf6);
+    opacity: 0.4;
+    filter: blur(15px);
+    z-index: 0;
+    border-radius: 18px;
 }
 
 .value-block h3 {
     color: white;
     font-size: 18px;
     margin-bottom: 10px;
+    position: relative;
+    z-index: 1;
 }
 
 .value-number {
     font-size: 32px;
     font-weight: 700;
-    color: white;
+    color: #fff;
+    position: relative;
+    z-index: 1;
 }
 
 .demand {
     font-size: 14px;
     color: #ddd;
     margin-top: 5px;
+    position: relative;
+    z-index: 1;
 }
 
 .vs {
@@ -206,7 +233,7 @@ body {
     </div>
 </div>
 
-<!-- YOUR OFFER / YOU WANT redesigné -->
+<!-- YOUR OFFER / YOU WANT design lumineux -->
 <div class="values">
     <div class="value-block">
         <h3>YOUR OFFER</h3>
