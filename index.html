@@ -71,6 +71,36 @@ body {
   }
 }
 
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.modal-header h3 {
+    margin: 0;
+    font-size: 18px;
+    background: linear-gradient(90deg,#8b5cf6,#a78bfa);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+#close-modal {
+    font-size: 20px;
+    background: none;
+    border: none;
+    color: #fff;
+    cursor: pointer;
+    padding: 4px 8px;
+    transition: color 0.2s ease;
+}
+
+#close-modal:hover {
+    color: #ff0000;
+}
+
+
 .trade-column { display:flex; flex-direction:column; gap:15px; }
 .trade-column h2 { text-align:center; font-size:20px; color:#aaa; }
 .grid { display:grid; grid-template-columns:repeat(2,90px); grid-template-rows:repeat(2,90px); gap:15px; }
@@ -347,6 +377,7 @@ initGrid("want");
 </script>
 </body>
 </html>
+
 
 
 
