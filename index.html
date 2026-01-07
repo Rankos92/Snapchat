@@ -73,9 +73,6 @@ body {
   }
 }
 
-
-
-
 .modal-header {
     display: flex;
     justify-content: space-between;
@@ -131,43 +128,6 @@ body {
 }
 
 
-.type-btn {
-  flex:1;
-  padding:10px;
-  border-radius:12px;
-  border:1px solid rgba(255,255,255,0.2);
-  background:#111;
-  color:#aaa;
-  font-weight:700;
-  cursor:pointer;
-}
-
-.type-btn.active {
-  background:#6d28d9;
-  color:white;
-  box-shadow:0 0 12px #8b5cf6;
-}
-
-#perm-value {
-  width:100%;
-  margin-bottom:12px;
-  padding:10px;
-  border-radius:10px;
-  background:#0f0f0f;
-  color:white;
-  border:1px solid rgba(255,255,255,0.2);
-}
-
-.add-trade-btn {
-  width:100%;
-  padding:12px;
-  border-radius:14px;
-  background:#8b5cf6;
-  color:white;
-  font-weight:800;
-  border:none;
-  cursor:pointer;
-}
 
 .values { margin-top:40px; width:90%; max-width:600px; display:flex; justify-content:space-between; gap:20px; }
 .value-block { flex:1; background:linear-gradient(145deg,#1a1a1a,#111); border-radius:18px; padding:20px; text-align:center; box-shadow:0 0 20px rgba(139,92,246,0.5); transition:transform 0.2s ease; }
@@ -176,57 +136,6 @@ body {
 .value-number { font-size:36px; font-weight:700; color:#8b5cf6; }
 .demand { font-size:14px; color:#ccc; margin-top:4px; }
 .vs { font-size:24px; opacity:0.6; align-self:center; }
-
-.trade-balance {
-  margin-top: 20px;
-  width: 100%;
-  max-width: 420px;
-  text-align: center;
-}
-
-.balance-track {
-  position: relative;
-  height: 8px;                /* 🔥 BARRE FINE */
-  background: rgba(255,255,255,0.12);
-  border-radius: 10px;
-  overflow: hidden;
-  box-shadow: inset 0 0 6px rgba(0,0,0,0.8);
-}
-
-.balance-center {
-  position: absolute;
-  left: 50%;
-  top: -3px;
-  width: 2px;
-  height: 14px;
-  background: rgba(255,255,255,0.6);
-}
-
-.balance-indicator {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 12px;
-  height: 12px;
-  background: #8b5cf6;
-  border-radius: 50%;
-  transform: translate(-50%, -50%);
-  transition: left 0.45s cubic-bezier(.22,1,.36,1);
-  box-shadow:
-    0 0 8px rgba(139,92,246,0.9),
-    0 0 16px rgba(139,92,246,0.5);
-}
-
-
-.balance-text {
-  margin-top: 6px;
-  font-size: 14px;
-  font-weight: 700;
-  letter-spacing: 1px;
-  color: #8b5cf6;
-}
-
-
 
 .modal { position:fixed; inset:0; background:rgba(0,0,0,0.85); display:none; justify-content:center; align-items:center; z-index:999; }
 .modal-content {
@@ -351,14 +260,6 @@ body {
     </div>
 </div>
 
-<div class="trade-balance">
-  <div class="balance-track">
-    <div class="balance-center"></div>
-    <div class="balance-indicator" id="balance-indicator"></div>
-  </div>
-  <div class="balance-text" id="balance-text">FAIR</div>
-</div>
-
 <div class="values">
     <div class="value-block">
         <h3>YOUR OFFER</h3>
@@ -384,44 +285,16 @@ body {
     </div>
 </div>
 
-<!-- MODAL TYPE SELECTION -->
-<div class="modal" id="type-modal">
-  <div class="modal-content" style="width:360px">
-    <h3>Select Type</h3>
-
-    <div style="display:flex; gap:12px; margin:15px 0;">
-      <button class="type-btn active" id="type-normal">NORMAL</button>
-      <button class="type-btn" id="type-permanent">PERMANENT</button>
-    </div>
-
-    <input
-      type="number"
-      id="perm-value"
-      placeholder="Permanent value"
-      style="display:none"
-    >
-
-    <button class="add-trade-btn" id="confirm-add">
-      ADD TO TRADE
-    </button>
-  </div>
-</div>
-
-
 
 
 <script>
-
-let selectedFruit = null;
-let selectedType = "normal";
-
 let currentSide = null;
 const slots = { have: [], want: [] };
 
 // Fruits avec image + rareté + valeur + demande
 const fruits = [
 /* ================= MYTHIC ================= */
-{ name:"Dragon (West)", rarity:"mythic", img:"https://static.wikia.nocookie.net/roblox-blox-piece/images/4/40/Dragon_%28West%29_Fruit.png", value:3240000000, demand:"10/10", permValue:3 },
+{ name:"Dragon (West)", rarity:"mythic", img:"https://static.wikia.nocookie.net/roblox-blox-piece/images/4/40/Dragon_%28West%29_Fruit.png", value:3240000000, demand:"10/10" },
 { name:"Dragon (East)", rarity:"mythic", img:"https://static.wikia.nocookie.net/roblox-blox-piece/images/4/4b/Dragon_%28East%29_Fruit.png", value:2840000000, demand:"10/10" },
 { name:"Kitsune", rarity:"mythic", img:"https://static.wikia.nocookie.net/roblox-blox-piece/images/6/65/Kitsune_Fruit.png", value:410000000, demand:"10/10" },
 { name:"Control", rarity:"mythic", img:"https://static.wikia.nocookie.net/roblox-blox-piece/images/c/cb/OldControlFruit.png", value:160000000, demand:"8/10" },
@@ -462,7 +335,7 @@ const fruits = [
 
 { name:"Purple Lightning", rarity:"uncommon", img:"https://i.postimg.cc/d0FsYGYD/Purple-Lightning.png", value:2400000000, demand:"10/10" },
 { name:"Yellow Lightning", rarity:"uncommon", img:"https://i.postimg.cc/cLwx2XPV/Yellow-Lightning.png", value:745000000, demand:"10/10" },
-{ name:"Green Lightning", rarity:"uncommon", img:"https://i.postimg.cc/MKcKbW5Z/Green-Lightning.png", value:180000000, demand:"7.5/10" },
+{ name:"Green Lightning", rarity:"uncommon", img:"https://i.postimg.cc/MKcKbW5Z/Green-Lightning.png", value:150000000, demand:"5/10" },
 { name:"Red Lightning", rarity:"uncommon", img:"https://i.postimg.cc/s2DmjTkH/Red-Lightning.png", value:570000000, demand:"10/10" },
 { name:"Torment pain", rarity:"uncommon", img:"https://i.postimg.cc/T1qGN3Q0/Torment.png", value:120000000, demand:"4/10" },
 { name:"Super Spirit Pain", rarity:"uncommon", img:"https://i.postimg.cc/Xv7LjsRD/Super-Spirit-Pain.png", value:530000000, demand:"10/10" },
@@ -526,7 +399,7 @@ function renderItems(filter){
         const div = document.createElement("div");
         div.className=`item ${f.rarity}`;
         div.innerHTML = `<img src="${f.img}" alt="${f.name}">${f.name}`;
-        div.onclick = ()=> openTypeModal(f);
+        div.onclick = ()=> selectItem(f);
         list.appendChild(div);
     });
 }
@@ -539,44 +412,22 @@ function selectItem(fruit){
     const side = currentSide;
     const slot = slots[side].find(s=>s.classList.contains("add-btn"));
     if(!slot) return;
-
     slot.className="slot item";
     slot.style.backgroundImage=`url('${fruit.img}')`;
     slot.style.backgroundSize="70%";
     slot.style.backgroundPosition="center";
     slot.dataset.value = fruit.value;
     slot.dataset.demand = fruit.demand;
-
-    // Badge PERM si fruit permanent
-    let permHTML = "";
-    if(fruit.demand === "PERM"){
-        permHTML = `<div style="
-            position:absolute;
-            top:4px;
-            right:4px;
-            background:#ffcc00;
-            color:#000;
-            font-size:9px;
-            font-weight:700;
-            padding:1px 3px;
-            border-radius:3px;
-            z-index:10;
-        ">PERM</div>`;
-    }
-
-    slot.innerHTML = permHTML + `<div class="value-box">
+    slot.innerHTML += `<div class="value-box">
         <div class="value-text">Value: ${formatValue(fruit.value)}</div>
-        <div class="demand-text">${fruit.demand}</div>
+        <div class="demand-text">Demand: ${fruit.demand}</div>
     </div>`;
-
     const index = slots[side].indexOf(slot);
     slot.onclick = ()=> removeItem(side,index);
-
     document.getElementById("modal").style.display="none";
     updatePlus(side);
     updateTradeValues();
 }
-
 
 function removeItem(side,index){
     const items = slots[side].filter((s,i)=>s.classList.contains("item") && i!==index).map(s=>({html:s.innerHTML,bg:s.style.backgroundImage,value:s.dataset.value,demand:s.dataset.demand}));
@@ -593,108 +444,16 @@ function removeItem(side,index){
     updateTradeValues();
 }
 
-document.getElementById("confirm-add").onclick = () => {
-    if(!pendingFruit) return;
-
-    let fruitToAdd = {...pendingFruit};
-
-    // Si Permanent est sélectionné
-    if(selectedType === "permanent"){
-        if(fruitToAdd.permValue){
-            fruitToAdd.value = fruitToAdd.permValue; // valeur permanente
-            fruitToAdd.demand = "PERM";             // badge PERM
-        } else {
-            alert("No permanent value defined for this fruit");
-            return;
-        }
-    }
-
-    document.getElementById("type-modal").style.display = "none";
-    selectItem(fruitToAdd);
-    pendingFruit = null;
-};
-
-
-
 function updateTradeValues(){
-    const offerValue = slots.have.reduce(
-        (s,e)=>e.dataset.value ? s + Number(e.dataset.value) : s, 0
-    );
-    const wantValue = slots.want.reduce(
-        (s,e)=>e.dataset.value ? s + Number(e.dataset.value) : s, 0
-    );
-
-    document.getElementById("offer-value").textContent = formatValue(offerValue);
-    document.getElementById("want-value").textContent  = formatValue(wantValue);
-
-    const indicator = document.getElementById("balance-indicator");
-    const text = document.getElementById("balance-text");
-
-    if(!indicator) return;
-
-    if(offerValue === 0 && wantValue === 0){
-        indicator.style.left = "50%";
-        text.textContent = "FAIR";
-        return;
-    }
-
-    const diff = offerValue - wantValue;
-    const max = Math.max(offerValue, wantValue);
-
-    const ratio = diff / max; // déplacement NORMAL
-    const clamped = Math.max(-1, Math.min(1, ratio));
-    const position = 50 + clamped * 45;
-
-    indicator.style.left = position + "%";
-
-    // 🔥 LOGIQUE INVERSEE COMME TU VEUX
-    if(Math.abs(clamped) < 0.05){
-        text.textContent = "FAIR";
-    } 
-    else if(diff > 0){
-        // Your offer PLUS HAUTE → LOSE
-        text.textContent = "LOSE";
-    } 
-    else {
-        // Your offer PLUS BASSE → WIN
-        text.textContent = "WIN";
-    }
+    const offerValue = slots['have'].reduce((sum,s)=> s.dataset.value ? sum + parseInt(s.dataset.value) : sum,0);
+    const wantValue = slots['want'].reduce((sum,s)=> s.dataset.value ? sum + parseInt(s.dataset.value) : sum,0);
+    document.getElementById('offer-value').textContent = formatValue(offerValue);
+    document.getElementById('want-value').textContent = formatValue(wantValue);
+    const offerDemand = slots['have'].reduce((max,s)=> s.dataset.demand && parseInt(s.dataset.demand.split('/')[0])>max ? parseInt(s.dataset.demand.split('/')[0]) : max ,0);
+    const wantDemand = slots['want'].reduce((max,s)=> s.dataset.demand && parseInt(s.dataset.demand.split('/')[0])>max ? parseInt(s.dataset.demand.split('/')[0]) : max ,0);
+    document.getElementById('offer-demand').textContent = `Demand: ${offerDemand}/10`;
+    document.getElementById('want-demand').textContent = `Demand: ${wantDemand}/10`;
 }
-
-
-
-function openTypeModal(fruit){
-    pendingFruit = fruit;
-    selectedType = "normal";
-
-    document.getElementById("type-normal").classList.add("active");
-    document.getElementById("type-permanent").classList.remove("active");
-    document.getElementById("perm-value").style.display = "none";
-    document.getElementById("perm-value").value = "";
-
-    document.getElementById("type-modal").style.display = "flex";
-}
-
-document.getElementById("confirm-add").onclick = () => {
-    if(!pendingFruit) return;
-
-    let fruitToAdd = {...pendingFruit};
-
-    if(selectedType === "permanent"){
-        const customValue = Number(document.getElementById("perm-value").value);
-        if(!customValue || customValue <= 0){
-            alert("Enter a permanent value");
-            return;
-        }
-        fruitToAdd.value = customValue;
-        fruitToAdd.demand = "PERM";
-    }
-
-    document.getElementById("type-modal").style.display = "none";
-    selectItem(fruitToAdd);
-    pendingFruit = null;
-};
-
   
 initGrid("have");
 initGrid("want");
@@ -706,16 +465,6 @@ document.getElementById('close-modal').onclick = () => {
 </script>
 </body>
 </html>
-
-
-
-
-
-
-
-
-
-
 
 
 
