@@ -403,9 +403,23 @@ function updatePlus(side){
 
 function openModal(side){
     currentSide = side;
-    document.getElementById("modal").style.display="flex";
-    renderItems("");
+    const modal = document.getElementById("modal");
+    modal.style.display="flex";
+    renderItems(""); // affichage de la liste complète des items
+    setupModalClose(); // configure le bouton croix
 }
+
+function setupModalClose(){
+    const modal = document.getElementById("modal");
+    const closeBtn = document.getElementById("close-modal");
+    if(closeBtn){
+        closeBtn.onclick = () => {
+            modal.style.display = "none";
+            renderItems(""); // réinitialiser le contenu pour revenir à la liste des items
+        }
+    }
+}
+
 
 function renderItems(filter){
     const list = document.getElementById("item-list");
@@ -521,11 +535,13 @@ initGrid("want");
 
 document.getElementById('close-modal').onclick = () => {
     document.getElementById('modal').style.display = 'none';
+    renderItems(""); 
 };
 
 </script>
 </body>
 </html>
+
 
 
 
