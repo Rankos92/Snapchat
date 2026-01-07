@@ -507,8 +507,12 @@ function removeItem(side,index){
 }
 
 function updateTradeValues(){
-    const offerValue = slots.have.reduce((s,e)=>e.dataset.value? s + Number(e.dataset.value) : s, 0);
-    const wantValue  = slots.want.reduce((s,e)=>e.dataset.value? s + Number(e.dataset.value) : s, 0);
+    const offerValue = slots.have.reduce(
+        (s,e)=>e.dataset.value ? s + Number(e.dataset.value) : s, 0
+    );
+    const wantValue = slots.want.reduce(
+        (s,e)=>e.dataset.value ? s + Number(e.dataset.value) : s, 0
+    );
 
     document.getElementById("offer-value").textContent = formatValue(offerValue);
     document.getElementById("want-value").textContent  = formatValue(wantValue);
@@ -527,22 +531,26 @@ function updateTradeValues(){
     const diff = offerValue - wantValue;
     const max = Math.max(offerValue, wantValue);
 
-    // 🔁 INVERSION ICI
-    const ratio = -diff / max;
-
+    const ratio = diff / max; // déplacement NORMAL
     const clamped = Math.max(-1, Math.min(1, ratio));
     const position = 50 + clamped * 45;
 
     indicator.style.left = position + "%";
 
+    // 🔥 LOGIQUE INVERSEE COMME TU VEUX
     if(Math.abs(clamped) < 0.05){
         text.textContent = "FAIR";
-    } else if(clamped < 0){
-        text.textContent = "WIN";
-    } else {
+    } 
+    else if(diff > 0){
+        // Your offer PLUS HAUTE → LOSE
         text.textContent = "LOSE";
+    } 
+    else {
+        // Your offer PLUS BASSE → WIN
+        text.textContent = "WIN";
     }
 }
+
 
 
 
@@ -558,6 +566,7 @@ document.getElementById('close-modal').onclick = () => {
 </script>
 </body>
 </html>
+
 
 
 
