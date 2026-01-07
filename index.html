@@ -73,6 +73,16 @@ body {
   }
 }
 
+<div class="trade-result">
+  <div class="result-bar">
+    <div class="center-line"></div>
+    <div class="bar-fill" id="bar-fill"></div>
+  </div>
+  <div class="result-text" id="result-text">EQUAL</div>
+</div>
+
+
+
 .modal-header {
     display: flex;
     justify-content: space-between;
@@ -136,6 +146,51 @@ body {
 .value-number { font-size:36px; font-weight:700; color:#8b5cf6; }
 .demand { font-size:14px; color:#ccc; margin-top:4px; }
 .vs { font-size:24px; opacity:0.6; align-self:center; }
+
+.trade-result {
+  margin-top: 30px;
+  width: 90%;
+  max-width: 600px;
+  text-align: center;
+}
+
+.result-bar {
+  position: relative;
+  height: 18px;
+  border-radius: 12px;
+  background: linear-gradient(90deg, #ef4444, #facc15, #22c55e);
+  overflow: hidden;
+  box-shadow: 0 0 20px rgba(0,0,0,0.8);
+}
+
+.center-line {
+  position: absolute;
+  left: 50%;
+  top: 0;
+  width: 2px;
+  height: 100%;
+  background: white;
+  opacity: 0.8;
+  z-index: 2;
+}
+
+.bar-fill {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  height: 100%;
+  width: 0%;
+  background: rgba(255,255,255,0.25);
+  transition: all 0.5s ease;
+}
+
+.result-text {
+  margin-top: 10px;
+  font-size: 22px;
+  font-weight: 800;
+  letter-spacing: 1px;
+}
+
 
 .modal { position:fixed; inset:0; background:rgba(0,0,0,0.85); display:none; justify-content:center; align-items:center; z-index:999; }
 .modal-content {
@@ -447,13 +502,45 @@ function removeItem(side,index){
 function updateTradeValues(){
     const offerValue = slots['have'].reduce((sum,s)=> s.dataset.value ? sum + parseInt(s.dataset.value) : sum,0);
     const wantValue = slots['want'].reduce((sum,s)=> s.dataset.value ? sum + parseInt(s.dataset.value) : sum,0);
+
     document.getElementById('offer-value').textContent = formatValue(offerValue);
     document.getElementById('want-value').textContent = formatValue(wantValue);
-    const offerDemand = slots['have'].reduce((max,s)=> s.dataset.demand && parseInt(s.dataset.demand.split('/')[0])>max ? parseInt(s.dataset.demand.split('/')[0]) : max ,0);
-    const wantDemand = slots['want'].reduce((max,s)=> s.dataset.demand && parseInt(s.dataset.demand.split('/')[0])>max ? parseInt(s.dataset.demand.split('/')[0]) : max ,0);
-    document.getElementById('offer-demand').textContent = `Demand: ${offerDemand}/10`;
-    document.getElementById('want-demand').textContent = `Demand: ${wantDemand}/10`;
+
+    const bar = document.getElementById("bar-fill");
+    const text = document.getElementById("result-text");
+
+    if(offerValue === 0 && wantValue === 0){
+        bar.style.width = "0%";
+        bar.style.left = "50%";
+        text.textContent = "EQUAL";
+        text.style.color = "#facc15";
+        return;
+    }
+
+    const diff = offerValue - wantValue;
+    const max = Math.max(offerValue, wantValue);
+    const percent = Math.min(Math.abs(diff) / max * 50, 50);
+
+    if(diff > 0){
+        bar.style.left = "50%";
+        bar.style.width = percent + "%";
+        text.textContent = "WIN";
+        text.style.color = "#22c55e";
+    } 
+    else if(diff < 0){
+        bar.style.left = (50 - percent) + "%";
+        bar.style.width = percent + "%";
+        text.textContent = "LOSE";
+        text.style.color = "#ef4444";
+    } 
+    else {
+        bar.style.width = "0%";
+        bar.style.left = "50%";
+        text.textContent = "EQUAL";
+        text.style.color = "#facc15";
+    }
 }
+
   
 initGrid("have");
 initGrid("want");
@@ -465,6 +552,7 @@ document.getElementById('close-modal').onclick = () => {
 </script>
 </body>
 </html>
+
 
 
 
