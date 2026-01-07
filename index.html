@@ -192,6 +192,21 @@ body {
 
 .items { display:grid; grid-template-columns:repeat(4,1fr); gap:14px; max-height:400px; overflow-y:auto; }
 
+.type-btn {
+    padding:10px 20px;
+    border:none;
+    border-radius:12px;
+    cursor:pointer;
+    font-weight:600;
+    font-size:14px;
+    background:#1a1a1a;
+    color:white;
+    transition: all 0.2s;
+}
+.type-btn:hover { background:#6d28d9; }
+.type-btn.selected { background:#8b5cf6; color:white; }
+
+
 .item { border-radius:12px; padding:10px; text-align:center; cursor:pointer; transition:all 0.2s; font-weight:600; display:flex; flex-direction:column; align-items:center; font-size:13px; }
 .item img { width:60px; height:60px; margin-bottom:5px; }
 .item:hover { background:#6d28d9; box-shadow:0 0 15px #8b5cf6; }
@@ -296,7 +311,7 @@ const fruits = [
 /* ================= MYTHIC ================= */
 { name:"Dragon (West)", rarity:"mythic", img:"https://static.wikia.nocookie.net/roblox-blox-piece/images/4/40/Dragon_%28West%29_Fruit.png", value:3240000000, demand:"10/10" },
 { name:"Dragon (East)", rarity:"mythic", img:"https://static.wikia.nocookie.net/roblox-blox-piece/images/4/4b/Dragon_%28East%29_Fruit.png", value:2840000000, demand:"10/10" },
-{ name:"Kitsune", rarity:"mythic", img:"https://static.wikia.nocookie.net/roblox-blox-piece/images/6/65/Kitsune_Fruit.png", value:410000000, demand:"10/10" },
+{ name:"Kitsune", rarity:"mythic", img:"https://static.wikia.nocookie.net/roblox-blox-piece/images/6/65/Kitsune_Fruit.png", value:410000000,permValue:8000000000, demand:"10/10" },
 { name:"Control", rarity:"mythic", img:"https://static.wikia.nocookie.net/roblox-blox-piece/images/c/cb/OldControlFruit.png", value:160000000, demand:"8/10" },
 { name:"Tiger", rarity:"mythic", img:"https://static.wikia.nocookie.net/roblox-blox-piece/images/1/14/Tiger_Fruit.png", value:160000000, demand:"8/10" },
 { name:"Yeti", rarity:"mythic", img:"https://static.wikia.nocookie.net/roblox-blox-piece/images/2/2f/Yeti_Fruit.png", value:150000000, demand:"10/10" },
@@ -410,24 +425,70 @@ document.getElementById("search").addEventListener("input", e=>{
 
 function selectItem(fruit){
     const side = currentSide;
-    const slot = slots[side].find(s=>s.classList.contains("add-btn"));
-    if(!slot) return;
-    slot.className="slot item";
-    slot.style.backgroundImage=`url('${fruit.img}')`;
-    slot.style.backgroundSize="70%";
-    slot.style.backgroundPosition="center";
-    slot.dataset.value = fruit.value;
-    slot.dataset.demand = fruit.demand;
-    slot.innerHTML += `<div class="value-box">
-        <div class="value-text">Value: ${formatValue(fruit.value)}</div>
-        <div class="demand-text">Demand: ${fruit.demand}</div>
-    </div>`;
-    const index = slots[side].indexOf(slot);
-    slot.onclick = ()=> removeItem(side,index);
-    document.getElementById("modal").style.display="none";
-    updatePlus(side);
-    updateTradeValues();
+    const modalContent = document.querySelector(".modal-content");
+    modalContent.innerHTML = `
+        <div class="modal-header">
+            <h3>Select Option for ${fruit.name}</h3>
+            <button id="close-modal">&times;</button>
+        </div>
+        <div style="display:flex; gap:20px; justify-content:center; margin:20px 0;">
+            <button id="normal-btn" class="type-btn selected">Normal</button>
+            <button id="perm-btn" class="type-btn">Permanent</button>
+        </div>
+        <button id="add-trade-btn" style="
+            padding:10px 20px; border-radius:12px; 
+            background:#6d28d9; color:white; border:none; cursor:pointer;
+            font-weight:600; font-size:16px;
+        ">Add to Trade</button>
+    `;
+
+    document.getElementById('close-modal').onclick = () => {
+        document.getElementById('modal').style.display = 'none';
+        renderItems(""); // reset modal
+    };
+
+    let selectedType = "normal";
+
+    document.getElementById('normal-btn').onclick = () => {
+        selectedType = "normal";
+        document.getElementById('normal-btn').classList.add('selected');
+        document.getElementById('perm-btn').classList.remove('selected');
+    };
+    document.getElementById('perm-btn').onclick = () => {
+        selectedType = "perm";
+        document.getElementById('perm-btn').classList.add('selected');
+        document.getElementById('normal-btn').classList.remove('selected');
+    };
+
+    document.getElementById('add-trade-btn').onclick = () => {
+        const slot = slots[side].find(s=>s.classList.contains("add-btn"));
+        if(!slot) return;
+
+        slot.className="slot item";
+        slot.style.backgroundImage=`url('${fruit.img}')`;
+        slot.style.backgroundSize="70%";
+        slot.style.backgroundPosition="center";
+
+        // Utiliser permValue si Permanent sélectionné
+        let value = (selectedType === "perm" && fruit.permValue) ? fruit.permValue : fruit.value;
+
+        slot.dataset.value = value;
+        slot.dataset.demand = fruit.demand;
+        slot.innerHTML += `<div class="value-box">
+            <div class="value-text">Value: ${formatValue(value)}</div>
+            <div class="demand-text">Demand: ${fruit.demand}</div>
+        </div>`;
+
+        const index = slots[side].indexOf(slot);
+        slot.onclick = ()=> removeItem(side,index);
+
+        document.getElementById("modal").style.display="none";
+        renderItems(""); // reset modal
+        updatePlus(side);
+        updateTradeValues();
+    };
 }
+
 
 function removeItem(side,index){
     const items = slots[side].filter((s,i)=>s.classList.contains("item") && i!==index).map(s=>({html:s.innerHTML,bg:s.style.backgroundImage,value:s.dataset.value,demand:s.dataset.demand}));
@@ -465,6 +526,7 @@ document.getElementById('close-modal').onclick = () => {
 </script>
 </body>
 </html>
+
 
 
 
