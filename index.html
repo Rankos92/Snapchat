@@ -421,7 +421,7 @@ const slots = { have: [], want: [] };
 // Fruits avec image + rareté + valeur + demande
 const fruits = [
 /* ================= MYTHIC ================= */
-{ name:"Dragon (West)", rarity:"mythic", img:"https://static.wikia.nocookie.net/roblox-blox-piece/images/4/40/Dragon_%28West%29_Fruit.png", value:3240000000, demand:"10/10" },
+{ name:"Dragon (West)", rarity:"mythic", img:"https://static.wikia.nocookie.net/roblox-blox-piece/images/4/40/Dragon_%28West%29_Fruit.png", value:3240000000, demand:"10/10", permValue:3 },
 { name:"Dragon (East)", rarity:"mythic", img:"https://static.wikia.nocookie.net/roblox-blox-piece/images/4/4b/Dragon_%28East%29_Fruit.png", value:2840000000, demand:"10/10" },
 { name:"Kitsune", rarity:"mythic", img:"https://static.wikia.nocookie.net/roblox-blox-piece/images/6/65/Kitsune_Fruit.png", value:410000000, demand:"10/10" },
 { name:"Control", rarity:"mythic", img:"https://static.wikia.nocookie.net/roblox-blox-piece/images/c/cb/OldControlFruit.png", value:160000000, demand:"8/10" },
@@ -539,22 +539,44 @@ function selectItem(fruit){
     const side = currentSide;
     const slot = slots[side].find(s=>s.classList.contains("add-btn"));
     if(!slot) return;
+
     slot.className="slot item";
     slot.style.backgroundImage=`url('${fruit.img}')`;
     slot.style.backgroundSize="70%";
     slot.style.backgroundPosition="center";
     slot.dataset.value = fruit.value;
     slot.dataset.demand = fruit.demand;
-    slot.innerHTML += `<div class="value-box">
+
+    // Badge PERM si fruit permanent
+    let permHTML = "";
+    if(fruit.demand === "PERM"){
+        permHTML = `<div style="
+            position:absolute;
+            top:4px;
+            right:4px;
+            background:#ffcc00;
+            color:#000;
+            font-size:9px;
+            font-weight:700;
+            padding:1px 3px;
+            border-radius:3px;
+            z-index:10;
+        ">PERM</div>`;
+    }
+
+    slot.innerHTML = permHTML + `<div class="value-box">
         <div class="value-text">Value: ${formatValue(fruit.value)}</div>
-        <div class="demand-text">Demand: ${fruit.demand}</div>
+        <div class="demand-text">${fruit.demand}</div>
     </div>`;
+
     const index = slots[side].indexOf(slot);
     slot.onclick = ()=> removeItem(side,index);
+
     document.getElementById("modal").style.display="none";
     updatePlus(side);
     updateTradeValues();
 }
+
 
 function removeItem(side,index){
     const items = slots[side].filter((s,i)=>s.classList.contains("item") && i!==index).map(s=>({html:s.innerHTML,bg:s.style.backgroundImage,value:s.dataset.value,demand:s.dataset.demand}));
@@ -576,20 +598,22 @@ document.getElementById("confirm-add").onclick = () => {
 
     let fruitToAdd = {...pendingFruit};
 
+    // Si Permanent est sélectionné
     if(selectedType === "permanent"){
-        const customValue = Number(document.getElementById("perm-value").value);
-        if(!customValue || customValue <= 0){
-            alert("Enter a permanent value");
+        if(fruitToAdd.permValue){
+            fruitToAdd.value = fruitToAdd.permValue; // valeur permanente
+            fruitToAdd.demand = "PERM";             // badge PERM
+        } else {
+            alert("No permanent value defined for this fruit");
             return;
         }
-        fruitToAdd.value = customValue;
-        fruitToAdd.demand = "PERM";
     }
 
     document.getElementById("type-modal").style.display = "none";
     selectItem(fruitToAdd);
     pendingFruit = null;
 };
+
 
 
 function updateTradeValues(){
@@ -682,6 +706,7 @@ document.getElementById('close-modal').onclick = () => {
 </script>
 </body>
 </html>
+
 
 
 
