@@ -188,16 +188,6 @@ body {
   100% { box-shadow: 0 0 15px #8b5cf6, 0 0 25px #ff00ff; }
 }
 
-/* Petits traits (small lose / small / small win) */
-.trade-bar .small-indicator {
-  position: absolute;
-  top: 0;
-  width: 2px;
-  height: 100%;
-  background: rgba(255,255,255,0.3);
-  z-index: 3;
-}
-
 /* Labels Lose / Equal / Win */
 .trade-bar-labels {
   margin-top: 6px;
@@ -238,6 +228,31 @@ body {
   -webkit-text-fill-color: transparent;
   text-shadow: 0 0 5px rgba(139,92,246,0.7), 0 0 10px rgba(255,0,255,0.5);
 }
+
+/* Petits labels Small Lose / Small Win */
+.trade-bar .small-label {
+  position: absolute;
+  top: -18px; /* légèrement au-dessus de la barre */
+  font-size: 10px;
+  font-weight: 600;
+  font-family: 'Butler', serif;
+  color: rgba(255,255,255,0.6);
+  text-shadow: 0 0 3px rgba(0,0,0,0.7);
+  pointer-events: none;
+  user-select: none;
+  transition: all 0.3s ease;
+}
+
+.trade-bar .small-label.lose {
+  left: 40%; /* proche du centre à gauche */
+  color: #ff5555;
+}
+
+.trade-bar .small-label.win {
+  left: 60%; /* proche du centre à droite */
+  color: #33ff33;
+}
+
 
 
 
@@ -586,18 +601,16 @@ function updateTradeValues(){
     // Barre Win/Lose inversée : si offer > want => Lose
     const bar = document.querySelector(".trade-bar-indicator");
     const totalValue = offerValue + wantValue;
-    let percent = 50; // égalité par défaut
+    let percent = 50;
     if(totalValue > 0){
-        // Inversion pour logique que tu veux
-        percent = (wantValue / totalValue) * 100; 
+        percent = (wantValue / totalValue) * 100; // logique inversée
     }
     percent = Math.max(0, Math.min(100, percent));
     bar.style.left = percent + "%";
 
-    // Gestion des labels Lose/Equal/Win
+    // Labels principaux
     const labels = document.querySelectorAll(".trade-bar-labels span");
     labels.forEach(label => label.classList.remove("active-lose","active-win","active-equal"));
-
     if(percent < 45){       // Lose
         labels[0].classList.add("active-lose");
     } else if(percent > 55){ // Win
@@ -606,18 +619,20 @@ function updateTradeValues(){
         labels[1].classList.add("active-equal");
     }
 
-    // Supprimer les anciens small indicators
-    document.querySelectorAll(".trade-bar .small-indicator").forEach(e=>e.remove());
+    // Supprimer anciens petits labels
+    document.querySelectorAll(".trade-bar .small-label").forEach(e=>e.remove());
 
-    // Ajouter small lose / small / small win
+    // Ajouter Small Lose / Small Win
     const barContainer = document.querySelector(".trade-bar");
-    const smallOffsets = [20, 50, 80]; // positions % approximatives
-    smallOffsets.forEach(pos=>{
-        const div = document.createElement("div");
-        div.className = "small-indicator";
-        div.style.left = pos + "%";
-        barContainer.appendChild(div);
-    });
+    const smallLose = document.createElement("div");
+    smallLose.className = "small-label lose";
+    smallLose.textContent = "Small Lose";
+    barContainer.appendChild(smallLose);
+
+    const smallWin = document.createElement("div");
+    smallWin.className = "small-label win";
+    smallWin.textContent = "Small Win";
+    barContainer.appendChild(smallWin);
 }
 
 
@@ -632,6 +647,7 @@ document.getElementById('close-modal').onclick = () => {
 </script>
 </body>
 </html>
+
 
 
 
