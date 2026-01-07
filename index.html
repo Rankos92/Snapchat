@@ -143,21 +143,22 @@ body {
 .trade-bar {
   position: relative;
   width: 100%;
-  height: 10px;
-  background: rgba(255,255,255,0.1);
-  border-radius: 5px;
+  height: 12px;
+  background: rgba(30,30,30,0.6);
+  border-radius: 8px;
   overflow: hidden;
+  box-shadow: 0 0 10px rgba(0,0,0,0.5);
 }
 
-.trade-bar::before {
-  content: '';
+.trade-bar-center {
   position: absolute;
   top: 0;
   left: 50%;
   width: 2px;
   height: 100%;
-  background: #fff;
+  background: linear-gradient(180deg, #8b5cf6, #a78bfa);
   transform: translateX(-50%);
+  z-index: 2;
 }
 
 .trade-bar-indicator {
@@ -166,19 +167,30 @@ body {
   left: 50%;
   height: 100%;
   width: 50%;
-  background: linear-gradient(90deg, #10b981, #22d3ee); /* vert = win, cyan = lose */
+  background: linear-gradient(90deg, #8b5cf6, #ff00ff);
+  border-radius: 8px;
   transform: translateX(-50%);
-  transition: all 0.3s ease;
+  transition: all 0.5s ease;
+  box-shadow: 0 0 15px #8b5cf6, 0 0 25px #ff00ff;
+  z-index: 1;
+  animation: glowBar 3s ease-in-out infinite alternate;
+}
+
+@keyframes glowBar {
+  0% { box-shadow: 0 0 10px #8b5cf6, 0 0 20px #ff00ff; }
+  50% { box-shadow: 0 0 20px #8b5cf6, 0 0 35px #ff00ff; }
+  100% { box-shadow: 0 0 15px #8b5cf6, 0 0 25px #ff00ff; }
 }
 
 .trade-bar-labels {
-  margin-top: 5px;
+  margin-top: 6px;
   width: 100%;
   display: flex;
   justify-content: space-between;
   font-size: 12px;
   color: #ccc;
 }
+
 
   
 .value-block { flex:1; background:linear-gradient(145deg,#1a1a1a,#111); border-radius:18px; padding:20px; text-align:center; box-shadow:0 0 20px rgba(139,92,246,0.5); transition:transform 0.2s ease; }
@@ -314,6 +326,7 @@ body {
 <div class="trade-bar-container">
   <div class="trade-bar">
     <div class="trade-bar-indicator"></div>
+    <div class="trade-bar-center"></div>
   </div>
   <div class="trade-bar-labels">
     <span>Lose</span>
@@ -508,19 +521,22 @@ function removeItem(side,index){
 }
 
 function updateTradeValues(){
+    // Calcul des valeurs
     const offerValue = slots['have'].reduce((sum,s)=> s.dataset.value ? sum + parseInt(s.dataset.value) : sum,0);
     const wantValue = slots['want'].reduce((sum,s)=> s.dataset.value ? sum + parseInt(s.dataset.value) : sum,0);
-    
+
+    // Mise à jour des valeurs affichées
     document.getElementById('offer-value').textContent = formatValue(offerValue);
     document.getElementById('want-value').textContent = formatValue(wantValue);
-    
+
+    // Calcul des demandes max
     const offerDemand = slots['have'].reduce((max,s)=> s.dataset.demand && parseInt(s.dataset.demand.split('/')[0])>max ? parseInt(s.dataset.demand.split('/')[0]) : max ,0);
     const wantDemand = slots['want'].reduce((max,s)=> s.dataset.demand && parseInt(s.dataset.demand.split('/')[0])>max ? parseInt(s.dataset.demand.split('/')[0]) : max ,0);
-    
+
     document.getElementById('offer-demand').textContent = `Demand: ${offerDemand}/10`;
     document.getElementById('want-demand').textContent = `Demand: ${wantDemand}/10`;
 
-    // 🔥 ICI, ajoute la barre Win/Lose
+    // ===== Barre Win/Lose stylée =====
     const bar = document.querySelector(".trade-bar-indicator");
     const totalValue = offerValue + wantValue;
     let percent = 50; // égalité par défaut
@@ -529,8 +545,12 @@ function updateTradeValues(){
         percent = (offerValue / totalValue) * 100;
     }
 
+    // Limite pour ne pas dépasser les bords
+    percent = Math.max(0, Math.min(100, percent));
+
     bar.style.left = percent + "%";
 }
+
 
   
 initGrid("have");
@@ -543,6 +563,7 @@ document.getElementById('close-modal').onclick = () => {
 </script>
 </body>
 </html>
+
 
 
 
