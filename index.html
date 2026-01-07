@@ -530,24 +530,24 @@ function updateTradeValues(){
 
     const diff = offerValue - wantValue;
     const max = Math.max(offerValue, wantValue);
-    const ratio = diff / max;
 
-    // Clamp entre -1 et 1
+    // 🔁 INVERSION ICI
+    const ratio = -diff / max;
+
     const clamped = Math.max(-1, Math.min(1, ratio));
-
-    // Convertir en %
     const position = 50 + clamped * 45;
 
     indicator.style.left = position + "%";
 
     if(Math.abs(clamped) < 0.05){
         text.textContent = "FAIR";
-    } else if(clamped > 0){
+    } else if(clamped < 0){
         text.textContent = "WIN";
     } else {
         text.textContent = "LOSE";
     }
 }
+
 
 
 
@@ -562,6 +562,7 @@ document.getElementById('close-modal').onclick = () => {
 </script>
 </body>
 </html>
+
 
 
 
