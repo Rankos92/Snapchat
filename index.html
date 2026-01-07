@@ -131,10 +131,21 @@ body {
 
 .values { margin-top:40px; width:90%; max-width:600px; display:flex; justify-content:space-between; gap:20px; }
 /* Barre générale */
+/* Conteneur de la barre */
+.trade-bar-container {
+  width: 80%;       /* largeur du bloc barre */
+  max-width: 600px; /* limite max */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 20px 0;
+}
+
+/* Barre générale (fond) */
 .trade-bar {
   position: relative;
-  width: 100%;
-  height: 8px; /* barre fine */
+  width: 100%;     /* barre pleine largeur */
+  height: 8px;     /* barre fine mais visible */
   background: rgba(30,30,30,0.6);
   border-radius: 4px;
   overflow: hidden;
@@ -153,13 +164,13 @@ body {
   z-index: 2;
 }
 
-/* Indicateur violet fin */
+/* Curseur violet fin */
 .trade-bar-indicator {
   position: absolute;
   top: 50%;
   left: 50%;
-  height: 100%;
-  width: 5%; /* largeur fine du curseur */
+  width: 5%;       /* largeur fine du curseur */
+  height: 100%;    /* hauteur = barre complète */
   background: linear-gradient(90deg, #8b5cf6, #ff00ff);
   border-radius: 4px;
   transform: translate(-50%, -50%);
@@ -179,21 +190,21 @@ body {
 /* Labels Lose / Equal / Win stylés */
 .trade-bar-labels {
   margin-top: 6px;
-  width: 100%;
+  width: 100%;                 /* s'étend sur toute la largeur de la barre */
   display: flex;
   justify-content: space-between;
   font-size: 14px;
   font-weight: 700;
-  font-family: 'Butler', serif; /* même font que tes items */
+  font-family: 'Butler', serif;
 }
 
 .trade-bar-labels span {
-  color: #fff;
   background: linear-gradient(90deg, #8b5cf6, #ff00ff);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   text-shadow: 0 0 5px rgba(139,92,246,0.7), 0 0 10px rgba(255,0,255,0.5);
 }
+
 
 
 
@@ -568,6 +579,7 @@ document.getElementById('close-modal').onclick = () => {
 </script>
 </body>
 </html>
+
 
 
 
