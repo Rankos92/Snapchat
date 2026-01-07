@@ -132,6 +132,7 @@ body {
 .values { margin-top:40px; width:90%; max-width:600px; display:flex; justify-content:space-between; gap:20px; }
 /* Barre générale */
 /* Conteneur de la barre */
+/* Conteneur de la barre */
 .trade-bar-container {
   width: 80%;       /* largeur du bloc barre */
   max-width: 600px; /* limite max */
@@ -169,7 +170,7 @@ body {
   position: absolute;
   top: 50%;
   left: 50%;
-  width: 5%;       /* largeur fine du curseur */
+  width: 5%;       /* curseur fin */
   height: 100%;    /* hauteur = barre complète */
   background: linear-gradient(90deg, #8b5cf6, #ff00ff);
   border-radius: 4px;
@@ -180,7 +181,7 @@ body {
   animation: glowBar 3s ease-in-out infinite alternate;
 }
 
-/* Glow animé */
+/* Glow animé du curseur */
 @keyframes glowBar {
   0% { box-shadow: 0 0 10px #8b5cf6, 0 0 20px #ff00ff; }
   50% { box-shadow: 0 0 20px #8b5cf6, 0 0 35px #ff00ff; }
@@ -203,7 +204,32 @@ body {
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   text-shadow: 0 0 5px rgba(139,92,246,0.7), 0 0 10px rgba(255,0,255,0.5);
+  transition: all 0.3s ease; /* animation douce pour taille et couleur */
 }
+
+/* Classes dynamiques pour texte actif */
+.trade-bar-labels span.active-lose {
+  color: #ff3333 !important;   /* rouge */
+  font-size: 18px;             /* agrandi */
+  text-shadow: 0 0 8px #ff5555, 0 0 15px #ff0000;
+  -webkit-text-fill-color: initial; /* ignore le gradient */
+}
+
+.trade-bar-labels span.active-win {
+  color: #33ff33 !important;   /* vert */
+  font-size: 18px;
+  text-shadow: 0 0 8px #55ff55, 0 0 15px #00ff00;
+  -webkit-text-fill-color: initial;
+}
+
+.trade-bar-labels span.active-equal {
+  font-size: 14px;             /* retour à normal */
+  color: transparent;           /* gradient par défaut */
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-shadow: 0 0 5px rgba(139,92,246,0.7), 0 0 10px rgba(255,0,255,0.5);
+}
+
 
 
 
@@ -537,35 +563,40 @@ function removeItem(side,index){
 }
 
 function updateTradeValues(){
-    // Calcul des valeurs
     const offerValue = slots['have'].reduce((sum,s)=> s.dataset.value ? sum + parseInt(s.dataset.value) : sum,0);
     const wantValue = slots['want'].reduce((sum,s)=> s.dataset.value ? sum + parseInt(s.dataset.value) : sum,0);
 
-    // Mise à jour des valeurs affichées
     document.getElementById('offer-value').textContent = formatValue(offerValue);
     document.getElementById('want-value').textContent = formatValue(wantValue);
 
-    // Calcul des demandes max
     const offerDemand = slots['have'].reduce((max,s)=> s.dataset.demand && parseInt(s.dataset.demand.split('/')[0])>max ? parseInt(s.dataset.demand.split('/')[0]) : max ,0);
     const wantDemand = slots['want'].reduce((max,s)=> s.dataset.demand && parseInt(s.dataset.demand.split('/')[0])>max ? parseInt(s.dataset.demand.split('/')[0]) : max ,0);
-
     document.getElementById('offer-demand').textContent = `Demand: ${offerDemand}/10`;
     document.getElementById('want-demand').textContent = `Demand: ${wantDemand}/10`;
 
-    // ===== Barre Win/Lose stylée =====
+    // Barre Win/Lose
     const bar = document.querySelector(".trade-bar-indicator");
     const totalValue = offerValue + wantValue;
     let percent = 50; // égalité par défaut
-
     if(totalValue > 0){
         percent = (offerValue / totalValue) * 100;
     }
-
-    // Limite pour ne pas dépasser les bords
-    percent = Math.max(0, Math.min(100, percent));
-
+    percent = Math.max(0, Math.min(100, percent)); // limiter à 0-100
     bar.style.left = percent + "%";
+
+    // Gestion des labels Lose/Equal/Win
+    const labels = document.querySelectorAll(".trade-bar-labels span");
+    labels.forEach(label => label.classList.remove("active-lose","active-win","active-equal"));
+
+    if(percent < 45){       // Lose
+        labels[0].classList.add("active-lose");
+    } else if(percent > 55){ // Win
+        labels[2].classList.add("active-win");
+    } else {                // Equal
+        labels[1].classList.add("active-equal");
+    }
 }
+
 
 
   
@@ -579,6 +610,7 @@ document.getElementById('close-modal').onclick = () => {
 </script>
 </body>
 </html>
+
 
 
 
