@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Jeu 3D avec déplacement joystick</title>
+<title>Jeu Mobile 3D avec Joystick</title>
 <style>
   body { margin: 0; overflow: hidden; font-family: Arial; }
 
@@ -22,30 +22,38 @@
     z-index: 10;
   }
 
-  /* Conteneur pour le joystick */
+  /* Zone joystick */
   #joystickContainer {
     position: absolute;
     bottom: 20px; left: 20px;
     width: 150px; height: 150px;
     background: rgba(0,0,0,0.2);
     border-radius: 50%;
-    display: none; /* caché au début */
     touch-action: none;
+    display: none; /* caché au début */
   }
 
-  /* La zone de la zone de rendu */
-  canvas { display: block; }
+  /* Point central du joystick */
+  #joystickPoint {
+    position: absolute;
+    top: 50%; left: 50%;
+    width: 20px; height: 20px;
+    background: #fff;
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+  }
+
+  /* Canvas pour rendu 3D */
+  canvas { display: block; width: 100%; height: 100vh; }
 </style>
 </head>
 <body>
 
-<!-- Bouton Play -->
 <button id="playButton">PLAY</button>
+<div id="joystickContainer">
+  <div id="joystickPoint"></div>
+</div>
 
-<!-- Conteneur joystick -->
-<div id="joystickContainer"></div>
-
-<!-- Script Three.js et gestion joystick -->
 <script src="https://cdn.jsdelivr.net/npm/three@0.152.0/build/three.min.js"></script>
 
 <script>
@@ -64,15 +72,11 @@ const startGame = () => {
 
 document.getElementById('playButton').addEventListener('click', startGame);
 
-// Initialisation de la scène
+// Initialisation scène
 function init() {
   scene = new THREE.Scene();
   scene.background = new THREE.Color(0x87ceeb);
-
   camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
-  camera.position.set(0, 5, 10);
-  camera.lookAt(0,0,0);
-
   renderer = new THREE.WebGLRenderer({ antialias: true });
   renderer.setSize(window.innerWidth, window.innerHeight);
   document.body.appendChild(renderer.domElement);
@@ -84,11 +88,47 @@ function init() {
   floor.rotation.x = -Math.PI/2;
   scene.add(floor);
 
-  // Personnage (cube)
-  const personGeo = new THREE.BoxGeometry(1, 2, 1);
-  const personMat = new THREE.MeshPhongMaterial({ color: 0xff0000 });
-  character = new THREE.Mesh(personGeo, personMat);
-  character.position.y = 1;
+  // Personnage (avec corps, bras, jambes)
+  character = new THREE.Group();
+
+  // Tête
+  const headGeo = new THREE.SphereGeometry(0.5, 16, 16);
+  const headMat = new THREE.MeshPhongMaterial({ color: 0xffcc99 });
+  const head = new THREE.Mesh(headGeo, headMat);
+  head.position.y = 2.5;
+  character.add(head);
+
+  // Corps
+  const bodyGeo = new THREE.CylinderGeometry(0.3, 0.3, 1, 16);
+  const bodyMat = new THREE.MeshPhongMaterial({ color: 0x0000ff });
+  const body = new THREE.Mesh(bodyGeo, bodyMat);
+  body.position.y = 1.5;
+  character.add(body);
+
+  // Bras
+  const armGeo = new THREE.CylinderGeometry(0.1, 0.1, 1, 16);
+  const armMat = new THREE.MeshPhongMaterial({ color: 0xffcc99 });
+  const leftArm = new THREE.Mesh(armGeo, armMat);
+  leftArm.position.set(-0.4, 2, 0);
+  leftArm.rotation.z = Math.PI/4;
+  const rightArm = leftArm.clone();
+  rightArm.position.set(0.4, 2, 0);
+    rightArm.rotation.z = -Math.PI/4;
+  character.add(leftArm);
+  character.add(rightArm);
+
+  // Jambes
+  const legGeo = new THREE.CylinderGeometry(0.15, 0.15, 1, 16);
+  const legMat = new THREE.MeshPhongMaterial({ color: 0x0000ff });
+  const leftLeg = new THREE.Mesh(legGeo, legMat);
+  leftLeg.position.set(-0.2, 0.5, 0);
+  const rightLeg = leftLeg.clone();
+  rightLeg.position.set(0.2, 0.5, 0);
+  character.add(leftLeg);
+  character.add(rightLeg);
+
+  // Position initiale
+  character.position.y = 0.5;
   scene.add(character);
 
   // Lumière
@@ -98,14 +138,14 @@ function init() {
   dirLight.position.set(5, 10, 7.5);
   scene.add(dirLight);
 
-  // Gestion du resize
+  // Resize
   window.addEventListener('resize', () => {
     camera.aspect = window.innerWidth/window.innerHeight;
     camera.updateProjectionMatrix();
     renderer.setSize(window.innerWidth, window.innerHeight);
   });
 
-  // Ajout du contrôleur tactile (Joystick personnalisé)
+  // Contrôles joystick
   initJoystick();
 }
 
@@ -113,72 +153,66 @@ function init() {
 function animate() {
   requestAnimationFrame(animate);
   const delta = clock.getDelta();
-
   // Déplacement du personnage
-  character.position.x += moveX * delta * 5;
-  character.position.z += moveZ * delta * 5;
+  character.position.x += moveX * delta * 3;
+  character.position.z += moveZ * delta * 3;
 
   // Limites
   character.position.x = Math.max(-24, Math.min(24, character.position.x));
   character.position.z = Math.max(-24, Math.min(24, character.position.z));
 
-  // La caméra suit le personnage
-  camera.position.x = character.position.x;
-  camera.position.z = character.position.z + 10;
+  // Caméra suit le personnage
+  camera.position.x = character.position.x + 0;
+  camera.position.z = character.position.z + 6;
+  camera.position.y = character.position.y + 3;
   camera.lookAt(character.position);
 
   renderer.render(scene, camera);
 }
 
-// Initialisation du joystick
+// Joystick
 function initJoystick() {
   const container = document.getElementById('joystickContainer');
+  const point = document.getElementById('joystickPoint');
   let pointerId = null;
-  let startX = 0, startY=0;
-  let currentX=0, currentY=0;
+  let startX = 0, startY=0, currentX=0, currentY=0;
 
-  // Fonction pour mettre à jour la direction
-  const updateDirection = () => {
-    const dx = currentX - startX;
-    const dy = currentY - startY;
-    const maxDist = 50;
-
-    // Normaliser
-    const dist = Math.min(Math.sqrt(dx*dx + dy*dy), maxDist);
-    if(dist > 10) {
-      moveX = (dx / dist) || 0;
-      moveZ = (dy / dist) || 0;
-    } else {
-      moveX = 0;
-      moveZ = 0;
-    }
-  };
-
-  container.addEventListener('pointerdown', (e) => {
+  container.addEventListener('pointerdown', e => {
     pointerId = e.pointerId;
     startX = e.clientX;
     startY = e.clientY;
     currentX = startX;
     currentY = startY;
   });
-
-  container.addEventListener('pointermove', (e) => {
-    if(e.pointerId === pointerId) {
+  container.addEventListener('pointermove', e => {
+    if(e.pointerId===pointerId){
       currentX = e.clientX;
       currentY = e.clientY;
-      updateDirection();
+      // Calcul du déplacement
+      const dx = currentX - startX;
+      const dy = currentY - startY;
+      const maxDist = 50;
+      const dist = Math.min(Math.sqrt(dx*dx + dy*dy), maxDist);
+      const angle = Math.atan2(dy, dx);
+      // Limite le point au cercle
+      const x = Math.cos(angle) * dist;
+      const y = Math.sin(angle) * dist;
+      point.style.transform = `translate(${x}px, ${y}px)`;
+      // Met à jour la direction
+      moveX = (x / maxDist);
+      moveZ = (y / maxDist);
     }
   });
-
-  container.addEventListener('pointerup', (e) => {
-    if(e.pointerId === pointerId) {
+  container.addEventListener('pointerup', e => {
+    if(e.pointerId===pointerId){
       pointerId = null;
+      // Centrer le point
+      document.getElementById('joystickPoint').style.transform = `translate(0,0)`;
       moveX = 0;
       moveZ = 0;
     }
   });
 }
 </script>
-
 </body>
 </html>
