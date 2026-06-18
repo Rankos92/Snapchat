@@ -1,697 +1,117 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Blox Fruit Value</title>
-<link href="https://fonts.googleapis.com/css2?family=Butler:wght@400;600;700&display=swap" rel="stylesheet">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Jeu simple - Déplacement personnage</title>
 <style>
-* { margin:0; padding:0; box-sizing:border-box; font-family:'Poppins', sans-serif; }
-
-body {
-  background: linear-gradient(
-    -45deg,
-    #000000,
-    #1a1a1a,
-    #2b2b2b,
-    #0d0d0d
-  );
-  background-size: 400% 400%;
-  animation: darkFlow 15s ease infinite;
-
-  color: white;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-@keyframes darkFlow {
-  0% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
-  100% { background-position: 0% 50%; }
-}
-
-
-
-.title { margin-top:30px; font-size:48px; font-weight:800; background:linear-gradient(90deg,#8b5cf6,#a78bfa); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
-
-.trade-zone {
-  margin-top: 40px;
-  padding: 30px;
-  border-radius: 22px;
-  display: flex;
-  gap: 60px;
-
-  background: linear-gradient(
-    135deg,
-    rgba(30,30,30,0.85),
-    rgba(10,10,10,0.85)
-  );
-
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-
-  box-shadow:
-    0 0 25px rgba(0,0,0,0.9),
-    inset 0 0 15px rgba(255,255,255,0.05);
-
-  border: 1px solid rgba(255,255,255,0.08);
-
-  animation: tradeGlow 6s ease-in-out infinite;
-}
-@keyframes tradeGlow {
-  0%, 100% {
-    box-shadow:
-      0 0 25px rgba(0,0,0,0.9),
-      inset 0 0 15px rgba(255,255,255,0.05);
-  }
-  50% {
-    box-shadow:
-      0 0 35px rgba(120,120,120,0.35),
-      inset 0 0 25px rgba(255,255,255,0.08);
-  }
-}
-
-.modal-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 10px;
-}
-
-.modal-header h3 {
+  body {
     margin: 0;
-    font-size: 18px;
-    background: linear-gradient(90deg,#8b5cf6,#a78bfa);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-}
+    font-family: Arial, sans-serif;
+  }
 
-#close-modal {
-    font-size: 20px;
-    background: none;
-    border: none;
+  /* Menu */
+  #menu {
+    background: #333;
+    padding: 10px;
+    display: flex;
+  }
+
+  #menu button {
+    background: #555;
     color: #fff;
+    border: none;
+    padding: 10px 20px;
+    margin-right: 10px;
     cursor: pointer;
-    padding: 4px 8px;
-    transition: color 0.2s ease;
-}
-
-#close-modal:hover {
-    color: #ff0000;
-}
-
-
-.trade-column { display:flex; flex-direction:column; gap:15px; }
-.trade-column h2 { text-align:center; font-size:20px; color:#aaa; }
-.grid { display:grid; grid-template-columns:repeat(2,90px); grid-template-rows:repeat(2,90px); gap:15px; }
-.slot { width:90px; height:90px; background:#0f0f0f; border-radius:15px; display:flex; flex-direction:column; justify-content:flex-end; text-align:center; font-size:12px; overflow:hidden; position:relative; transition:transform 0.2s ease, box-shadow 0.2s ease; }
-.slot.item { cursor:pointer; background-repeat:no-repeat; background-position:center; background-size:70%; box-shadow:0 0 8px #8b5cf6; }
-.slot.item:hover { transform:scale(1.05); box-shadow:0 0 15px #ff00ff,0 0 30px #8b5cf6; }
-.slot.add-btn { background:#141414; display:flex; justify-content:center; align-items:center; font-size:36px; font-weight:bold; color:#fff; cursor:pointer; transition:all 0.2s ease; border-radius:12px; }
-.slot.add-btn:hover { background:#6d28d9; box-shadow:0 0 15px #8b5cf6; transform:scale(1.08); }
-.value-box { background: rgba(0,0,0,0.65); padding: 4px 0; position:absolute; bottom:0; width:100%; display:flex; flex-direction:column; align-items:center; }
-.value-text { font-size:11px; color:#ccc; }
-.demand-text { font-size:9px; color:#ffcc00; }
-.item {
-  background: rgba(0,0,0,0.45);
-  border: 1px solid rgba(255,255,255,0.06);
-}
-
-.item {
-    font-family: 'Butler', serif;  /* La font Butler */
-    font-weight: 600;              /* Semi-bold pour un joli rendu */
-    font-size: 14px;               /* Taille du texte */
-    color: #fff;                   /* Couleur du texte */
-    text-align: center;            /* Centrer le texte sous l'image */
-}
-
-
-
-.values { margin-top:40px; width:90%; max-width:600px; display:flex; justify-content:space-between; gap:20px; }
-/* Barre générale */
-/* Conteneur de la barre */
-/* Conteneur barre */
-.trade-bar-container {
-  width: 80%;
-  max-width: 600px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  margin: 20px 0;
-}
-
-/* Barre principale */
-.trade-bar {
-  position: relative;
-  width: 100%;
-  height: 8px;
-  background: rgba(30,30,30,0.6);
-  border-radius: 4px;
-  overflow: hidden;
-  box-shadow: 0 0 8px rgba(0,0,0,0.5);
-}
-
-/* Trait central */
-.trade-bar-center {
-  position: absolute;
-  top: 0;
-  left: 50%;
-  width: 2px;
-  height: 100%;
-  background: linear-gradient(180deg, #8b5cf6, #a78bfa);
-  transform: translateX(-50%);
-  z-index: 2;
-}
-
-/* Curseur violet */
-.trade-bar-indicator {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 5%;
-  height: 100%;
-  background: linear-gradient(90deg, #8b5cf6, #ff00ff);
-  border-radius: 4px;
-  transform: translate(-50%, -50%);
-  transition: all 0.5s ease;
-  box-shadow: 0 0 15px #8b5cf6, 0 0 25px #ff00ff;
-  z-index: 1;
-  animation: glowBar 3s ease-in-out infinite alternate;
-}
-
-/* Glow animé */
-@keyframes glowBar {
-  0% { box-shadow: 0 0 10px #8b5cf6, 0 0 20px #ff00ff; }
-  50% { box-shadow: 0 0 20px #8b5cf6, 0 0 35px #ff00ff; }
-  100% { box-shadow: 0 0 15px #8b5cf6, 0 0 25px #ff00ff; }
-}
-
-/* Labels Lose / Equal / Win */
-.trade-bar-labels {
-  margin-top: 6px;
-  width: 100%;
-  display: flex;
-  justify-content: space-between;
-  font-size: 14px;
-  font-weight: 700;
-  font-family: 'Butler', serif;
-}
-
-.trade-bar-labels span {
-  background: linear-gradient(90deg, #8b5cf6, #ff00ff);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  text-shadow: 0 0 5px rgba(139,92,246,0.7), 0 0 10px rgba(255,0,255,0.5);
-  transition: all 0.3s ease;
-}
-
-.trade-bar-labels span.active-lose {
-  color: #ff3333 !important;
-  font-size: 18px;
-  text-shadow: 0 0 8px #ff5555, 0 0 15px #ff0000;
-  -webkit-text-fill-color: initial;
-}
-
-.trade-bar-labels span.active-win {
-  color: #33ff33 !important;
-  font-size: 18px;
-  text-shadow: 0 0 8px #55ff55, 0 0 15px #00ff00;
-  -webkit-text-fill-color: initial;
-}
-
-.trade-bar-labels span.active-equal {
-  font-size: 14px;
-  color: transparent;
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  text-shadow: 0 0 5px rgba(139,92,246,0.7), 0 0 10px rgba(255,0,255,0.5);
-}
-
-/* Petits labels Small Lose / Small Win */
-.trade-bar .small-label {
-  position: absolute;
-  top: -18px; /* légèrement au-dessus de la barre */
-  font-size: 10px;
-  font-weight: 600;
-  font-family: 'Butler', serif;
-  color: rgba(255,255,255,0.6);
-  text-shadow: 0 0 3px rgba(0,0,0,0.7);
-  pointer-events: none;
-  user-select: none;
-  transition: all 0.3s ease;
-}
-
-.trade-bar .small-label.lose {
-  left: 40%; /* proche du centre à gauche */
-  color: #ff5555;
-}
-
-.trade-bar .small-label.win {
-  left: 60%; /* proche du centre à droite */
-  color: #33ff33;
-}
-
-
-
-
-
-
-  
-.value-block { flex:1; background:linear-gradient(145deg,#1a1a1a,#111); border-radius:18px; padding:20px; text-align:center; box-shadow:0 0 20px rgba(139,92,246,0.5); transition:transform 0.2s ease; }
-.value-block:hover { transform:scale(1.05); box-shadow:0 0 30px rgba(139,92,246,0.8); }
-.value-block h3 { font-size:18px; margin-bottom:10px; background:linear-gradient(90deg,#8b5cf6,#a78bfa); -webkit-background-clip:text; -webkit-text-fill-color:transparent; font-weight:800; }
-.value-number { font-size:36px; font-weight:700; color:#8b5cf6; }
-.demand { font-size:14px; color:#ccc; margin-top:4px; }
-.vs { font-size:24px; opacity:0.6; align-self:center; }
-
-.modal { position:fixed; inset:0; background:rgba(0,0,0,0.85); display:none; justify-content:center; align-items:center; z-index:999; }
-.modal-content {
-  background: linear-gradient(
-    145deg,
-    rgba(20,20,20,0.95),
-    rgba(5,5,5,0.95)
-  );
-  width: 520px;
-  max-height: 70vh;
-  border-radius: 22px;
-  padding: 20px;
-  display: flex;
-  flex-direction: column;
-  overflow-y: auto;
-
-  box-shadow:
-    0 0 40px rgba(0,0,0,1),
-    inset 0 0 20px rgba(255,255,255,0.05);
-
-  border: 1px solid rgba(255,255,255,0.08);
-}
-
-.modal-content h3 { margin-bottom:10px; }
-
-#search {
-  margin-bottom: 14px;
-  padding: 10px 14px;
-  border-radius: 14px;
-
-  background: rgba(0,0,0,0.6);
-  border: 1px solid rgba(255,255,255,0.12);
-
-  color: white;
-  font-size: 14px;
-
-  outline: none;
-  transition: all 0.25s ease;
-
-  box-shadow: inset 0 0 10px rgba(0,0,0,0.8);
-}
-
-#search::placeholder {
-  color: rgba(255,255,255,0.4);
-}
-
-#search:focus {
-  border-color: #8b5cf6;
-  box-shadow:
-    0 0 12px rgba(139,92,246,0.7),
-    inset 0 0 10px rgba(0,0,0,0.9);
-}
-
-
-.items { display:grid; grid-template-columns:repeat(4,1fr); gap:14px; max-height:400px; overflow-y:auto; }
-
-.item { border-radius:12px; padding:10px; text-align:center; cursor:pointer; transition:all 0.2s; font-weight:600; display:flex; flex-direction:column; align-items:center; font-size:13px; }
-.item img { width:60px; height:60px; margin-bottom:5px; }
-.item:hover { background:#6d28d9; box-shadow:0 0 15px #8b5cf6; }
-
-
-@media (max-width: 768px) {
-
-  .title {
-    font-size: 28px;
-    text-align: center;
+    font-size: 16px;
   }
 
-  .trade-zone {
-    flex-direction: column;
-    gap: 30px;
-    padding: 20px;
-    width: 95%;
+  #menu button:hover {
+    background: #777;
   }
 
-  .grid {
-    grid-template-columns: repeat(2, 70px);
-    grid-template-rows: repeat(2, 70px);
-    gap: 12px;
-    justify-content: center;
+  /* Zone de jeu */
+  #gameArea {
+    position: relative;
+    width: 800px;
+    height: 600px;
+    margin: 20px auto;
+    background: #f0f0f0;
+    border: 2px solid #ccc;
+    display: none; /* Caché au début */
   }
 
-  .slot {
-    width: 70px;
-    height: 70px;
+  /* Personnage */
+  #character {
+    position: absolute;
+    width: 50px;
+    height: 50px;
+    background: red;
+    top: 275px; /* Centré initialement */
+    left: 375px;
   }
-
-  .values {
-    flex-direction: column;
-    gap: 15px;
-  }
-
-  .vs {
-    display: none;
-  }
-
-  .modal-content {
-    width: 90%;
-    max-height: 80vh;
-  }
-
-  .items {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
-
 </style>
 </head>
 <body>
 
-<div class="title">BLOX FRUIT VALUE</div>
-
-<div class="trade-zone">
-    <div class="trade-column">
-        <h2>I Have</h2>
-        <div class="grid" data-side="have"></div>
-    </div>
-
-    <div class="trade-column">
-        <h2>I Want</h2>
-        <div class="grid" data-side="want"></div>
-    </div>
+<!-- Menu -->
+<div id="menu">
+  <button id="playBtn">PLAY</button>
 </div>
 
-<div class="trade-bar-container">
-  <div class="trade-bar">
-    <div class="trade-bar-indicator"></div>
-    <div class="trade-bar-center"></div>
-  </div>
-  <div class="trade-bar-labels">
-    <span>Lose</span>
-    <span>Equal</span>
-    <span>Win</span>
-  </div>
+<!-- Zone de jeu -->
+<div id="gameArea">
+  <div id="character"></div>
 </div>
-
-
-<div class="values">
-    <div class="value-block">
-        <h3>YOUR OFFER</h3>
-        <div class="value-number" id="offer-value">0</div>
-        <div class="demand" id="offer-demand">Demand: 0/10</div>
-    </div>
-    <div class="vs">VS</div>
-    <div class="value-block">
-        <h3>YOU WANT</h3>
-        <div class="value-number" id="want-value">0</div>
-        <div class="demand" id="want-demand">Demand: 0/10</div>
-    </div>
-</div>
-
-<div class="modal" id="modal">
-    <div class="modal-content">
-        <div class="modal-header">
-            <h3>Available Items</h3>
-            <button id="close-modal">&times;</button>
-        </div>
-        <input type="text" id="search" placeholder="Search fruit...">
-        <div class="items" id="item-list"></div>
-    </div>
-</div>
-
-
 
 <script>
-let currentSide = null;
-const slots = { have: [], want: [] };
+  const playBtn = document.getElementById('playBtn');
+  const gameArea = document.getElementById('gameArea');
+  const character = document.getElementById('character');
 
-// Fruits avec image + rareté + valeur + demande
-const fruits = [
-/* ================= MYTHIC ================= */
-{ name:"Dragon (West)", rarity:"mythic", img:"https://static.wikia.nocookie.net/roblox-blox-piece/images/4/40/Dragon_%28West%29_Fruit.png", value:3240000000, demand:"10/10" },
-{ name:"Dragon (East)", rarity:"mythic", img:"https://static.wikia.nocookie.net/roblox-blox-piece/images/4/4b/Dragon_%28East%29_Fruit.png", value:2840000000, demand:"10/10" },
-{ name:"Kitsune", rarity:"mythic", img:"https://static.wikia.nocookie.net/roblox-blox-piece/images/6/65/Kitsune_Fruit.png", value:410000000, demand:"10/10" },
-{ name:"Control", rarity:"mythic", img:"https://static.wikia.nocookie.net/roblox-blox-piece/images/c/cb/OldControlFruit.png", value:160000000, demand:"8/10" },
-{ name:"Tiger", rarity:"mythic", img:"https://static.wikia.nocookie.net/roblox-blox-piece/images/1/14/Tiger_Fruit.png", value:160000000, demand:"8/10" },
-{ name:"Yeti", rarity:"mythic", img:"https://static.wikia.nocookie.net/roblox-blox-piece/images/2/2f/Yeti_Fruit.png", value:150000000, demand:"10/10" },
-{ name:"Gas", rarity:"mythic", img:"https://static.wikia.nocookie.net/roblox-blox-piece/images/e/ed/Gas_Fruit.png", value:60000000, demand:"8/10" },
-{ name:"Dough", rarity:"mythic", img:"https://static.wikia.nocookie.net/roblox-blox-piece/images/0/02/Dough_Fruit.png", value:30000000, demand:"10/10" },
-{ name:"Venom", rarity:"mythic", img:"https://static.wikia.nocookie.net/roblox-blox-piece/images/d/d2/Venom_Fruit.png", value:10000000, demand:"8/10" },
-{ name:"Pain", rarity:"mythic", img:"https://static.wikia.nocookie.net/roblox-blox-piece/images/4/40/Pain_Fruit.png", value:15000000, demand:"5/10" },
-{ name:"Spirit", rarity:"mythic", img:"https://static.wikia.nocookie.net/roblox-blox-piece/images/6/66/Spirit_Fruit.png", value:10000000, demand:"6/10" },
-{ name:"Shadow", rarity:"mythic", img:"https://static.wikia.nocookie.net/roblox-blox-piece/images/5/58/Shadow_Fruit.png", value:6500000, demand:"5/10" },
-{ name:"Portal", rarity:"legendary", img:"https://static.wikia.nocookie.net/roblox-blox-piece/images/8/8a/Portal_Fruit.png", value:10000000, demand:"10/10" },
-{ name:"Gravity", rarity:"mythic", img:"https://static.wikia.nocookie.net/roblox-blox-piece/images/5/5f/Gravity_Fruit.png", value:10000000, demand:"4/10" },
-{ name:"Mammoth", rarity:"mythic", img:"https://static.wikia.nocookie.net/roblox-blox-piece/images/9/95/Mammoth_Fruit.png", value:10000000, demand:"5/10" },
-{ name:"T-Rex", rarity:"mythic", img:"https://cdn.nookazon.com/bloxfruits/Fruits/T-RexFruit.svg", value:20000000, demand:"8/10" },
-{ name:"Buddha", rarity:"legendary", img:"https://static.wikia.nocookie.net/roblox-blox-piece/images/d/df/Buddha_Fruit.png", value:10000000, demand:"10/10" },
+  // Afficher la zone de jeu quand on clique sur PLAY
+  playBtn.addEventListener('click', () => {
+    gameArea.style.display = 'block';
+    // Reset position
+    character.style.top = '275px';
+    character.style.left = '375px';
+  });
 
-/* ================= LEGENDARY ================= */
-{ name:"Sound", rarity:"legendary", img:"https://static.wikia.nocookie.net/roblox-blox-piece/images/b/ba/Sound_Fruit.png", value:2500000, demand:"4/10" },
-{ name:"Quake", rarity:"legendary", img:"https://static.wikia.nocookie.net/roblox-blox-piece/images/4/42/Quake_Fruit.png", value:1000000, demand:"2/10" },
-{ name:"Phoenix", rarity:"legendary", img:"https://static.wikia.nocookie.net/roblox-blox-piece/images/f/fc/Phoenix_Fruit.png", value:2750000, demand:"3/10" },
-{ name:"Blizzard", rarity:"legendary", img:"https://static.wikia.nocookie.net/roblox-blox-piece/images/c/c9/Blizzard_Fruit.png", value:5000000, demand:"5/10" },
+  // Variables pour la position
+  let posX = 375;
+  let posY = 275;
+  const step = 10; // Nombre de pixels pour chaque déplacement
 
-/* ================= UNCOMMON ================= */
-{ name:"Love", rarity:"legendary", img:"https://static.wikia.nocookie.net/roblox-blox-piece/images/b/b3/Love_Fruit.png", value:1500000, demand:"3/10" },
-{ name:"Creation", rarity:"legendary", img:"https://static.wikia.nocookie.net/roblox-blox-piece/images/4/44/Creation_Fruit.png", value:3500000, demand:"3/10" },
-{ name:"Spider", rarity:"legendary", img:"https://static.wikia.nocookie.net/roblox-blox-piece/images/6/61/Spider_Fruit.png", value:1500000, demand:"2/10" },
-{ name:"Diamond", rarity:"legendary", img:"https://static.wikia.nocookie.net/roblox-blox-piece/images/8/88/Diamond_Fruit.png", value:1000000, demand:"2/10" },
-{ name:"Light", rarity:"uncommon", img:"https://static.wikia.nocookie.net/roblox-blox-piece/images/8/83/Light_Fruit.png", value:800000, demand:"2/10" },
-{ name:"Eagle", rarity:"legendary", img:"https://static.wikia.nocookie.net/roblox-blox-piece/images/5/53/Eagle_Fruit.png", value:800000, demand:"2/10" },
-{ name:"Rubber", rarity:"uncommon", img:"https://static.wikia.nocookie.net/roblox-blox-piece/images/5/5c/Rubber_Fruit.png", value:700000, demand:"1/10" },
-{ name:"Ghost", rarity:"uncommon", img:"https://static.wikia.nocookie.net/roblox-blox-piece/images/8/8c/Ghost_Fruit.png", value:800000, demand:"1/10" },
-{ name:"Magma", rarity:"uncommon", img:"https://static.wikia.nocookie.net/roblox-blox-piece/images/2/27/Magma_Fruit.png", value:1150000, demand:"8/10" },
-{ name:"Flame", rarity:"uncommon", img:"https://static.wikia.nocookie.net/roblox-blox-piece/images/c/c4/Flame_Fruit.png", value:250000, demand:"1/10" },
-{ name:"Ice", rarity:"uncommon", img:"https://static.wikia.nocookie.net/roblox-blox-piece/images/c/c5/Ice_Fruit.png", value:550000, demand:"2/10" },
-{ name:"Sand", rarity:"uncommon", img:"https://static.wikia.nocookie.net/roblox-blox-piece/images/7/72/Sand_Fruit.png", value:420000, demand:"1/10" },
-{ name:"Dark", rarity:"uncommon", img:"https://static.wikia.nocookie.net/roblox-blox-piece/images/5/5c/Dark_Fruit.png", value:400000, demand:"1/10" },
-
-{ name:"Purple Lightning", rarity:"uncommon", img:"https://i.postimg.cc/d0FsYGYD/Purple-Lightning.png", value:2400000000, demand:"10/10" },
-{ name:"Yellow Lightning", rarity:"uncommon", img:"https://i.postimg.cc/cLwx2XPV/Yellow-Lightning.png", value:745000000, demand:"10/10" },
-{ name:"Green Lightning", rarity:"uncommon", img:"https://i.postimg.cc/MKcKbW5Z/Green-Lightning.png", value:180000000, demand:"5/10" },
-{ name:"Red Lightning", rarity:"uncommon", img:"https://i.postimg.cc/s2DmjTkH/Red-Lightning.png", value:570000000, demand:"10/10" },
-{ name:"Torment pain", rarity:"uncommon", img:"https://i.postimg.cc/T1qGN3Q0/Torment.png", value:120000000, demand:"4/10" },
-{ name:"Super Spirit Pain", rarity:"uncommon", img:"https://i.postimg.cc/Xv7LjsRD/Super-Spirit-Pain.png", value:530000000, demand:"10/10" },
-{ name:"Sadness Pain", rarity:"uncommon", img:"https://i.postimg.cc/C5VS4qCd/Sadness.png", value:260000000, demand:"7/10" },
-{ name:"Frustration Pain", rarity:"uncommon", img:"https://i.postimg.cc/26WCvwZP/Frustration.png", value:200000000, demand:"6/10" },
-{ name:"Celestial Pain", rarity:"uncommon", img:"https://i.postimg.cc/RC7ZvC2r/Celestial-Pain.png", value:250000000, demand:"7/10" },
-{ name:"Galaxy Empyrean", rarity:"uncommon", img:"https://i.postimg.cc/k5JRY7vf/latest-cb-20251226164613.webp", value:4810000000, demand:"10/10" },
-{ name:"Crimson Kitsune", rarity:"uncommon", img:"https://static.wikia.nocookie.net/roblox-blox-piece/images/b/be/Empyrean_Fruit_%28Crimson%29.png", value:2830000000, demand:"10/10" },
-{ name:"Ember West Dragon", rarity:"uncommon", img:"https://i.postimg.cc/Qtn7Wv59/latest-cb-20251226164628.webp", value:4070000000, demand:"10/10" },
-{ name:"Divine Portal", rarity:"uncommon", img:"https://i.postimg.cc/htF9sFwc/latest-cb-20251225222313.webp", value:410000000, demand:"8/10" },
-
-{ name:"+1 Fruit Storage", rarity:"uncommon", img:"https://static.wikia.nocookie.net/roblox-blox-piece/images/6/6a/BadgeFruitStorage.png", value:195000000, demand:"10/10" },
-{ name:"Comming Soon", rarity:"uncommon", img:"https://image.shutterstock.com/z/stock-vector-coming-soon-speechbubble-advertising-megaphone-vector-banner-stock-vector-2511768889.jpg", value:0, demand:"0/0" },
-{ name:"Comming Soon", rarity:"uncommon", img:"https://image.shutterstock.com/z/stock-vector-coming-soon-speechbubble-advertising-megaphone-vector-banner-stock-vector-2511768889.jpg", value:0, demand:"0/0" },
-{ name:"Comming Soon", rarity:"uncommon", img:"https://image.shutterstock.com/z/stock-vector-coming-soon-speechbubble-advertising-megaphone-vector-banner-stock-vector-2511768889.jpg", value:0, demand:"0/0" },
-{ name:"Comming Soon", rarity:"uncommon", img:"https://image.shutterstock.com/z/stock-vector-coming-soon-speechbubble-advertising-megaphone-vector-banner-stock-vector-2511768889.jpg", value:0, demand:"0/0" },
-{ name:"Comming Soon", rarity:"uncommon", img:"https://image.shutterstock.com/z/stock-vector-coming-soon-speechbubble-advertising-megaphone-vector-banner-stock-vector-2511768889.jpg", value:0, demand:"0/0" },
-{ name:"Comming Soon", rarity:"uncommon", img:"https://image.shutterstock.com/z/stock-vector-coming-soon-speechbubble-advertising-megaphone-vector-banner-stock-vector-2511768889.jpg", value:0, demand:"0/0" },
-{ name:"Comming Soon", rarity:"uncommon", img:"https://image.shutterstock.com/z/stock-vector-coming-soon-speechbubble-advertising-megaphone-vector-banner-stock-vector-2511768889.jpg", value:0, demand:"0/0" }
-];
-
-// Fonction pour formater les valeurs en K, M, B
-function formatValue(num){
-    if(num >= 1_000_000_000) return (num/1_000_000_000).toFixed(1)+'B';
-    if(num >= 1_000_000) return (num/1_000_000).toFixed(1)+'M';
-    if(num >= 1_000) return (num/1_000).toFixed(1)+'K';
-    return num;
-}
-
-function initGrid(side){
-    const grid = document.querySelector(`.grid[data-side="${side}"]`);
-    grid.innerHTML = "";
-    slots[side] = [];
-    for(let i=0;i<4;i++){
-        const slot = document.createElement("div");
-        slot.className="slot";
-        slots[side].push(slot);
-        grid.appendChild(slot);
+  // Écouter les touches
+  document.addEventListener('keydown', (e) => {
+    switch(e.key) {
+      case 'ArrowUp':
+        if (posY - step >= 0) {
+          posY -= step;
+        }
+        break;
+      case 'ArrowDown':
+        if (posY + step <= 550) { // 600 - 50 (hauteur personnage)
+          posY += step;
+        }
+        break;
+      case 'ArrowLeft':
+        if (posX - step >= 0) {
+          posX -= step;
+        }
+        break;
+      case 'ArrowRight':
+        if (posX + step <= 750) { // 800 - 50 (largeur personnage)
+          posX += step;
+        }
+        break;
     }
-    updatePlus(side);
-}
-
-function updatePlus(side){
-    const empty = slots[side].find(s=>s.innerHTML==="");
-    if(!empty) return;
-    empty.className="slot add-btn";
-    empty.innerHTML="+";
-    empty.onclick = ()=> openModal(side);
-}
-
-function openModal(side){
-    currentSide = side;
-    document.getElementById("modal").style.display="flex";
-    renderItems("");
-}
-
-function renderItems(filter){
-    const list = document.getElementById("item-list");
-    list.innerHTML = "";
-    fruits.filter(f=>f.name.toLowerCase().includes(filter.toLowerCase())).forEach(f=>{
-        const div = document.createElement("div");
-        div.className=`item ${f.rarity}`;
-        div.innerHTML = `<img src="${f.img}" alt="${f.name}">${f.name}`;
-        div.onclick = ()=> selectItem(f);
-        list.appendChild(div);
-    });
-}
-
-document.getElementById("search").addEventListener("input", e=>{
-    renderItems(e.target.value);
-});
-
-function selectItem(fruit){
-    const side = currentSide;
-    const slot = slots[side].find(s=>s.classList.contains("add-btn"));
-    if(!slot) return;
-    slot.className="slot item";
-    slot.style.backgroundImage=`url('${fruit.img}')`;
-    slot.style.backgroundSize="70%";
-    slot.style.backgroundPosition="center";
-    slot.dataset.value = fruit.value;
-    slot.dataset.demand = fruit.demand;
-    slot.innerHTML += `<div class="value-box">
-        <div class="value-text">Value: ${formatValue(fruit.value)}</div>
-        <div class="demand-text">Demand: ${fruit.demand}</div>
-    </div>`;
-    const index = slots[side].indexOf(slot);
-    slot.onclick = ()=> removeItem(side,index);
-    document.getElementById("modal").style.display="none";
-    updatePlus(side);
-    updateTradeValues();
-}
-
-function removeItem(side,index){
-    const items = slots[side].filter((s,i)=>s.classList.contains("item") && i!==index).map(s=>({html:s.innerHTML,bg:s.style.backgroundImage,value:s.dataset.value,demand:s.dataset.demand}));
-    slots[side].forEach(s=>{ s.className="slot"; s.innerHTML=""; s.style.backgroundImage=""; s.onclick=null; s.dataset.value=""; s.dataset.demand=""; });
-    items.forEach((item,i)=>{
-        slots[side][i].className="slot item";
-        slots[side][i].innerHTML=item.html;
-        slots[side][i].style.backgroundImage=item.bg;
-        slots[side][i].dataset.value = item.value;
-        slots[side][i].dataset.demand = item.demand;
-        slots[side][i].onclick=()=>removeItem(side,i);
-    });
-    updatePlus(side);
-    updateTradeValues();
-}
-
-function updateTradeValues(){
-    const offerValue = slots['have'].reduce((sum,s)=> s.dataset.value ? sum + parseInt(s.dataset.value) : sum,0);
-    const wantValue = slots['want'].reduce((sum,s)=> s.dataset.value ? sum + parseInt(s.dataset.value) : sum,0);
-
-    document.getElementById('offer-value').textContent = formatValue(offerValue);
-    document.getElementById('want-value').textContent = formatValue(wantValue);
-
-    const offerDemand = slots['have'].reduce((max,s)=> s.dataset.demand && parseInt(s.dataset.demand.split('/')[0])>max ? parseInt(s.dataset.demand.split('/')[0]) : max ,0);
-    const wantDemand = slots['want'].reduce((max,s)=> s.dataset.demand && parseInt(s.dataset.demand.split('/')[0])>max ? parseInt(s.dataset.demand.split('/')[0]) : max ,0);
-    document.getElementById('offer-demand').textContent = `Demand: ${offerDemand}/10`;
-    document.getElementById('want-demand').textContent = `Demand: ${wantDemand}/10`;
-
-    // Barre Win/Lose inversée : si offer > want => Lose
-    const bar = document.querySelector(".trade-bar-indicator");
-    const totalValue = offerValue + wantValue;
-    let percent = 50;
-    if(totalValue > 0){
-        percent = (wantValue / totalValue) * 100; // logique inversée
-    }
-    percent = Math.max(0, Math.min(100, percent));
-    bar.style.left = percent + "%";
-
-    // Labels principaux
-    const labels = document.querySelectorAll(".trade-bar-labels span");
-    labels.forEach(label => label.classList.remove("active-lose","active-win","active-equal"));
-    if(percent < 45){       // Lose
-        labels[0].classList.add("active-lose");
-    } else if(percent > 55){ // Win
-        labels[2].classList.add("active-win");
-    } else {                // Equal
-        labels[1].classList.add("active-equal");
-    }
-
-    // Supprimer anciens petits labels
-    document.querySelectorAll(".trade-bar .small-label").forEach(e=>e.remove());
-
-    // Ajouter Small Lose / Small Win
-    const barContainer = document.querySelector(".trade-bar");
-    const smallLose = document.createElement("div");
-    smallLose.className = "small-label lose";
-    smallLose.textContent = "Small Lose";
-    barContainer.appendChild(smallLose);
-
-    const smallWin = document.createElement("div");
-    smallWin.className = "small-label win";
-    smallWin.textContent = "Small Win";
-    barContainer.appendChild(smallWin);
-}
-
-
-  
-initGrid("have");
-initGrid("want");
-
-document.getElementById('close-modal').onclick = () => {
-    document.getElementById('modal').style.display = 'none';
-};
-
+    // Mettre à jour la position
+    character.style.top = posY + 'px';
+    character.style.left = posX + 'px';
+  });
 </script>
+
 </body>
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
