@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<title>Roblox Anti-Gesture Edition</title>
+<title>Roblox Super Fluid Edition</title>
 <style>
   * {
     box-sizing: border-box;
@@ -21,9 +21,8 @@
     margin: 0;
     padding: 0;
     overflow: hidden;
-    background: #0a0e14;
+    background: #a1c4fd;
     font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-    /* Bloque les comportements de défilement et de rebond d'iOS */
     touch-action: none; 
     position: fixed;
   }
@@ -37,7 +36,7 @@
     justify-content: center;
     align-items: center;
     z-index: 100;
-    transition: opacity 0.5s ease;
+    transition: opacity 0.3s ease;
   }
   #ui-menu h1 {
     color: white;
@@ -66,7 +65,6 @@
     display: none;
   }
 
-  /* Zone de contrôle gauche resserrée pour éviter le bord extrême de l'écran */
   #touch-zone-left {
     position: absolute;
     bottom: 5%; left: 5%;
@@ -77,25 +75,22 @@
   #joystickContainer {
     position: absolute;
     bottom: 20px; left: 20px;
-    width: 120px; height: 120px;
+    width: 110px; height: 110px;
     background: rgba(0, 0, 0, 0.4);
-    border: 2px solid rgba(255, 255, 255, 0.25);
+    border: 2px solid rgba(255, 255, 255, 0.3);
     border-radius: 50%;
-    backdrop-filter: blur(10px);
+    backdrop-filter: blur(8px);
     display: flex;
     justify-content: center;
     align-items: center;
-    touch-action: none;
   }
   #joystickPoint {
-    width: 50px; height: 50px;
-    background: linear-gradient(135deg, #ffffff, #cdcdcd);
+    width: 45px; height: 45px;
+    background: #ffffff;
     border-radius: 50%;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.4);
-    touch-action: none;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.4);
   }
 
-  /* Zone droite éloignée du bas pour pas déclencher le switch d'appli */
   #touch-zone-right {
     position: absolute;
     bottom: 5%; right: 0;
@@ -113,13 +108,10 @@
     color: white;
     font-weight: 800;
     font-size: 14px;
-    backdrop-filter: blur(10px);
+    backdrop-filter: blur(8px);
     display: flex;
     justify-content: center;
     align-items: center;
-    box-shadow: 0 8px 32px rgba(0,0,0,0.3);
-    cursor: pointer;
-    touch-action: none;
   }
 
   canvas { display: block; width: 100%; height: 100%; }
@@ -128,7 +120,7 @@
 <body>
 
 <div id="ui-menu">
-  <h1>AVENTURE MOBILE</h1>
+  <h1>ROBLOX V2 FAST</h1>
   <button id="playButton">START</button>
 </div>
 
@@ -138,7 +130,6 @@
       <div id="joystickPoint"></div>
     </div>
   </div>
-  
   <div id="touch-zone-right">
     <div id="jumpButton">JUMP</div>
   </div>
@@ -147,21 +138,19 @@
 <script src="https://cdn.jsdelivr.net/npm/three@0.152.0/build/three.min.js"></script>
 
 <script>
-// SÉCURITÉ ULTRA INTERNATIONALE : Bloque les gestes Safari et iOS
-document.addEventListener('touchmove', (e) => {
-  if (e.touches.length > 1 || e.scale !== 1) {
-    e.preventDefault(); 
-  }
-}, { passive: false });
+// Blocage hardcore des gestes de l'iPhone
+document.addEventListener('touchmove', (e) => { if (e.touches.length > 1 || e.scale !== 1) e.preventDefault(); }, { passive: false });
+document.addEventListener('touchstart', (e) => { if (e.touches.length > 1) e.preventDefault(); }, { passive: false });
 
-// Bloque le double-tap magique qui fait zoomer la page par erreur
-document.addEventListener('touchstart', (e) => {
-  if (e.touches.length > 1) {
-    e.preventDefault();
-  }
-}, { passive: false });
+// Sensibilité et vitesse boostées pour supprimer la sensation de lenteur
+const CONFIG = { 
+  playerSpeed: 10, 
+  jumpForce: 14, 
+  gravity: 36, 
+  cameraSensitivity: 0.012, // Caméra beaucoup plus rapide
+  worldSize: 120 
+};
 
-const CONFIG = { playerSpeed: 8, jumpForce: 13, gravity: 34, cameraSensitivity: 0.008, worldSize: 120 };
 let scene, camera, renderer, clock;
 let character, leftArm, rightArm, leftLeg, rightLeg;
 let velocityY = 0, isGrounded = true;
@@ -169,7 +158,7 @@ let moveDirection = { x: 0, z: 0 };
 let inputState = { forward: 0, backward: 0, left: 0, right: 0 };
 let collidableObjects = [];
 
-let cameraOrbit = { radius: 9, theta: Math.PI / 4, phi: Math.PI / 3.5, targetY: 1.4 };
+let cameraOrbit = { radius: 8, theta: Math.PI / 4, phi: Math.PI / 4, targetY: 1.4 };
 
 document.getElementById('playButton').addEventListener('click', () => {
   document.getElementById('ui-menu').style.opacity = '0';
@@ -177,7 +166,7 @@ document.getElementById('playButton').addEventListener('click', () => {
     document.getElementById('ui-menu').style.display = 'none';
     document.getElementById('game-ui').style.display = 'block';
     setupGame();
-  }, 500);
+  }, 300);
 });
 
 function setupGame() {
@@ -192,25 +181,22 @@ function setupGame() {
 function initScene() {
   scene = new THREE.Scene();
   scene.background = new THREE.Color(0xa1c4fd);
-  scene.fog = new THREE.FogExp2(0xa1c4fd, 0.012);
+  scene.fog = new THREE.FogExp2(0xa1c4fd, 0.015);
 
-  camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
+  camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.2, 500);
   
-  renderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: "high-performance" });
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  // Optimisation maximale du rendu WebGL
+  renderer = new THREE.WebGLRenderer({ antialias: false, powerPreference: "high-performance" });
+  renderer.setPixelRatio(1); // Bloqué à 1 pour éviter la surchauffe et le lag sur mobile
   renderer.setSize(window.innerWidth, window.innerHeight);
-  renderer.shadowMap.enabled = true;
-  renderer.shadowMap.type = THREE.PCFSoftShadowMap;
   document.body.appendChild(renderer.domElement);
 
-  scene.add(new THREE.AmbientLight(0xffffff, 0.6));
-  const hemiLight = new THREE.HemisphereLight(0xffffff, 0x8d99ae, 0.4);
-  hemiLight.position.set(0, 200, 0);
-  scene.add(hemiLight);
+  // Lumière simple sans ombres portées (Gain massif de FPS)
+  const ambientLight = new THREE.AmbientLight(0xffffff, 0.8);
+  scene.add(ambientLight);
 
-  const dirLight = new THREE.DirectionalLight(0xfff3e0, 0.8);
-  dirLight.position.set(30, 50, 20);
-  dirLight.castShadow = true;
+  const dirLight = new THREE.DirectionalLight(0xffffff, 0.4);
+  dirLight.position.set(10, 20, 10);
   scene.add(dirLight);
 
   window.addEventListener('resize', onWindowResize);
@@ -218,131 +204,110 @@ function initScene() {
 
 function createTree(x, z) {
   const tree = new THREE.Group();
-  const trunkGeo = new THREE.CylinderGeometry(0.2, 0.4, 2.5, 5);
+  const trunkGeo = new THREE.CylinderGeometry(0.2, 0.3, 2, 4);
   const trunkMat = new THREE.MeshStandardMaterial({ color: 0x5c4033, roughness: 0.9 });
   const trunk = new THREE.Mesh(trunkGeo, trunkMat);
-  trunk.position.y = 1.25;
-  trunk.castShadow = true;
+  trunk.position.y = 1;
   tree.add(trunk);
 
-  const leavesGeo = new THREE.ConeGeometry(1.5, 3, 5);
-  const leavesMat = new THREE.MeshStandardMaterial({ color: 0x2e7d32, roughness: 0.6, flatShading: true });
+  const leavesGeo = new THREE.ConeGeometry(1.2, 2.5, 4);
+  const leavesMat = new THREE.MeshStandardMaterial({ color: 0x2e7d32, flatShading: true });
   const leaves = new THREE.Mesh(leavesGeo, leavesMat);
-  leaves.position.y = 3;
-  leaves.castShadow = true;
+  leaves.position.y = 2.5;
   tree.add(leaves);
 
   tree.position.set(x, 0, z);
   scene.add(tree);
-  collidableObjects.push(trunk);
+  collidableObjects.push({ mesh: trunk, radius: 0.4, type: 'cylinder' });
 }
 
 function createRock(x, z, scale) {
-  const rockGeo = new THREE.DodecahedronGeometry(scale, 1);
-  const rockMat = new THREE.MeshStandardMaterial({ color: 0x7f8c8d, roughness: 0.8, flatShading: true });
+  const rockGeo = new THREE.DodecahedronGeometry(scale, 0);
+  const rockMat = new THREE.MeshStandardMaterial({ color: 0x7f8c8d, flatShading: true });
   const rock = new THREE.Mesh(rockGeo, rockMat);
-  rock.position.set(x, scale * 0.7, z);
-  rock.scale.set(1, 1.3, 1);
-  rock.castShadow = true;
+  rock.position.set(x, scale * 0.6, z);
   scene.add(rock);
-  collidableObjects.push(rock);
+  collidableObjects.push({ mesh: rock, radius: scale * 0.9, type: 'cylinder' });
 }
 
 function createPlatform(x, y, z, w, h, d) {
   const platGeo = new THREE.BoxGeometry(w, h, d);
-  const platMat = new THREE.MeshStandardMaterial({ color: 0xe0e0e0, roughness: 0.5 });
+  const platMat = new THREE.MeshStandardMaterial({ color: 0xdcdcdc, roughness: 0.6 });
   const plat = new THREE.Mesh(platGeo, platMat);
   plat.position.set(x, y + h/2, z);
-  plat.castShadow = true;
-  plat.receiveShadow = true;
   scene.add(plat);
-  collidableObjects.push(plat);
+  collidableObjects.push({ mesh: plat, w: w, h: h, d: d, type: 'box' });
 }
 
 function initEnvironment() {
   const floorGeo = new THREE.PlaneGeometry(CONFIG.worldSize, CONFIG.worldSize);
-  const floorMat = new THREE.MeshStandardMaterial({ color: 0x4caf50, roughness: 0.9 });
+  const floorMat = new THREE.MeshStandardMaterial({ color: 0x4caf50, roughness: 1.0 });
   const floor = new THREE.Mesh(floorGeo, floorMat);
   floor.rotation.x = -Math.PI / 2;
-  floor.receiveShadow = true;
   scene.add(floor);
 
   const grid = new THREE.GridHelper(CONFIG.worldSize, 40, 0x388e3c, 0x388e3c);
-  grid.position.y = 0.02;
+  grid.position.y = 0.01;
   scene.add(grid);
 
-  for(let i=0; i<25; i++) {
+  // Spawns d'obstacles légers
+  for(let i=0; i<20; i++) {
     let rx = (Math.random() - 0.5) * (CONFIG.worldSize - 30);
     let rz = (Math.random() - 0.5) * (CONFIG.worldSize - 30);
-    if (Math.abs(rx) > 10 || Math.abs(rz) > 10) createTree(rx, rz);
+    if (Math.abs(rx) > 8 || Math.abs(rz) > 8) createTree(rx, rz);
   }
 
-  for(let i=0; i<12; i++) {
+  for(let i=0; i<10; i++) {
     let rx = (Math.random() - 0.5) * (CONFIG.worldSize - 30);
     let rz = (Math.random() - 0.5) * (CONFIG.worldSize - 30);
-    if (Math.abs(rx) > 10 || Math.abs(rz) > 10) createRock(rx, rz, 1.5 + Math.random()*2);
+    if (Math.abs(rx) > 8 || Math.abs(rz) > 8) createRock(rx, rz, 1.5 + Math.random()*1.5);
   }
 
-  createPlatform(10, 0, -10, 6, 1.5, 6);
-  createPlatform(18, 0, -12, 5, 3.0, 5);
-  createPlatform(25, 0, -5, 6, 4.5, 6);
+  createPlatform(8, 0, -8, 6, 1.5, 6);
+  createPlatform(16, 0, -10, 5, 3.0, 5);
+  createPlatform(23, 0, -4, 6, 4.5, 6);
 }
 
 function initCharacter() {
   character = new THREE.Group();
-  const skinMat = new THREE.MeshStandardMaterial({ color: 0xffe0bd, roughness: 0.6 });
-  const torsoMat = new THREE.MeshStandardMaterial({ color: 0x29b6f6, roughness: 0.4 });
-  const pantsMat = new THREE.MeshStandardMaterial({ color: 0x263238, roughness: 0.5 });
+  const skinMat = new THREE.MeshStandardMaterial({ color: 0xffe0bd });
+  const torsoMat = new THREE.MeshStandardMaterial({ color: 0x29b6f6 });
+  const pantsMat = new THREE.MeshStandardMaterial({ color: 0x263238 });
 
-  const torsoGeo = new THREE.BoxGeometry(0.8, 1.2, 0.4);
-  const torso = new THREE.Mesh(torsoGeo, torsoMat);
+  const torso = new THREE.Mesh(new THREE.BoxGeometry(0.8, 1.2, 0.4), torsoMat);
   torso.position.y = 1.3;
-  torso.castShadow = true;
   character.add(torso);
 
-  const headGeo = new THREE.BoxGeometry(0.52, 0.52, 0.52);
-  const head = new THREE.Mesh(headGeo, skinMat);
+  const head = new THREE.Mesh(new THREE.BoxGeometry(0.5, 0.5, 0.5), skinMat);
   head.position.y = 2.15;
-  head.castShadow = true;
   character.add(head);
 
-  const faceContainer = new THREE.Group();
-  const eyeGeo = new THREE.BoxGeometry(0.08, 0.08, 0.02);
+  // Visage Roblox
   const faceMat = new THREE.MeshBasicMaterial({ color: 0x111111 });
-  const leftEye = new THREE.Mesh(eyeGeo, faceMat);
-  leftEye.position.set(-0.12, 2.2, 0.27);
-  const rightEye = leftEye.clone();
-  rightEye.position.x = 0.12;
-  const mouthGeo = new THREE.BoxGeometry(0.18, 0.04, 0.02);
-  const mouth = new THREE.Mesh(mouthGeo, faceMat);
-  mouth.position.set(0, 2.05, 0.27);
-  faceContainer.add(leftEye, rightEye, mouth);
-  character.add(faceContainer);
+  const leftEye = new THREE.Mesh(new THREE.BoxGeometry(0.08, 0.08, 0.02), faceMat);
+  leftEye.position.set(-0.12, 2.2, 0.26);
+  const rightEye = leftEye.clone(); rightEye.position.x = 0.12;
+  const mouth = new THREE.Mesh(new THREE.BoxGeometry(0.16, 0.04, 0.02), faceMat);
+  mouth.position.set(0, 2.04, 0.26);
+  character.add(leftEye, rightEye, mouth);
 
-  const armGeo = new THREE.BoxGeometry(0.32, 1.1, 0.32);
+  const armGeo = new THREE.BoxGeometry(0.3, 1.1, 0.3);
   armGeo.translate(0, -0.45, 0);
-  leftArm = new THREE.Mesh(armGeo, skinMat);
-  leftArm.position.set(-0.58, 1.85, 0);
-  leftArm.castShadow = true;
-  character.add(leftArm);
-  rightArm = leftArm.clone();
-  rightArm.position.x = 0.58;
-  character.add(rightArm);
+  leftArm = new THREE.Mesh(armGeo, skinMat); leftArm.position.set(-0.56, 1.85, 0);
+  rightArm = leftArm.clone(); rightArm.position.x = 0.56;
+  character.add(leftArm, rightArm);
 
-  const legGeo = new THREE.BoxGeometry(0.36, 1.1, 0.36);
+  const legGeo = new THREE.BoxGeometry(0.34, 1.1, 0.34);
   legGeo.translate(0, -0.45, 0);
-  leftLeg = new THREE.Mesh(legGeo, pantsMat);
-  leftLeg.position.set(-0.22, 0.95, 0);
-  leftLeg.castShadow = true;
-  character.add(leftLeg);
-  rightLeg = leftLeg.clone();
-  rightLeg.position.x = 0.22;
-  character.add(rightLeg);
+  leftLeg = new THREE.Mesh(legGeo, pantsMat); leftLeg.position.set(-0.2, 0.95, 0);
+  rightLeg = leftLeg.clone(); rightLeg.position.x = 0.2;
+  character.add(leftLeg, rightLeg);
 
   scene.add(character);
 }
 
 function initControls() {
+  // Clavier PC (Au cas où)
   window.addEventListener('keydown', (e) => {
     switch (e.code) {
       case 'KeyW': inputState.forward = 1; break;
@@ -361,7 +326,7 @@ function initControls() {
     }
   });
 
-  // Utilisation exclusive des PointerEvents avec e.preventDefault() forcé pour briser iOS
+  // Joystick Tactile CORRIGÉ (Axe Y inversé pour aller vers l'avant !)
   const joystickZone = document.getElementById('touch-zone-left');
   const joystickPoint = document.getElementById('joystickPoint');
   let joyPointerId = null;
@@ -379,7 +344,7 @@ function initControls() {
       e.preventDefault();
       const dx = e.clientX - joyStartX;
       const dy = e.clientY - joyStartY;
-      const maxLimit = 45;
+      const maxLimit = 40;
       const distance = Math.min(Math.sqrt(dx*dx + dy*dy), maxLimit);
       const angle = Math.atan2(dy, dx);
 
@@ -387,6 +352,8 @@ function initControls() {
       const moveY = Math.sin(angle) * distance;
 
       joystickPoint.style.transform = `translate(${moveX}px, ${moveY}px)`;
+      
+      // FIX DES AXES : -dy pour que le haut avance et le bas recule !
       moveDirection.x = moveX / maxLimit;
       moveDirection.z = moveY / maxLimit;
     }
@@ -402,6 +369,7 @@ function initControls() {
   };
   window.addEventListener('pointerup', stopJoystick);
 
+  // Rotation Caméra (Zone Droite) CORRIGÉE (Style Roblox)
   const cameraZone = document.getElementById('touch-zone-right');
   let camPointerId = null;
   let prevCamX = 0, prevCamY = 0;
@@ -420,8 +388,9 @@ function initControls() {
       const movementX = e.clientX - prevCamX;
       const movementY = e.clientY - prevCamY;
 
+      // FIX INVERSION ROBLOX : Glisser le doigt vers le haut fait monter la caméra (+)
       cameraOrbit.theta -= movementX * CONFIG.cameraSensitivity;
-      cameraOrbit.phi -= movementY * CONFIG.cameraSensitivity;
+      cameraOrbit.phi += movementY * CONFIG.cameraSensitivity; // Changé de - à +
       cameraOrbit.phi = Math.max(0.05, Math.min(Math.PI / 2 - 0.05, cameraOrbit.phi));
 
       prevCamX = e.clientX;
@@ -447,8 +416,7 @@ function triggerJump() {
 
 function animate() {
   requestAnimationFrame(animate);
-  const delta = clock.getDelta();
-  if(delta > 0.1) return;
+  const delta = Math.min(clock.getDelta(), 0.1); // Évite les sauts de physique si micro-lag
 
   updatePhysics(delta);
   updateCharacterAnimations();
@@ -463,40 +431,36 @@ function updatePhysics(delta) {
 
   if (xInput === 0 && zInput === 0) {
     xInput = inputState.right - inputState.left;
-    zInput = inputState.backward - inputState.forward;
+    zInput = inputState.backward - inputState.forward; // Inversé aussi sur PC
   }
 
   const camForward = new THREE.Vector3(0, 0, -1).applyQuaternion(camera.quaternion);
-  camForward.y = 0;
-  camForward.normalize();
+  camForward.y = 0; camForward.normalize();
 
   const camRight = new THREE.Vector3(1, 0, 0).applyQuaternion(camera.quaternion);
-  camRight.y = 0;
-  camRight.normalize();
+  camRight.y = 0; camRight.normalize();
 
+  // On applique la direction (zInput est négatif vers le haut sur l'axe Three.js)
   const moveVector = new THREE.Vector3()
     .addScaledVector(camRight, xInput)
-    .addScaledVector(camForward, zInput);
+    .addScaledVector(camForward, -zInput); // Applique la correction de poussée
 
   if (moveVector.lengthSq() > 1) moveVector.normalize();
 
   const oldPos = character.position.clone();
   character.position.addScaledVector(moveVector, CONFIG.playerSpeed * delta);
 
-  const playerRadius = 0.5;
-  for (let obj of collidableObjects) {
-    const objPos = new THREE.Vector3();
-    obj.getWorldPosition(objPos);
+  // Système de collision ultra-rapide (Zéro Lag)
+  const playerRadius = 0.4;
+  for (let i = 0; i < collidableObjects.length; i++) {
+    const obj = collidableObjects[i];
+    const objPos = obj.mesh.position;
     
-    if(obj.geometry.type === "BoxGeometry") {
-      const boxWidth = obj.geometry.parameters.width;
-      const boxDepth = obj.geometry.parameters.depth;
-      const boxHeight = obj.geometry.parameters.height;
-
-      if (Math.abs(character.position.x - objPos.x) < (boxWidth/2 + playerRadius) &&
-          Math.abs(character.position.z - objPos.z) < (boxDepth/2 + playerRadius)) {
-          if (oldPos.y >= (objPos.y + boxHeight/2 - 0.2)) {
-            character.position.y = objPos.y + boxHeight/2;
+    if(obj.type === 'box') {
+      if (Math.abs(character.position.x - objPos.x) < (obj.w/2 + playerRadius) &&
+          Math.abs(character.position.z - objPos.z) < (obj.d/2 + playerRadius)) {
+          if (oldPos.y >= (objPos.y + obj.h/2 - 0.2)) {
+            character.position.y = objPos.y + obj.h/2;
             velocityY = 0;
             isGrounded = true;
           } else {
@@ -506,7 +470,7 @@ function updatePhysics(delta) {
       }
     } else {
       const distXZ = Math.sqrt(Math.pow(character.position.x - objPos.x, 2) + Math.pow(character.position.z - objPos.z, 2));
-      if (distXZ < (playerRadius + 0.4) && character.position.y < 2) {
+      if (distXZ < (playerRadius + obj.radius) && character.position.y < 1.8) {
         character.position.x = oldPos.x;
         character.position.z = oldPos.z;
       }
@@ -517,7 +481,7 @@ function updatePhysics(delta) {
     const targetAngle = Math.atan2(moveVector.x, moveVector.z);
     let diff = targetAngle - character.rotation.y;
     diff = Math.atan2(Math.sin(diff), Math.cos(diff));
-    character.rotation.y += diff * 15 * delta;
+    character.rotation.y += diff * 18 * delta;
     character.userData.isMoving = true;
   } else {
     character.userData.isMoving = false;
@@ -538,14 +502,14 @@ function updatePhysics(delta) {
 }
 
 function updateCharacterAnimations() {
-  const time = performance.now() * 0.009;
+  const time = performance.now() * 0.01;
   if (!isGrounded) {
     leftArm.rotation.x = -Math.PI; rightArm.rotation.x = -Math.PI;
     leftLeg.rotation.x = 0.2; rightLeg.rotation.x = -0.2;
   } else if (character.userData.isMoving) {
-    const wave = Math.sin(time * 1.6);
-    leftLeg.rotation.x = wave * 0.65; rightLeg.rotation.x = -wave * 0.65;
-    leftArm.rotation.x = -wave * 0.65; rightArm.rotation.x = wave * 0.65;
+    const wave = Math.sin(time * 1.5);
+    leftLeg.rotation.x = wave * 0.6; rightLeg.rotation.x = -wave * 0.6;
+    leftArm.rotation.x = -wave * 0.6; rightArm.rotation.x = wave * 0.6;
   } else {
     leftLeg.rotation.x *= 0.8; rightLeg.rotation.x *= 0.8;
     leftArm.rotation.x *= 0.8; rightArm.rotation.x *= 0.8;
@@ -553,15 +517,12 @@ function updateCharacterAnimations() {
 }
 
 function updateCamera() {
-  const targetX = character.position.x + cameraOrbit.radius * Math.sin(cameraOrbit.theta) * Math.cos(cameraOrbit.phi);
-  const targetY = character.position.y + cameraOrbit.targetY + cameraOrbit.radius * Math.sin(cameraOrbit.phi);
-  const targetZ = character.position.z + cameraOrbit.radius * Math.cos(cameraOrbit.theta) * Math.cos(cameraOrbit.phi);
+  // SUPPRESSION DU LERP (Suivi 100% instantané, fini l'effet lourd et en retard)
+  camera.position.x = character.position.x + cameraOrbit.radius * Math.sin(cameraOrbit.theta) * Math.cos(cameraOrbit.phi);
+  camera.position.y = character.position.y + cameraOrbit.targetY + cameraOrbit.radius * Math.sin(cameraOrbit.phi);
+  camera.position.z = character.position.z + cameraOrbit.radius * Math.cos(cameraOrbit.theta) * Math.cos(cameraOrbit.phi);
 
-  camera.position.x += (targetX - camera.position.x) * 0.12;
-  camera.position.y += (targetY - camera.position.y) * 0.12;
-  camera.position.z += (targetZ - camera.position.z) * 0.12;
-
-  camera.lookAt(new THREE.Vector3(character.position.x, character.position.y + cameraOrbit.targetY, character.position.z));
+  camera.lookAt(character.position.x, character.position.y + cameraOrbit.targetY, character.position.z);
 }
 
 function onWindowResize() {
