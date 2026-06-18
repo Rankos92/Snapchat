@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<title>Roblox Edition Premium</title>
+<title>Roblox Anti-Gesture Edition</title>
 <style>
   * {
     box-sizing: border-box;
@@ -23,10 +23,11 @@
     overflow: hidden;
     background: #0a0e14;
     font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    /* Bloque les comportements de défilement et de rebond d'iOS */
     touch-action: none; 
+    position: fixed;
   }
 
-  /* Écran de démarrage moderne */
   #ui-menu {
     position: absolute;
     top: 0; left: 0; width: 100%; height: 100%;
@@ -36,13 +37,12 @@
     justify-content: center;
     align-items: center;
     z-index: 100;
-    transition: opacity 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: opacity 0.5s ease;
   }
   #ui-menu h1 {
     color: white;
-    font-size: 2.8rem;
+    font-size: 2.5rem;
     font-weight: 900;
-    letter-spacing: 2px;
     margin-bottom: 30px;
     text-shadow: 0 4px 15px rgba(0,0,0,0.5);
     text-align: center;
@@ -50,7 +50,6 @@
   #playButton {
     font-size: 20px;
     font-weight: bold;
-    letter-spacing: 1px;
     padding: 16px 60px;
     background: #ffffff;
     color: #b21f1f;
@@ -58,13 +57,8 @@
     border-radius: 50px;
     cursor: pointer;
     box-shadow: 0 10px 25px rgba(0,0,0,0.3);
-    transition: transform 0.2s, box-shadow 0.2s;
-  }
-  #playButton:active {
-    transform: scale(0.95);
   }
 
-  /* Interface Mobile Épurée */
   #game-ui {
     position: absolute;
     top: 0; left: 0; width: 100%; height: 100%;
@@ -72,76 +66,60 @@
     display: none;
   }
 
-  /* Notice PC temporaire */
-  #pc-info {
-    position: absolute;
-    top: 20px; left: 20px;
-    color: white;
-    background: rgba(0, 0, 0, 0.6);
-    backdrop-filter: blur(8px);
-    padding: 12px 20px;
-    border-radius: 12px;
-    font-size: 13px;
-    pointer-events: none;
-    border: 1px solid rgba(255,255,255,0.1);
-    transition: opacity 1s ease;
-  }
-
-  /* Zone Joystick Gauche */
+  /* Zone de contrôle gauche resserrée pour éviter le bord extrême de l'écran */
   #touch-zone-left {
     position: absolute;
-    bottom: 0; left: 0;
-    width: 50%; height: 70%;
+    bottom: 5%; left: 5%;
+    width: 40%; height: 60%;
     pointer-events: auto;
+    touch-action: none;
   }
   #joystickContainer {
     position: absolute;
-    bottom: 40px; left: 40px;
+    bottom: 20px; left: 20px;
     width: 120px; height: 120px;
-    background: rgba(0, 0, 0, 0.35);
-    border: 2px solid rgba(255, 255, 255, 0.2);
+    background: rgba(0, 0, 0, 0.4);
+    border: 2px solid rgba(255, 255, 255, 0.25);
     border-radius: 50%;
     backdrop-filter: blur(10px);
-    box-shadow: 0 8px 32px rgba(0,0,0,0.3);
     display: flex;
     justify-content: center;
     align-items: center;
+    touch-action: none;
   }
   #joystickPoint {
     width: 50px; height: 50px;
     background: linear-gradient(135deg, #ffffff, #cdcdcd);
     border-radius: 50%;
     box-shadow: 0 4px 15px rgba(0,0,0,0.4);
+    touch-action: none;
   }
 
-  /* Zone Droite (Caméra + Saut) */
+  /* Zone droite éloignée du bas pour pas déclencher le switch d'appli */
   #touch-zone-right {
     position: absolute;
-    bottom: 0; right: 0;
-    width: 50%; height: 100%;
+    bottom: 5%; right: 0;
+    width: 50%; height: 85%;
     pointer-events: auto;
+    touch-action: none;
   }
   #jumpButton {
     position: absolute;
-    bottom: 50px; right: 40px;
+    bottom: 30px; right: 40px;
     width: 75px; height: 75px;
-    background: rgba(0, 0, 0, 0.35);
+    background: rgba(0, 0, 0, 0.4);
     border: 2px solid rgba(255, 255, 255, 0.4);
     border-radius: 50%;
     color: white;
     font-weight: 800;
     font-size: 14px;
-    letter-spacing: 0.5px;
     backdrop-filter: blur(10px);
     display: flex;
     justify-content: center;
     align-items: center;
     box-shadow: 0 8px 32px rgba(0,0,0,0.3);
     cursor: pointer;
-  }
-  #jumpButton:active {
-    background: rgba(255, 255, 255, 0.2);
-    transform: scale(0.92);
+    touch-action: none;
   }
 
   canvas { display: block; width: 100%; height: 100%; }
@@ -150,15 +128,11 @@
 <body>
 
 <div id="ui-menu">
-  <h1>AVENTURE MULTI-ISLANDS</h1>
-  <button id="playButton">START GAME</button>
+  <h1>AVENTURE MOBILE</h1>
+  <button id="playButton">START</button>
 </div>
 
 <div id="game-ui">
-  <div id="pc-info" id="infoBox">
-    🎮 <b>Commandes :</b> ZQSD / Joystick + Glisser pour tourner la caméra
-  </div>
-  
   <div id="touch-zone-left">
     <div id="joystickContainer">
       <div id="joystickPoint"></div>
@@ -173,17 +147,21 @@
 <script src="https://cdn.jsdelivr.net/npm/three@0.152.0/build/three.min.js"></script>
 
 <script>
-// Blocage des gestes parasites natifs du téléphone
-document.addEventListener('touchmove', (e) => { if (e.scale !== 1) e.preventDefault(); }, { passive: false });
+// SÉCURITÉ ULTRA INTERNATIONALE : Bloque les gestes Safari et iOS
+document.addEventListener('touchmove', (e) => {
+  if (e.touches.length > 1 || e.scale !== 1) {
+    e.preventDefault(); 
+  }
+}, { passive: false });
 
-const CONFIG = {
-  playerSpeed: 8,
-  jumpForce: 13,
-  gravity: 34,
-  cameraSensitivity: 0.007,
-  worldSize: 120
-};
+// Bloque le double-tap magique qui fait zoomer la page par erreur
+document.addEventListener('touchstart', (e) => {
+  if (e.touches.length > 1) {
+    e.preventDefault();
+  }
+}, { passive: false });
 
+const CONFIG = { playerSpeed: 8, jumpForce: 13, gravity: 34, cameraSensitivity: 0.008, worldSize: 120 };
 let scene, camera, renderer, clock;
 let character, leftArm, rightArm, leftLeg, rightLeg;
 let velocityY = 0, isGrounded = true;
@@ -191,12 +169,7 @@ let moveDirection = { x: 0, z: 0 };
 let inputState = { forward: 0, backward: 0, left: 0, right: 0 };
 let collidableObjects = [];
 
-let cameraOrbit = {
-  radius: 9,
-  theta: Math.PI / 4,
-  phi: Math.PI / 3.5,
-  targetY: 1.4
-};
+let cameraOrbit = { radius: 9, theta: Math.PI / 4, phi: Math.PI / 3.5, targetY: 1.4 };
 
 document.getElementById('playButton').addEventListener('click', () => {
   document.getElementById('ui-menu').style.opacity = '0';
@@ -204,13 +177,7 @@ document.getElementById('playButton').addEventListener('click', () => {
     document.getElementById('ui-menu').style.display = 'none';
     document.getElementById('game-ui').style.display = 'block';
     setupGame();
-    
-    // Disparition de la notice après 4s pour nettoyer l'écran mobile
-    setTimeout(() => {
-      const info = document.getElementById('pc-info');
-      if(info) info.style.opacity = '0';
-    }, 4000);
-  }, 600);
+  }, 500);
 });
 
 function setupGame() {
@@ -230,16 +197,13 @@ function initScene() {
   camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
   
   renderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: "high-performance" });
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2)); // Évite le flou sur les écrans Retina/OLED
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
   renderer.setSize(window.innerWidth, window.innerHeight);
   renderer.shadowMap.enabled = true;
   renderer.shadowMap.type = THREE.PCFSoftShadowMap;
   document.body.appendChild(renderer.domElement);
 
-  // Lumières travaillées
-  const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
-  scene.add(ambientLight);
-
+  scene.add(new THREE.AmbientLight(0xffffff, 0.6));
   const hemiLight = new THREE.HemisphereLight(0xffffff, 0x8d99ae, 0.4);
   hemiLight.position.set(0, 200, 0);
   scene.add(hemiLight);
@@ -247,21 +211,13 @@ function initScene() {
   const dirLight = new THREE.DirectionalLight(0xfff3e0, 0.8);
   dirLight.position.set(30, 50, 20);
   dirLight.castShadow = true;
-  dirLight.shadow.camera.top = 60;
-  dirLight.shadow.camera.bottom = -60;
-  dirLight.shadow.camera.left = -60;
-  dirLight.shadow.camera.right = 60;
-  dirLight.shadow.mapSize.width = 1024;
-  dirLight.shadow.mapSize.height = 1024;
   scene.add(dirLight);
 
   window.addEventListener('resize', onWindowResize);
 }
 
-// Génération d'éléments de décor stylisés (Arbres, Rochers, Plateformes)
 function createTree(x, z) {
   const tree = new THREE.Group();
-  
   const trunkGeo = new THREE.CylinderGeometry(0.2, 0.4, 2.5, 5);
   const trunkMat = new THREE.MeshStandardMaterial({ color: 0x5c4033, roughness: 0.9 });
   const trunk = new THREE.Mesh(trunkGeo, trunkMat);
@@ -278,7 +234,7 @@ function createTree(x, z) {
 
   tree.position.set(x, 0, z);
   scene.add(tree);
-  collidableObjects.push(trunk); // Seul le tronc bloque le joueur
+  collidableObjects.push(trunk);
 }
 
 function createRock(x, z, scale) {
@@ -288,7 +244,6 @@ function createRock(x, z, scale) {
   rock.position.set(x, scale * 0.7, z);
   rock.scale.set(1, 1.3, 1);
   rock.castShadow = true;
-  rock.receiveShadow = true;
   scene.add(rock);
   collidableObjects.push(rock);
 }
@@ -305,7 +260,6 @@ function createPlatform(x, y, z, w, h, d) {
 }
 
 function initEnvironment() {
-  // Sol principal en pavés stylisés (via pattern répétitif sans image externe)
   const floorGeo = new THREE.PlaneGeometry(CONFIG.worldSize, CONFIG.worldSize);
   const floorMat = new THREE.MeshStandardMaterial({ color: 0x4caf50, roughness: 0.9 });
   const floor = new THREE.Mesh(floorGeo, floorMat);
@@ -313,30 +267,22 @@ function initEnvironment() {
   floor.receiveShadow = true;
   scene.add(floor);
 
-  // Ajout de détails visuels au sol (quadrillage premium discret)
   const grid = new THREE.GridHelper(CONFIG.worldSize, 40, 0x388e3c, 0x388e3c);
   grid.position.y = 0.02;
   scene.add(grid);
 
-  // Génération de la map
-  // Zone de spawn libre
   for(let i=0; i<25; i++) {
     let rx = (Math.random() - 0.5) * (CONFIG.worldSize - 30);
     let rz = (Math.random() - 0.5) * (CONFIG.worldSize - 30);
-    if (Math.abs(rx) > 10 || Math.abs(rz) > 10) {
-      createTree(rx, rz);
-    }
+    if (Math.abs(rx) > 10 || Math.abs(rz) > 10) createTree(rx, rz);
   }
 
   for(let i=0; i<12; i++) {
     let rx = (Math.random() - 0.5) * (CONFIG.worldSize - 30);
     let rz = (Math.random() - 0.5) * (CONFIG.worldSize - 30);
-    if (Math.abs(rx) > 10 || Math.abs(rz) > 10) {
-      createRock(rx, rz, 1.5 + Math.random()*2);
-    }
+    if (Math.abs(rx) > 10 || Math.abs(rz) > 10) createRock(rx, rz, 1.5 + Math.random()*2);
   }
 
-  // Plateformes de saut (Zone d'entraînement)
   createPlatform(10, 0, -10, 6, 1.5, 6);
   createPlatform(18, 0, -12, 5, 3.0, 5);
   createPlatform(25, 0, -5, 6, 4.5, 6);
@@ -348,59 +294,47 @@ function initCharacter() {
   const torsoMat = new THREE.MeshStandardMaterial({ color: 0x29b6f6, roughness: 0.4 });
   const pantsMat = new THREE.MeshStandardMaterial({ color: 0x263238, roughness: 0.5 });
 
-  // Torse
   const torsoGeo = new THREE.BoxGeometry(0.8, 1.2, 0.4);
   const torso = new THREE.Mesh(torsoGeo, torsoMat);
   torso.position.y = 1.3;
   torso.castShadow = true;
   character.add(torso);
 
-  // Tête
   const headGeo = new THREE.BoxGeometry(0.52, 0.52, 0.52);
   const head = new THREE.Mesh(headGeo, skinMat);
   head.position.y = 2.15;
   head.castShadow = true;
   character.add(head);
 
-  // Visage Roblox Classique (Yeux + Sourire)
   const faceContainer = new THREE.Group();
   const eyeGeo = new THREE.BoxGeometry(0.08, 0.08, 0.02);
   const faceMat = new THREE.MeshBasicMaterial({ color: 0x111111 });
-  
   const leftEye = new THREE.Mesh(eyeGeo, faceMat);
   leftEye.position.set(-0.12, 2.2, 0.27);
   const rightEye = leftEye.clone();
   rightEye.position.x = 0.12;
-  
   const mouthGeo = new THREE.BoxGeometry(0.18, 0.04, 0.02);
   const mouth = new THREE.Mesh(mouthGeo, faceMat);
   mouth.position.set(0, 2.05, 0.27);
-  
   faceContainer.add(leftEye, rightEye, mouth);
   character.add(faceContainer);
 
-  // Bras animés
   const armGeo = new THREE.BoxGeometry(0.32, 1.1, 0.32);
   armGeo.translate(0, -0.45, 0);
-
   leftArm = new THREE.Mesh(armGeo, skinMat);
   leftArm.position.set(-0.58, 1.85, 0);
   leftArm.castShadow = true;
   character.add(leftArm);
-
   rightArm = leftArm.clone();
   rightArm.position.x = 0.58;
   character.add(rightArm);
 
-  // Jambes animées
   const legGeo = new THREE.BoxGeometry(0.36, 1.1, 0.36);
   legGeo.translate(0, -0.45, 0);
-
   leftLeg = new THREE.Mesh(legGeo, pantsMat);
   leftLeg.position.set(-0.22, 0.95, 0);
   leftLeg.castShadow = true;
   character.add(leftLeg);
-
   rightLeg = leftLeg.clone();
   rightLeg.position.x = 0.22;
   character.add(rightLeg);
@@ -409,7 +343,6 @@ function initCharacter() {
 }
 
 function initControls() {
-  // Clavier PC
   window.addEventListener('keydown', (e) => {
     switch (e.code) {
       case 'KeyW': inputState.forward = 1; break;
@@ -428,13 +361,14 @@ function initControls() {
     }
   });
 
-  // Joystick Tactile Fluide
+  // Utilisation exclusive des PointerEvents avec e.preventDefault() forcé pour briser iOS
   const joystickZone = document.getElementById('touch-zone-left');
   const joystickPoint = document.getElementById('joystickPoint');
   let joyPointerId = null;
   let joyStartX = 0, joyStartY = 0;
 
   joystickZone.addEventListener('pointerdown', (e) => {
+    e.preventDefault();
     joyPointerId = e.pointerId;
     joyStartX = e.clientX;
     joyStartY = e.clientY;
@@ -442,6 +376,7 @@ function initControls() {
 
   window.addEventListener('pointermove', (e) => {
     if (e.pointerId === joyPointerId) {
+      e.preventDefault();
       const dx = e.clientX - joyStartX;
       const dy = e.clientY - joyStartY;
       const maxLimit = 45;
@@ -452,7 +387,6 @@ function initControls() {
       const moveY = Math.sin(angle) * distance;
 
       joystickPoint.style.transform = `translate(${moveX}px, ${moveY}px)`;
-
       moveDirection.x = moveX / maxLimit;
       moveDirection.z = moveY / maxLimit;
     }
@@ -467,15 +401,14 @@ function initControls() {
     }
   };
   window.addEventListener('pointerup', stopJoystick);
-  window.addEventListener('pointercancel', stopJoystick);
 
-  // Caméra Orbite Glisser (Zone Droite)
   const cameraZone = document.getElementById('touch-zone-right');
   let camPointerId = null;
   let prevCamX = 0, prevCamY = 0;
 
   cameraZone.addEventListener('pointerdown', (e) => {
     if(e.target.id === 'jumpButton') return;
+    e.preventDefault();
     camPointerId = e.pointerId;
     prevCamX = e.clientX;
     prevCamY = e.clientY;
@@ -483,6 +416,7 @@ function initControls() {
 
   window.addEventListener('pointermove', (e) => {
     if (e.pointerId === camPointerId) {
+      e.preventDefault();
       const movementX = e.clientX - prevCamX;
       const movementY = e.clientY - prevCamY;
 
@@ -498,6 +432,7 @@ function initControls() {
   window.addEventListener('pointerup', (e) => { if (e.pointerId === camPointerId) camPointerId = null; });
 
   document.getElementById('jumpButton').addEventListener('pointerdown', (e) => {
+    e.preventDefault();
     e.stopPropagation();
     triggerJump();
   });
@@ -545,41 +480,31 @@ function updatePhysics(delta) {
 
   if (moveVector.lengthSq() > 1) moveVector.normalize();
 
-  // Sauvegarde ancienne position avant déplacement (Utile si collision)
   const oldPos = character.position.clone();
   character.position.addScaledVector(moveVector, CONFIG.playerSpeed * delta);
 
-  // Système de collision boite/cylindre ultra-simplifié avec les décors
   const playerRadius = 0.5;
   for (let obj of collidableObjects) {
-    // Calcul de la position mondiale de l'obstacle
     const objPos = new THREE.Vector3();
     obj.getWorldPosition(objPos);
     
-    // Si c'est une plateforme (Box)
     if(obj.geometry.type === "BoxGeometry") {
       const boxWidth = obj.geometry.parameters.width;
       const boxDepth = obj.geometry.parameters.depth;
       const boxHeight = obj.geometry.parameters.height;
 
-      // Détection de collision sur l'axe horizontal AABB
       if (Math.abs(character.position.x - objPos.x) < (boxWidth/2 + playerRadius) &&
           Math.abs(character.position.z - objPos.z) < (boxDepth/2 + playerRadius)) {
-          
-          // Si on est au dessus de la plateforme, on atterrit dessus
           if (oldPos.y >= (objPos.y + boxHeight/2 - 0.2)) {
             character.position.y = objPos.y + boxHeight/2;
             velocityY = 0;
             isGrounded = true;
           } else {
-            // Sinon on est bloqué sur les côtés (Mur)
             character.position.x = oldPos.x;
             character.position.z = oldPos.z;
           }
       }
-    } 
-    // Si c'est un tronc d'arbre ou un rocher arrondi
-    else {
+    } else {
       const distXZ = Math.sqrt(Math.pow(character.position.x - objPos.x, 2) + Math.pow(character.position.z - objPos.z, 2));
       if (distXZ < (playerRadius + 0.4) && character.position.y < 2) {
         character.position.x = oldPos.x;
@@ -598,18 +523,15 @@ function updatePhysics(delta) {
     character.userData.isMoving = false;
   }
 
-  // Gravité
   velocityY -= CONFIG.gravity * delta;
   character.position.y += velocityY * delta;
 
-  // Collision sol de base
   if (character.position.y <= 0) {
     character.position.y = 0;
     velocityY = 0;
     isGrounded = true;
   }
 
-  // Maintien dans les limites de la map
   const halfSize = CONFIG.worldSize / 2 - 1;
   character.position.x = Math.max(-halfSize, Math.min(halfSize, character.position.x));
   character.position.z = Math.max(-halfSize, Math.min(halfSize, character.position.z));
@@ -617,25 +539,16 @@ function updatePhysics(delta) {
 
 function updateCharacterAnimations() {
   const time = performance.now() * 0.009;
-  
   if (!isGrounded) {
-    leftArm.rotation.x = -Math.PI;
-    rightArm.rotation.x = -Math.PI;
-    leftLeg.rotation.x = 0.2;
-    rightLeg.rotation.x = -0.2;
-  } 
-  else if (character.userData.isMoving) {
+    leftArm.rotation.x = -Math.PI; rightArm.rotation.x = -Math.PI;
+    leftLeg.rotation.x = 0.2; rightLeg.rotation.x = -0.2;
+  } else if (character.userData.isMoving) {
     const wave = Math.sin(time * 1.6);
-    leftLeg.rotation.x = wave * 0.65;
-    rightLeg.rotation.x = -wave * 0.65;
-    leftArm.rotation.x = -wave * 0.65;
-    rightArm.rotation.x = wave * 0.65;
-  } 
-  else {
-    leftLeg.rotation.x *= 0.8;
-    rightLeg.rotation.x *= 0.8;
-    leftArm.rotation.x *= 0.8;
-    rightArm.rotation.x *= 0.8;
+    leftLeg.rotation.x = wave * 0.65; rightLeg.rotation.x = -wave * 0.65;
+    leftArm.rotation.x = -wave * 0.65; rightArm.rotation.x = wave * 0.65;
+  } else {
+    leftLeg.rotation.x *= 0.8; rightLeg.rotation.x *= 0.8;
+    leftArm.rotation.x *= 0.8; rightArm.rotation.x *= 0.8;
   }
 }
 
@@ -644,13 +557,11 @@ function updateCamera() {
   const targetY = character.position.y + cameraOrbit.targetY + cameraOrbit.radius * Math.sin(cameraOrbit.phi);
   const targetZ = character.position.z + cameraOrbit.radius * Math.cos(cameraOrbit.theta) * Math.cos(cameraOrbit.phi);
 
-  // Fluidité amortie du suivi caméra (Lerp)
   camera.position.x += (targetX - camera.position.x) * 0.12;
   camera.position.y += (targetY - camera.position.y) * 0.12;
   camera.position.z += (targetZ - camera.position.z) * 0.12;
 
-  const lookTarget = new THREE.Vector3(character.position.x, character.position.y + cameraOrbit.targetY, character.position.z);
-  camera.lookAt(lookTarget);
+  camera.lookAt(new THREE.Vector3(character.position.x, character.position.y + cameraOrbit.targetY, character.position.z));
 }
 
 function onWindowResize() {
