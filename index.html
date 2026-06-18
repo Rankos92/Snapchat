@@ -2,19 +2,29 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
-<title>Roblox Prototype Standard Pro - Three.js</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>Roblox Prototype Mobile Fix - Three.js</title>
 <style>
   * {
     box-sizing: border-box;
     user-select: none;
     -webkit-user-select: none;
+    /* Désactive le surlignage bleu au clic sur mobile */
+    -webkit-tap-highlight-color: transparent; 
   }
-  body { 
-    margin: 0; 
-    overflow: hidden; 
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+  
+  html, body {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
     background: #111;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    /* CRUCIAL : Bloque le pull-to-refresh et les gestes de navigation du téléphone */
+    touch-action: none; 
   }
 
   /* Écran de démarrage */
@@ -31,12 +41,14 @@
   }
   #ui-menu h1 {
     color: white;
-    font-size: 3rem;
+    font-size: 2.5rem;
     margin-bottom: 20px;
     text-shadow: 0 4px 10px rgba(0,0,0,0.3);
+    text-align: center;
+    padding: 0 10px;
   }
   #playButton {
-    font-size: 24px;
+    font-size: 22px;
     font-weight: bold;
     padding: 15px 50px;
     background: #00e676;
@@ -47,16 +59,12 @@
     box-shadow: 0 4px 15px rgba(0,230,118,0.4);
     transition: transform 0.2s, background 0.2s;
   }
-  #playButton:hover {
-    transform: scale(1.05);
-    background: #00c853;
-  }
 
   /* Interface de Jeu */
   #game-ui {
     position: absolute;
     top: 0; left: 0; width: 100%; height: 100%;
-    pointer-events: none; /* Laisse passer les clics vers le canvas */
+    pointer-events: none;
     display: none;
   }
 
@@ -64,13 +72,14 @@
   #touch-zone-left {
     position: absolute;
     bottom: 0; left: 0;
-    width: 50%; height: 60%;
+    width: 50%; height: 70%;
     pointer-events: auto;
+    touch-action: none;
   }
   #joystickContainer {
     position: absolute;
-    bottom: 40px; left: 40px;
-    width: 140px; height: 140px;
+    bottom: 50px; left: 50px;
+    width: 130px; height: 130px;
     background: rgba(255, 255, 255, 0.15);
     border: 2px solid rgba(255, 255, 255, 0.3);
     border-radius: 50%;
@@ -78,13 +87,14 @@
     display: flex;
     justify-content: center;
     align-items: center;
+    touch-action: none;
   }
   #joystickPoint {
-    width: 50px; height: 50px;
+    width: 45px; height: 45px;
     background: #ffffff;
     border-radius: 50%;
     box-shadow: 0 4px 10px rgba(0,0,0,0.3);
-    transition: transform 0.05s linear;
+    touch-action: none;
   }
 
   /* Zone tactile droite : Caméra & Saut */
@@ -93,29 +103,30 @@
     bottom: 0; right: 0;
     width: 50%; height: 100%;
     pointer-events: auto;
+    touch-action: none;
   }
   #jumpButton {
     position: absolute;
-    bottom: 50px; right: 50px;
-    width: 80px; height: 80px;
+    bottom: 70px; right: 50px;
+    width: 75px; height: 75px;
     background: rgba(255, 255, 255, 0.25);
     border: 3px solid #fff;
     border-radius: 50%;
     color: white;
     font-weight: bold;
-    font-size: 18px;
+    font-size: 16px;
     display: flex;
     justify-content: center;
     align-items: center;
     box-shadow: 0 4px 10px rgba(0,0,0,0.2);
     cursor: pointer;
+    touch-action: none;
   }
   #jumpButton:active {
     background: rgba(255, 255, 255, 0.5);
     transform: scale(0.95);
   }
 
-  /* Indicateur de contrôles pour PC */
   #pc-info {
     position: absolute;
     top: 15px; left: 15px;
@@ -123,26 +134,23 @@
     background: rgba(0,0,0,0.5);
     padding: 10px 15px;
     border-radius: 8px;
-    font-size: 13px;
+    font-size: 12px;
     pointer-events: none;
   }
 
-  canvas { display: block; width: 100vw; height: 100vh; }
+  canvas { display: block; width: 100%; height: 100%; }
 </style>
 </head>
 <body>
 
 <div id="ui-menu">
-  <h1>ROBLOX SANDBOX 3D</h1>
-  <button id="playButton">COMMENCER</button>
+  <h1>ROBLOX PROTOTYPE MOBILE</h1>
+  <button id="playButton">JOUER</button>
 </div>
 
 <div id="game-ui">
   <div id="pc-info">
-    <strong>Contrôles PC :</strong><br>
-    • Z, Q, S, D ou Flèches : Se déplacer<br>
-    • Espace : Sauter<br>
-    • Clic gauche + Glisser : Tourner la caméra
+    <strong>Contrôles PC :</strong> ZQSD + Espace + Glisser Souris
   </div>
   
   <div id="touch-zone-left">
@@ -159,34 +167,32 @@
 <script src="https://cdn.jsdelivr.net/npm/three@0.152.0/build/three.min.js"></script>
 
 <script>
-// --- CONFIGURATION DU JEU ---
+// Empêcher complètement les gestes par défaut sur toute la page (anti-bug de glissement)
+document.addEventListener('touchmove', (e) => {
+  if (e.scale !== 1) { e.preventDefault(); } // Bloque aussi le zoom à deux doigts
+}, { passive: false });
+
 const CONFIG = {
   playerSpeed: 7,
   jumpForce: 12,
   gravity: 32,
-  cameraSensitivity: 0.005,
+  cameraSensitivity: 0.006,
   worldSize: 100
 };
 
-// --- VARIABLES GLOBALES ---
 let scene, camera, renderer, clock;
 let character, leftArm, rightArm, leftLeg, rightLeg;
-
-// Physique & États
-let velocityY = 0;
-let isGrounded = true;
+let velocityY = 0, isGrounded = true;
 let moveDirection = { x: 0, z: 0 };
 let inputState = { forward: 0, backward: 0, left: 0, right: 0 };
 
-// Caméra Orbite (Style Roblox)
 let cameraOrbit = {
   radius: 8,
-  theta: Math.PI / 4, // Rotation horizontale
-  phi: Math.PI / 3,    // Rotation verticale
+  theta: Math.PI / 4,
+  phi: Math.PI / 3,
   targetY: 1.5
 };
 
-// --- INITIALISATION AU CLIC PLAY ---
 document.getElementById('playButton').addEventListener('click', () => {
   document.getElementById('ui-menu').style.opacity = '0';
   setTimeout(() => {
@@ -198,19 +204,15 @@ document.getElementById('playButton').addEventListener('click', () => {
 
 function setupGame() {
   clock = new THREE.Clock();
-  
   initScene();
   initEnvironment();
   initCharacter();
   initControls();
-  
   animate();
 }
 
-// --- CREATION DE LA SCENE ---
 function initScene() {
   scene = new THREE.Scene();
-  // Brouillard pour donner de la profondeur
   scene.fog = new THREE.FogExp2(0x87ceeb, 0.015);
 
   camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
@@ -221,7 +223,6 @@ function initScene() {
   renderer.shadowMap.type = THREE.PCFSoftShadowMap;
   document.body.appendChild(renderer.domElement);
 
-  // Lumières
   const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
   scene.add(ambientLight);
 
@@ -236,26 +237,18 @@ function initScene() {
   dirLight.shadow.camera.bottom = -50;
   dirLight.shadow.camera.left = -50;
   dirLight.shadow.camera.right = 50;
-  dirLight.shadow.camera.near = 0.1;
-  dirLight.shadow.camera.far = 200;
-  dirLight.shadow.mapSize.width = 2048;
-  dirLight.shadow.mapSize.height = 2048;
+  dirLight.shadow.mapSize.width = 1024;
+  dirLight.shadow.mapSize.height = 1024;
   scene.add(dirLight);
 
   window.addEventListener('resize', onWindowResize);
 }
 
-// --- GENERATION DU MONDE ---
 function initEnvironment() {
-  // Ciel / Arrière-plan
   renderer.setClearColor(0x87ceeb, 1);
 
-  // Sol texturé par grille
   const floorGeo = new THREE.PlaneGeometry(CONFIG.worldSize, CONFIG.worldSize);
-  const floorMat = new THREE.MeshStandardMaterial({ 
-    color: 0x3a9d23, 
-    roughness: 0.8 
-  });
+  const floorMat = new THREE.MeshStandardMaterial({ color: 0x3a9d23, roughness: 0.8 });
   const floor = new THREE.Mesh(floorGeo, floorMat);
   floor.rotation.x = -Math.PI / 2;
   floor.receiveShadow = true;
@@ -265,49 +258,39 @@ function initEnvironment() {
   grid.position.y = 0.01;
   scene.add(grid);
 
-  // Obstacles de test (Cubes colorés)
+  // Obstacles
   const boxGeo = new THREE.BoxGeometry(3, 3, 3);
   for(let i=0; i<15; i++) {
-    const boxMat = new THREE.MeshStandardMaterial({ 
-      color: Math.random() * 0xffffff,
-      roughness: 0.4
-    });
+    const boxMat = new THREE.MeshStandardMaterial({ color: Math.random() * 0xffffff, roughness: 0.4 });
     const box = new THREE.Mesh(boxGeo, boxMat);
-    box.position.set(
-      (Math.random() - 0.5) * (CONFIG.worldSize - 20),
-      1.5,
-      (Math.random() - 0.5) * (CONFIG.worldSize - 20)
-    );
+    box.position.set((Math.random() - 0.5) * (CONFIG.worldSize - 20), 1.5, (Math.random() - 0.5) * (CONFIG.worldSize - 20));
     box.castShadow = true;
     box.receiveShadow = true;
     scene.add(box);
   }
 }
 
-// --- DESIGN DU PERSONNAGE (Modulaire pour Animations) ---
 function initCharacter() {
   character = new THREE.Group();
-
-  // Matériaux de base
   const skinMat = new THREE.MeshStandardMaterial({ color: 0xffdbac, roughness: 0.6 });
-  const torsoMat = new THREE.MeshStandardMaterial({ color: 0x00bcd4, roughness: 0.5 }); // Bleu Roblox
+  const torsoMat = new THREE.MeshStandardMaterial({ color: 0x00bcd4, roughness: 0.5 });
   const pantsMat = new THREE.MeshStandardMaterial({ color: 0x3f51b5, roughness: 0.5 });
 
-  // 1. Torse (Pivot central du corps)
+  // Torse
   const torsoGeo = new THREE.BoxGeometry(0.8, 1.2, 0.4);
   const torso = new THREE.Mesh(torsoGeo, torsoMat);
   torso.position.y = 1.3;
   torso.castShadow = true;
   character.add(torso);
 
-  // 2. Tête
+  // Tête
   const headGeo = new THREE.BoxGeometry(0.5, 0.5, 0.5);
   const head = new THREE.Mesh(headGeo, skinMat);
   head.position.y = 2.1;
   head.castShadow = true;
   character.add(head);
 
-  // Visage pixelisé simple
+  // Yeux
   const eyeGeo = new THREE.BoxGeometry(0.08, 0.08, 0.02);
   const eyeMat = new THREE.MeshBasicMaterial({ color: 0x111111 });
   const leftEye = new THREE.Mesh(eyeGeo, eyeMat);
@@ -316,9 +299,9 @@ function initCharacter() {
   rightEye.position.x = 0.12;
   character.add(leftEye, rightEye);
 
-  // 3. BRAS (Avec groupe pivot pour rotation naturelle)
+  // Bras
   const armGeo = new THREE.BoxGeometry(0.3, 1.0, 0.3);
-  armGeo.translate(0, -0.4, 0); // Décale le mesh vers le bas pour mettre le pivot en haut
+  armGeo.translate(0, -0.4, 0);
 
   leftArm = new THREE.Mesh(armGeo, skinMat);
   leftArm.position.set(-0.6, 1.8, 0);
@@ -329,9 +312,9 @@ function initCharacter() {
   rightArm.position.x = 0.6;
   character.add(rightArm);
 
-  // 4. JAMBES
+  // Jambes
   const legGeo = new THREE.BoxGeometry(0.35, 1.0, 0.35);
-  legGeo.translate(0, -0.4, 0); // Pivot au niveau de la hanche
+  legGeo.translate(0, -0.4, 0);
 
   leftLeg = new THREE.Mesh(legGeo, pantsMat);
   leftLeg.position.set(-0.22, 0.9, 0);
@@ -342,14 +325,11 @@ function initCharacter() {
   rightLeg.position.x = 0.22;
   character.add(rightLeg);
 
-  // Ajustement de la hauteur générale
-  character.position.set(0, 0, 0);
   scene.add(character);
 }
 
-// --- ETRE DE CONTROLE & CAPTEURS TACTILES ---
 function initControls() {
-  // --- CLAVIER PC ---
+  // Clavier PC
   window.addEventListener('keydown', (e) => {
     switch (e.code) {
       case 'KeyW': case 'ArrowUp':    inputState.forward = 1; break;
@@ -359,7 +339,6 @@ function initControls() {
       case 'Space':                   triggerJump(); break;
     }
   });
-
   window.addEventListener('keyup', (e) => {
     switch (e.code) {
       case 'KeyW': case 'ArrowUp':    inputState.forward = 0; break;
@@ -369,14 +348,13 @@ function initControls() {
     }
   });
 
-  // --- CONFIGURATION JOYSTICK TACTILE ---
+  // Tactile Gauche : Joystick
   const joystickZone = document.getElementById('touch-zone-left');
   const joystickPoint = document.getElementById('joystickPoint');
   let joyPointerId = null;
   let joyStartX = 0, joyStartY = 0;
 
   joystickZone.addEventListener('pointerdown', (e) => {
-    if (joyPointerId !== null) return;
     joyPointerId = e.pointerId;
     joyStartX = e.clientX;
     joyStartY = e.clientY;
@@ -395,7 +373,6 @@ function initControls() {
 
       joystickPoint.style.transform = `translate(${moveX}px, ${moveY}px)`;
 
-      // Liaison avec les vecteurs de mouvements
       moveDirection.x = moveX / maxLimit;
       moveDirection.z = moveY / maxLimit;
     }
@@ -412,13 +389,12 @@ function initControls() {
   window.addEventListener('pointerup', stopJoystick);
   window.addEventListener('pointercancel', stopJoystick);
 
-  // --- SOURIS & GLISSEMENT ECRAN (Caméra type Roblox) ---
+  // Tactile Droite : Caméra Orbite
   const cameraZone = document.getElementById('touch-zone-right');
   let camPointerId = null;
   let prevCamX = 0, prevCamY = 0;
 
   cameraZone.addEventListener('pointerdown', (e) => {
-    // Si on clique sur le bouton Jump, on annule la rotation caméra
     if(e.target.id === 'jumpButton') return;
     camPointerId = e.pointerId;
     prevCamX = e.clientX;
@@ -432,8 +408,6 @@ function initControls() {
 
       cameraOrbit.theta -= movementX * CONFIG.cameraSensitivity;
       cameraOrbit.phi -= movementY * CONFIG.cameraSensitivity;
-
-      // Verrouillage vertical pour éviter de retourner la caméra cul par dessus tête
       cameraOrbit.phi = Math.max(0.1, Math.min(Math.PI / 2 - 0.05, cameraOrbit.phi));
 
       prevCamX = e.clientX;
@@ -445,7 +419,6 @@ function initControls() {
     if (e.pointerId === camPointerId) camPointerId = null;
   });
 
-  // Action Bouton Jump Mobile
   document.getElementById('jumpButton').addEventListener('pointerdown', (e) => {
     e.stopPropagation();
     triggerJump();
@@ -459,12 +432,10 @@ function triggerJump() {
   }
 }
 
-// --- BOUCLE DE MISE À JOUR (TICK) ---
 function animate() {
   requestAnimationFrame(animate);
-
   const delta = clock.getDelta();
-  if(delta > 0.1) return; // Sécurité anti-lag
+  if(delta > 0.1) return;
 
   updatePhysics(delta);
   updateCharacterAnimations();
@@ -473,9 +444,7 @@ function animate() {
   renderer.render(scene, camera);
 }
 
-// --- CALCUL DES DEPLACEMENTS ET DE LA PHYSIQUE ---
 function updatePhysics(delta) {
-  // 1. Récupération des entrées clavier si le joystick n'est pas utilisé
   let xInput = moveDirection.x;
   let zInput = moveDirection.z;
 
@@ -484,8 +453,6 @@ function updatePhysics(delta) {
     zInput = inputState.backward - inputState.forward;
   }
 
-  // 2. Calcul des vecteurs de direction par rapport à la caméra
-  // Permet de reculer quand on pousse le joystick vers le bas *par rapport à l'écran*
   const camForward = new THREE.Vector3(0, 0, -1).applyQuaternion(camera.quaternion);
   camForward.y = 0;
   camForward.normalize();
@@ -500,15 +467,11 @@ function updatePhysics(delta) {
 
   if (moveVector.lengthSq() > 1) moveVector.normalize();
 
-  // 3. Déplacement du personnage
   character.position.addScaledVector(moveVector, CONFIG.playerSpeed * delta);
 
-  // Rotation douce vers la direction de déplacement
   if (moveVector.lengthSq() > 0.001) {
     const targetAngle = Math.atan2(moveVector.x, moveVector.z);
-    // Interpolation linéaire de l'angle pour fluidifier le demi-tour
     let diff = targetAngle - character.rotation.y;
-    // Normalisation de l'angle entre -PI et PI
     diff = Math.atan2(Math.sin(diff), Math.cos(diff));
     character.rotation.y += diff * 15 * delta;
     character.userData.isMoving = true;
@@ -516,46 +479,37 @@ function updatePhysics(delta) {
     character.userData.isMoving = false;
   }
 
-  // 4. Gravité et gestion du saut
   velocityY -= CONFIG.gravity * delta;
   character.position.y += velocityY * delta;
 
-  // Collision basique avec le sol naturel
   if (character.position.y <= 0) {
     character.position.y = 0;
     velocityY = 0;
     isGrounded = true;
   }
 
-  // Limites de la map mondiale
   const halfSize = CONFIG.worldSize / 2 - 1;
   character.position.x = Math.max(-halfSize, Math.min(halfSize, character.position.x));
   character.position.z = Math.max(-halfSize, Math.min(halfSize, character.position.z));
 }
 
-// --- MOTEUR D'ANIMATION PROCÉDURALE ---
 function updateCharacterAnimations() {
-  const time = performance.now() * 0.008; // Vitesse de l'animation
+  const time = performance.now() * 0.008;
   
   if (!isGrounded) {
-    // Animation de Saut (Bras en l'air, jambes figées)
     leftArm.rotation.x = -Math.PI;
     rightArm.rotation.x = -Math.PI;
     leftLeg.rotation.x = 0.2;
     rightLeg.rotation.x = -0.2;
   } 
   else if (character.userData.isMoving) {
-    // Animation de Course/Marche alternée en sinus (Style Roblox classique)
     const wave = Math.sin(time * 1.5);
-    
     leftLeg.rotation.x = wave * 0.6;
     rightLeg.rotation.x = -wave * 0.6;
-    
     leftArm.rotation.x = -wave * 0.6;
     rightArm.rotation.x = wave * 0.6;
   } 
   else {
-    // Retour doux à la position de repos (Idle)
     leftLeg.rotation.x *= 0.8;
     rightLeg.rotation.x *= 0.8;
     leftArm.rotation.x *= 0.8;
@@ -563,24 +517,19 @@ function updateCharacterAnimations() {
   }
 }
 
-// --- CALCUL ET SUIVI COMPORTEMENTAL CAMERA ---
 function updateCamera() {
-  // Calcul de la position orbitale sphérique autour du joueur
   const targetX = character.position.x + cameraOrbit.radius * Math.sin(cameraOrbit.theta) * Math.cos(cameraOrbit.phi);
   const targetY = character.position.y + cameraOrbit.targetY + cameraOrbit.radius * Math.sin(cameraOrbit.phi);
   const targetZ = character.position.z + cameraOrbit.radius * Math.cos(cameraOrbit.theta) * Math.cos(cameraOrbit.phi);
 
-  // Interpolation de la caméra (Lerp) pour donner un effet de fluidité cinématographique amorti
   camera.position.x += (targetX - camera.position.x) * 0.15;
   camera.position.y += (targetY - camera.position.y) * 0.15;
   camera.position.z += (targetZ - camera.position.z) * 0.15;
 
-  // La caméra regarde toujours le buste du personnage
   const lookTarget = new THREE.Vector3(character.position.x, character.position.y + cameraOrbit.targetY, character.position.z);
   camera.lookAt(lookTarget);
 }
 
-// --- REDIMENSIONNEMENT FENÊTRE ---
 function onWindowResize() {
   camera.aspect = window.innerWidth / window.innerHeight;
   camera.updateProjectionMatrix();
