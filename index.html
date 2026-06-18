@@ -1,15 +1,3 @@
-On change de braquet ! Si on veut du vrai **réalisme** dans les mouvements, il faut abandonner le style rigide "bloc" de Roblox et passer sur de la vraie physique d'articulation humaine (cinématique).
-Voici les grosses améliorations appliquées pour rendre le personnage et ses mouvements beaucoup plus réalistes :
-### 🏃‍♂️ Ce qui change sur le Personnage et les Mouvements :
- 1. **Anatomie humaine réaliste :** Le personnage n'est plus un assemblage de cubes. Il a maintenant des proportions humaines (tête, buste ovale, articulations distinctes pour les épaules, les coudes, les hanches et les genoux).
- 2. **Animation de course organique :** Les bras et les jambes se plient de façon fluide au niveau des coudes et des genoux en fonction de la vitesse, avec une légère inclinaison du torse vers l'avant quand il court, et un mouvement de haut en bas du bassin (oscillation réaliste).
- 3. **Effet d'inertie (Accélération / Freinage) :** Quand tu relâches le joystick, le personnage ne s'arrête pas net comme un robot : il glisse légèrement sur une fraction de seconde pour simuler son poids et l'élan (friction).
- 4. **Physique de saut naturelle :** Au moment du saut, le personnage plie les genoux, pousse, s'étire en l'air, puis amortit l'impact en se baissant légèrement lorsqu'il touche le sol.
-### ⚡ Côté Performance / Code :
- * J'ai rajouté énormément de lignes de calcul mathématique pour gérer toutes ces articulations séparément, sans que ça ne consomme plus sur ton iPhone.
- * La caméra reste ultra-instantanée et réactive avec les axes Roblox corrigés.
-Voici le tout nouveau script ultra-réaliste à tester :
-```html
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -578,5 +566,3 @@ function onWindowResize() {
 </script>
 </body>
 </html>
-
-```
