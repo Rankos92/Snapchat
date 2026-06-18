@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<title>Advanced Realistic Motion Engine</title>
+<title>Ultra Realistic Anatomy & Motion Engine</title>
 <style>
   * {
     box-sizing: border-box;
@@ -16,39 +16,46 @@
   html, body {
     width: 100%; height: 100vh; height: -webkit-fill-available;
     margin: 0; padding: 0; overflow: hidden;
-    background: #0f172a;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background: #090d16;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     touch-action: none; position: fixed;
   }
   #ui-menu {
     position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-    background: radial-gradient(circle at center, #1e293b 0%, #0f172a 100%);
+    background: radial-gradient(circle at center, #111827 0%, #030712 100%);
     display: flex; flex-direction: column; justify-content: center; align-items: center;
-    z-index: 100; transition: opacity 0.3s ease;
+    z-index: 100; transition: opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   }
   #ui-menu h1 {
-    color: #f8fafc; font-size: 2rem; font-weight: 800;
-    margin-bottom: 30px; text-align: center; letter-spacing: 2px;
+    color: #f3f4f6; font-size: 1.8rem; font-weight: 900;
+    margin-bottom: 5px; text-align: center; letter-spacing: 3px;
+    text-transform: uppercase;
+  }
+  #ui-menu p {
+    color: #9ca3af; font-size: 0.9rem; margin-bottom: 30px; letter-spacing: 1px;
   }
   #playButton {
-    font-size: 18px; font-weight: 700; padding: 16px 60px;
-    background: #3b82f6; color: #ffffff; border: none; border-radius: 50px;
-    cursor: pointer; box-shadow: 0 10px 25px rgba(59, 130, 246, 0.4);
+    font-size: 16px; font-weight: 800; padding: 18px 65px;
+    background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+    color: #ffffff; border: none; border-radius: 50px;
+    cursor: pointer; box-shadow: 0 10px 30px rgba(29, 78, 216, 0.4);
+    letter-spacing: 1px;
   }
   #game-ui { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; display: none; }
   #touch-zone-left { position: absolute; bottom: 5%; left: 5%; width: 40%; height: 60%; pointer-events: auto; touch-action: none; }
   #joystickContainer {
-    position: absolute; bottom: 20px; left: 20px; width: 110px; height: 110px;
-    background: rgba(255, 255, 255, 0.1); border: 2px solid rgba(255, 255, 255, 0.3);
-    border-radius: 50%; backdrop-filter: blur(10px); display: flex; justify-content: center; align-items: center;
+    position: absolute; bottom: 30px; left: 30px; width: 120px; height: 120px;
+    background: rgba(255, 255, 255, 0.05); border: 2px solid rgba(255, 255, 255, 0.2);
+    border-radius: 50%; backdrop-filter: blur(15px); display: flex; justify-content: center; align-items: center;
   }
-  #joystickPoint { width: 45px; height: 45px; background: #ffffff; border-radius: 50%; box-shadow: 0 4px 15px rgba(0,0,0,0.3); }
+  #joystickPoint { width: 50px; height: 50px; background: #ffffff; border-radius: 50%; box-shadow: 0 5px 20px rgba(0,0,0,0.4); }
   #touch-zone-right { position: absolute; bottom: 5%; right: 0; width: 50%; height: 85%; pointer-events: auto; touch-action: none; }
   #jumpButton {
-    position: absolute; bottom: 30px; right: 40px; width: 80px; height: 80px;
-    background: rgba(255, 255, 255, 0.1); border: 2px solid rgba(255, 255, 255, 0.4);
-    border-radius: 50%; color: white; font-weight: 800; font-size: 14px;
-    backdrop-filter: blur(10px); display: flex; justify-content: center; align-items: center;
+    position: absolute; bottom: 40px; right: 40px; width: 85px; height: 85px;
+    background: rgba(255, 255, 255, 0.05); border: 2px solid rgba(255, 255, 255, 0.3);
+    border-radius: 50%; color: white; font-weight: 900; font-size: 13px; letter-spacing: 1px;
+    backdrop-filter: blur(15px); display: flex; justify-content: center; align-items: center;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
   }
   canvas { display: block; width: 100%; height: 100%; }
 </style>
@@ -56,8 +63,9 @@
 <body>
 
 <div id="ui-menu">
-  <h1>ANATOMY MOTION ENGINE</h1>
-  <button id="playButton">START SYSTEM</button>
+  <h1>Anatomy Core Engine</h1>
+  <p>HIGH DEFINITION KINEMATICS</p>
+  <button id="playButton">INITIALIZE</button>
 </div>
 
 <div id="game-ui">
@@ -68,13 +76,13 @@
 <script src="https://cdn.jsdelivr.net/npm/three@0.152.0/build/three.min.js"></script>
 
 <script>
-// Blocages stricts des gestes natifs iOS
+// Neutralisation stricte de la physique de défilement d'iOS Safari
 document.addEventListener('touchmove', (e) => { if (e.touches.length > 1 || e.scale !== 1) e.preventDefault(); }, { passive: false });
 document.addEventListener('touchstart', (e) => { if (e.touches.length > 1) e.preventDefault(); }, { passive: false });
 
 const CONFIG = { 
-  maxSpeed: 8.5, acceleration: 40, friction: 9,
-  jumpForce: 12.5, gravity: 32, cameraSensitivity: 0.012, worldSize: 160 
+  maxSpeed: 7.8, acceleration: 38, friction: 10,
+  jumpForce: 11.5, gravity: 29, cameraSensitivity: 0.012, worldSize: 200 
 };
 
 let scene, camera, renderer, clock;
@@ -83,15 +91,20 @@ let currentVelocity = new THREE.Vector3();
 let velocityY = 0, isGrounded = true;
 let collidableObjects = [];
 
-// Squelette Anatomique Complet
-let playerGroup, pelvis, torso, head;
-let leftThigh, leftShin, leftFoot;
-let rightThigh, rightShin, rightFoot;
-let leftUpperArm, leftForearm, rightUpperArm, rightForearm;
+// Squelette & Groupes Anatomiques pour le maillage complexe
+let playerGroup, pelvis, spineLower, spineUpper, neck, head;
+let leftThigh, leftShin, leftFoot, leftToes;
+let rightThigh, rightShin, rightFoot, rightToes;
+let leftClavicle, leftUpperArm, leftForearm, leftHand;
+let rightClavicle, rightUpperArm, rightForearm, rightHand;
 
-let cameraOrbit = { radius: 7, theta: Math.PI / 4, phi: Math.PI / 6, targetY: 1.25 };
-let jumpPhase = 'grounded'; // 'grounded', 'takeoff', 'air', 'landing'
+// Paramètres de morphologie musculaire (Simulant le maillage de l'image de l'utilisateur)
+let muscleMat;
+
+let cameraOrbit = { radius: 6.5, theta: Math.PI / 4, phi: Math.PI / 7, targetY: 1.15 };
+let movementState = 'idle'; // 'idle', 'run', 'takeoff', 'air', 'landing'
 let landingTimer = 0, takeoffTimer = 0;
+let idleWeightTimer = 0, currentIdleStance = 0; // Gestion du basculement du poids au repos
 
 document.getElementById('playButton').addEventListener('click', () => {
   document.getElementById('ui-menu').style.opacity = '0';
@@ -99,205 +112,252 @@ document.getElementById('playButton').addEventListener('click', () => {
     document.getElementById('ui-menu').style.display = 'none';
     document.getElementById('game-ui').style.display = 'block';
     setupGame();
-  }, 300);
+  }, 400);
 });
 
 function setupGame() {
   clock = new THREE.Clock();
   initScene();
   initEnvironment();
-  initAnatomicalCharacter();
+  buildAdvancedAnatomy();
   initControls();
   animate();
 }
 
 function initScene() {
   scene = new THREE.Scene();
-  scene.background = new THREE.Color(0x0f172a);
-  scene.fog = new THREE.FogExp2(0x0f172a, 0.015);
+  scene.background = new THREE.Color(0x090d16);
+  scene.fog = new THREE.FogExp2(0x090d16, 0.012);
 
-  camera = new THREE.PerspectiveCamera(55, window.innerWidth / window.innerHeight, 0.1, 400);
+  camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 0.1, 500);
   
   renderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: "high-performance" });
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2)); 
   renderer.setSize(window.innerWidth, window.innerHeight);
   document.body.appendChild(renderer.domElement);
 
-  // Éclairage studio anatomique pour faire ressortir les formes des muscles
-  const ambient = new THREE.AmbientLight(0x334155, 0.6);
+  // Éclairage studio sculptant (Accentue le relief des muscles comme sur le rendu gris de référence)
+  const ambient = new THREE.AmbientLight(0x1e293b, 0.7);
   scene.add(ambient);
 
-  const sun = new THREE.DirectionalLight(0xf8fafc, 0.8);
-  sun.position.set(15, 30, 15);
-  scene.add(sun);
+  const keyLight = new THREE.DirectionalLight(0xe2e8f0, 0.9);
+  keyLight.position.set(20, 35, 15);
+  scene.add(keyLight);
 
-  const rimLight = new THREE.DirectionalLight(0x38bdf8, 0.5); // Effet de contour bleu réaliste
-  rimLight.position.set(-15, 10, -15);
+  const fillLight = new THREE.DirectionalLight(0x475569, 0.5);
+  fillLight.position.set(-20, 15, -10);
+  scene.add(fillLight);
+
+  const rimLight = new THREE.DirectionalLight(0x93c5fd, 0.6);
+  rimLight.position.set(0, 5, -20);
   scene.add(rimLight);
 
   window.addEventListener('resize', onWindowResize);
 }
 
 function initEnvironment() {
+  // Sol technique de présentation
   const floor = new THREE.Mesh(
     new THREE.PlaneGeometry(CONFIG.worldSize, CONFIG.worldSize),
-    new THREE.MeshStandardMaterial({ color: 0x1e293b, roughness: 0.8 })
+    new THREE.MeshStandardMaterial({ color: 0x111827, roughness: 0.7, metalness: 0.1 })
   );
   floor.rotation.x = -Math.PI / 2;
   scene.add(floor);
 
-  const grid = new THREE.GridHelper(CONFIG.worldSize, 60, 0x475569, 0x334155);
-  grid.position.y = 0.005;
+  const grid = new THREE.GridHelper(CONFIG.worldSize, 80, 0x374151, 0x1f2937);
+  grid.position.y = 0.002;
   scene.add(grid);
 
-  createObstacle(0, 0, -20, 10, 2, 10);
-  createObstacle(15, 0, -15, 6, 4, 6);
+  // Obstacles géométriques pour valider la cinématique de saut/réception
+  createObstacle(-8, 0, -12, 5, 1.2, 5);
+  createObstacle(6, 0, -18, 7, 2.5, 7);
 }
 
 function createObstacle(x, y, z, w, h, d) {
   const box = new THREE.Mesh(
     new THREE.BoxGeometry(w, h, d),
-    new THREE.MeshStandardMaterial({ color: 0x334155, roughness: 0.5 })
+    new THREE.MeshStandardMaterial({ color: 0x1f2937, roughness: 0.4 })
   );
   box.position.set(x, y + h/2, z);
   scene.add(box);
   collidableObjects.push({ mesh: box, w: w, h: h, d: d });
 }
 
-// CONSTRUCTION DE L'ANATOMIE HUMAINE (Muscles et Articulations)
-function initAnatomicalCharacter() {
+// ============================================================================
+// MODÉLISATION DE LA STRUCTURE ANATOMIQUE DÉTAILLÉE (Style Basemesh)
+// ============================================================================
+function buildAdvancedAnatomy() {
   playerGroup = new THREE.Group();
   
-  // Matériau type "écorché/modèle 3D" réaliste gris neutre comme sur ton image
-  const muscleMat = new THREE.MeshStandardMaterial({ 
-    color: 0x94a3b8, 
-    roughness: 0.5,
-    metalness: 0.1
+  // Matériau argile/synthétique mat identique à l'image fournie
+  muscleMat = new THREE.MeshStandardMaterial({ 
+    color: 0x828b99, 
+    roughness: 0.55,
+    metalness: 0.05
   });
 
-  // Pelvis (Le centre de gravité du corps)
+  // Base : Le Bassin / Pelvis
   pelvis = new THREE.Group();
-  pelvis.position.y = 0.95; 
+  pelvis.position.y = 0.92; 
   playerGroup.add(pelvis);
 
-  const pelvisMesh = new THREE.Mesh(new THREE.SphereGeometry(0.18, 16, 16), muscleMat);
-  pelvisMesh.scale.set(1.3, 0.8, 1);
+  const pelvisMesh = new THREE.Mesh(new THREE.SphereGeometry(0.16, 16, 16), muscleMat);
+  pelvisMesh.scale.set(1.2, 0.8, 0.9);
   pelvis.add(pelvisMesh);
 
-  // Torse / Cage Thoracique (Forme en V)
-  torso = new THREE.Group();
-  torso.position.y = 0.15;
-  pelvis.add(torso);
+  // Fessiers (Gluteus Maximus)
+  const gluteGeo = new THREE.SphereGeometry(0.09, 12, 12);
+  const leftGlute = new THREE.Mesh(gluteGeo, muscleMat);
+  leftGlute.position.set(-0.08, -0.04, -0.07);
+  pelvis.add(leftGlute);
+  const rightGlute = leftGlute.clone();
+  rightGlute.position.x = 0.08;
+  pelvis.add(rightGlute);
 
-  const chestMesh = new THREE.Mesh(new THREE.CylinderGeometry(0.24, 0.16, 0.55, 16), muscleMat);
-  chestMesh.position.y = 0.275;
-  chestMesh.scale.set(1.2, 1, 0.9); // Plus large sur les côtés
-  torso.add(chestMesh);
+  // Colonne Vertébrale Basse (Lombaire)
+  spineLower = new THREE.Group();
+  spineLower.position.y = 0.08;
+  pelvis.add(spineLower);
 
-  // Épaules (Deltoïdes)
-  const shoulderGeo = new THREE.SphereGeometry(0.09, 12, 12);
-  const leftShoulder = new THREE.Mesh(shoulderGeo, muscleMat);
-  leftShoulder.position.set(-0.28, 0.5, 0);
-  torso.add(leftShoulder);
-  
-  const rightShoulder = leftShoulder.clone();
-  rightShoulder.position.x = 0.28;
-  torso.add(rightShoulder);
+  const lumbarMesh = new THREE.Mesh(new THREE.CylinderGeometry(0.14, 0.16, 0.18, 12), muscleMat);
+  lumbarMesh.position.y = 0.09;
+  lumbarMesh.scale.set(1.1, 1, 0.9);
+  spineLower.add(lumbarMesh);
 
-  // Cou et Tête
-  head = new THREE.Group();
-  head.position.y = 0.58;
-  torso.add(head);
+  // Colonne Vertébrale Haute / Cage Thoracique / Buste en V
+  spineUpper = new THREE.Group();
+  spineUpper.position.y = 0.18;
+  spineLower.add(spineUpper);
 
-  const neckMesh = new THREE.Mesh(new THREE.CylinderGeometry(0.07, 0.08, 0.12, 10), muscleMat);
+  const chestMesh = new THREE.Mesh(new THREE.CylinderGeometry(0.24, 0.16, 0.42, 16), muscleMat);
+  chestMesh.position.y = 0.21;
+  chestMesh.scale.set(1.25, 1, 0.85);
+  spineUpper.add(chestMesh);
+
+  // Sculpture des Pectoraux
+  const pecGeo = new THREE.BoxGeometry(0.16, 0.14, 0.06);
+  const leftPec = new THREE.Mesh(pecGeo, muscleMat);
+  leftPec.position.set(-0.09, 0.28, 0.1);
+  leftPec.rotation.y = 0.1;
+  spineUpper.add(leftPec);
+  const rightPec = leftPec.clone();
+  rightPec.position.x = 0.09;
+  rightPec.rotation.y = -0.1;
+  spineUpper.add(rightPec);
+
+  // Ceinture Scapulaire / Clavicules
+  leftClavicle = new THREE.Group(); leftClavicle.position.set(-0.22, 0.38, 0); spineUpper.add(leftClavicle);
+  rightClavicle = new THREE.Group(); rightClavicle.position.set(0.22, 0.38, 0); spineUpper.add(rightClavicle);
+
+  const shoulderGeo = new THREE.SphereGeometry(0.085, 14, 14);
+  const leftDeltoid = new THREE.Mesh(shoulderGeo, muscleMat); leftClavicle.add(leftDeltoid);
+  const rightDeltoid = new THREE.Mesh(shoulderGeo, muscleMat); rightClavicle.add(rightDeltoid);
+
+  // Cou & Tête réaliste
+  neck = new THREE.Group();
+  neck.position.y = 0.42;
+  spineUpper.add(neck);
+
+  const neckMesh = new THREE.Mesh(new THREE.CylinderGeometry(0.07, 0.085, 0.12, 12), muscleMat);
   neckMesh.position.y = 0.06;
-  head.add(neckMesh);
+  neck.add(neckMesh);
 
-  const headMesh = new THREE.Mesh(new THREE.SphereGeometry(0.16, 16, 16), muscleMat);
-  headMesh.position.y = 0.22;
-  headMesh.scale.set(0.9, 1.1, 1); // Crâne ovalisé
+  head = new THREE.Group();
+  head.position.y = 0.12;
+  neck.add(head);
+
+  const headMesh = new THREE.Mesh(new THREE.SphereGeometry(0.14, 16, 16), muscleMat);
+  headMesh.position.y = 0.14;
+  headMesh.scale.set(0.9, 1.2, 1.05); // Structure de boîte crânienne ovalisée
   head.add(headMesh);
 
-  // CUISSES ET MOLLETS GALBÉS (Capsules pour le réalisme musculaire)
+  // Sculpture basique du visage (Mâchoire et nez pour repérer l'orientation du regard)
+  const jaw = new THREE.Mesh(new THREE.BoxGeometry(0.11, 0.09, 0.09), muscleMat);
+  jaw.position.set(0, 0.07, 0.04);
+  head.add(jaw);
+  const nose = new THREE.Mesh(new THREE.BoxGeometry(0.02, 0.05, 0.03), muscleMat);
+  nose.position.set(0, 0.14, 0.13);
+  head.add(nose);
+
+  // ==========================================
+  // MEMBRES INFÉRIEURS (Cuisses, Mollets, Pieds)
+  // ==========================================
+  
   // Jambe Gauche
-  leftThigh = new THREE.Group();
-  leftThigh.position.set(-0.14, -0.05, 0);
-  const ltMesh = new THREE.Mesh(new THREE.CapsuleGeometry(0.11, 0.35, 8, 16), muscleMat);
-  ltMesh.position.y = -0.22;
-  leftThigh.add(ltMesh);
-  pelvis.add(leftThigh);
+  leftThigh = new THREE.Group(); leftThigh.position.set(-0.13, -0.04, 0); pelvis.add(leftThigh);
+  const ltMuscle = new THREE.Mesh(new THREE.CapsuleGeometry(0.11, 0.34, 8, 14), muscleMat);
+  ltMuscle.position.y = -0.21;
+  ltMuscle.scale.set(1.05, 1, 1.1); // Quadriceps développés vers l'avant
+  leftThigh.add(ltMuscle);
 
-  leftShin = new THREE.Group();
-  leftShin.position.y = -0.42;
-  const lsMesh = new THREE.Mesh(new THREE.CapsuleGeometry(0.08, 0.35, 8, 16), muscleMat);
-  lsMesh.position.y = -0.22;
-  lsMesh.scale.set(1.1, 1, 0.9); // Mollet sculpté
-  leftShin.add(lsMesh);
-  leftThigh.add(leftShin);
+  leftShin = new THREE.Group(); leftShin.position.y = -0.40; leftThigh.add(leftShin);
+  const lsMuscle = new THREE.Mesh(new THREE.CapsuleGeometry(0.08, 0.34, 8, 14), muscleMat);
+  lsMuscle.position.y = -0.20;
+  lsMuscle.scale.set(1.1, 1, 0.9); // Mollet galbé (profil anatomique)
+  leftShin.add(lsMuscle);
 
-  leftFoot = new THREE.Mesh(new THREE.BoxGeometry(0.08, 0.06, 0.18), muscleMat);
-  leftFoot.position.set(0, -0.43, 0.05);
-  leftShin.add(leftFoot);
+  leftFoot = new THREE.Group(); leftFoot.position.y = -0.40; leftShin.add(leftFoot);
+  const lfMesh = new THREE.Mesh(new THREE.BoxGeometry(0.08, 0.05, 0.16), muscleMat);
+  lfMesh.position.set(0, -0.025, 0.05);
+  leftFoot.add(lfMesh);
+
+  leftToes = new THREE.Mesh(new THREE.BoxGeometry(0.085, 0.03, 0.04), muscleMat);
+  leftToes.position.set(0, -0.035, 0.15);
+  leftFoot.add(leftToes);
 
   // Jambe Droite
-  rightThigh = new THREE.Group();
-  rightThigh.position.set(0.14, -0.05, 0);
-  const rtMesh = new THREE.Mesh(new THREE.CapsuleGeometry(0.11, 0.35, 8, 16), muscleMat);
-  rtMesh.position.y = -0.22;
-  rightThigh.add(rtMesh);
-  pelvis.add(rightThigh);
+  rightThigh = new THREE.Group(); rightThigh.position.set(0.13, -0.04, 0); pelvis.add(rightThigh);
+  const rtMuscle = ltMuscle.clone(); rightThigh.add(rtMuscle);
 
-  rightShin = new THREE.Group();
-  rightShin.position.y = -0.42;
-  const rsMesh = new THREE.Mesh(new THREE.CapsuleGeometry(0.08, 0.35, 8, 16), muscleMat);
-  rsMesh.position.y = -0.22;
-  rsMesh.scale.set(1.1, 1, 0.9);
-  rightShin.add(rsMesh);
-  rightThigh.add(rightShin);
+  rightShin = new THREE.Group(); rightShin.position.y = -0.40; rightThigh.add(rightShin);
+  const rsMuscle = lsMuscle.clone(); rightShin.add(rsMuscle);
 
-  rightFoot = leftFoot.clone();
-  rightFoot.position.set(0, -0.43, 0.05);
-  rightShin.add(rightFoot);
+  rightFoot = new THREE.Group(); rightFoot.position.y = -0.40; rightShin.add(rightFoot);
+  const rfMesh = lfMesh.clone(); rightFoot.add(rfMesh);
+  
+  rightToes = leftToes.clone();
+  rightFoot.add(rightToes);
 
-  // BRAS ANATOMIQUES
+  // ==========================================
+  // MEMBRES SUPÉRIEURS (Bras, Avant-bras, Mains)
+  // ==========================================
+  
   // Bras Gauche
-  leftUpperArm = new THREE.Group();
-  leftUpperArm.position.set(-0.28, 0.5, 0);
-  const luaMesh = new THREE.Mesh(new THREE.CapsuleGeometry(0.08, 0.28, 6, 12), muscleMat);
-  luaMesh.position.y = -0.18;
-  leftUpperArm.add(luaMesh);
-  torso.add(leftUpperArm);
+  leftUpperArm = new THREE.Group(); leftUpperArm.position.set(0, 0, 0); leftClavicle.add(leftUpperArm);
+  const luaMuscle = new THREE.Mesh(new THREE.CapsuleGeometry(0.075, 0.26, 6, 12), muscleMat);
+  luaMuscle.position.y = -0.16;
+  leftUpperArm.add(luaMuscle);
 
-  leftForearm = new THREE.Group();
-  leftForearm.position.y = -0.34;
-  const lfaMesh = new THREE.Mesh(new THREE.CapsuleGeometry(0.065, 0.26, 6, 12), muscleMat);
-  lfaMesh.position.y = -0.16;
-  leftForearm.add(lfaMesh);
-  leftUpperArm.add(leftForearm);
+  leftForearm = new THREE.Group(); leftForearm.position.y = -0.31; leftUpperArm.add(leftForearm);
+  const lfaMuscle = new THREE.Mesh(new THREE.CapsuleGeometry(0.065, 0.24, 6, 12), muscleMat);
+  lfaMuscle.position.y = -0.15;
+  leftForearm.add(lfaMuscle);
+
+  leftHand = new THREE.Mesh(new THREE.BoxGeometry(0.03, 0.07, 0.07), muscleMat);
+  leftHand.position.set(0, -0.30, 0);
+  leftForearm.add(leftHand);
 
   // Bras Droit
-  rightUpperArm = new THREE.Group();
-  rightUpperArm.position.set(0.28, 0.5, 0);
-  const ruaMesh = new THREE.Mesh(new THREE.CapsuleGeometry(0.08, 0.28, 6, 12), muscleMat);
-  ruaMesh.position.y = -0.18;
-  rightUpperArm.add(ruaMesh);
-  torso.add(rightUpperArm);
+  rightUpperArm = new THREE.Group(); rightUpperArm.position.set(0, 0, 0); rightClavicle.add(rightUpperArm);
+  const ruaMuscle = luaMuscle.clone(); rightUpperArm.add(ruaMuscle);
 
-  rightForearm = new THREE.Group();
-  rightForearm.position.y = -0.34;
-  const rfaMesh = new THREE.Mesh(new THREE.CapsuleGeometry(0.065, 0.26, 6, 12), muscleMat);
-  rfaMesh.position.y = -0.16;
-  rightForearm.add(rfaMesh);
-  rightUpperArm.add(rightForearm);
+  rightForearm = new THREE.Group(); rightForearm.position.y = -0.31; rightUpperArm.add(rightForearm);
+  const rfaMuscle = lfaMuscle.clone(); rightForearm.add(rfaMuscle);
+
+  rightHand = rightHand = new THREE.Mesh(new THREE.BoxGeometry(0.03, 0.07, 0.07), muscleMat);
+  rightHand.position.set(0, -0.30, 0);
+  rightForearm.add(rightHand);
 
   scene.add(playerGroup);
 }
 
+// ============================================================================
+// SYSTEME DE CONFIGURATION DES GESTURES ET CONTRÔLES TACTILES
+// ============================================================================
 function initControls() {
   const joystickZone = document.getElementById('touch-zone-left');
   const joystickPoint = document.getElementById('joystickPoint');
-  let joyPointerId = null;
-  let joyStartX = 0, joyStartY = 0;
+  let joyPointerId = null, joyStartX = 0, joyStartY = 0;
 
   joystickZone.addEventListener('pointerdown', (e) => {
     e.preventDefault(); joyPointerId = e.pointerId;
@@ -308,7 +368,7 @@ function initControls() {
     if (e.pointerId === joyPointerId) {
       e.preventDefault();
       const dx = e.clientX - joyStartX; const dy = e.clientY - joyStartY;
-      const maxLimit = 42;
+      const maxLimit = 45;
       const distance = Math.min(Math.sqrt(dx*dx + dy*dy), maxLimit);
       const angle = Math.atan2(dy, dx);
       const moveX = Math.cos(angle) * distance; const moveY = Math.sin(angle) * distance;
@@ -319,14 +379,16 @@ function initControls() {
     }
   });
 
-  window.addEventListener('pointerup', (e) => {
+  const releaseJoystick = (e) => {
     if (e.pointerId === joyPointerId) {
       joyPointerId = null; joystickPoint.style.transform = `translate(0px, 0px)`;
       moveDirection.x = 0; moveDirection.z = 0;
     }
-  });
+  };
+  window.addEventListener('pointerup', releaseJoystick);
+  window.addEventListener('pointercancel', releaseJoystick);
 
-  // Caméra Roblox Glissement Inversé
+  // Zone Caméra Glissement de Doigt - Mode Inversé Natif Roblox
   const cameraZone = document.getElementById('touch-zone-right');
   let camPointerId = null; let prevCamX = 0, prevCamY = 0;
 
@@ -340,9 +402,11 @@ function initControls() {
     if (e.pointerId === camPointerId) {
       e.preventDefault();
       const movementX = e.clientX - prevCamX; const movementY = e.clientY - prevCamY;
+      
       cameraOrbit.theta -= movementX * CONFIG.cameraSensitivity;
-      cameraOrbit.phi += movementY * CONFIG.cameraSensitivity;
-      cameraOrbit.phi = Math.max(0.01, Math.min(Math.PI / 2 - 0.05, cameraOrbit.phi));
+      cameraOrbit.phi += movementY * CONFIG.cameraSensitivity; // Doigt haut = Recul d'écran vers le bas
+      cameraOrbit.phi = Math.max(0.02, Math.min(Math.PI / 2 - 0.08, cameraOrbit.phi));
+      
       prevCamX = e.clientX; prevCamY = e.clientY;
     }
   });
@@ -351,39 +415,42 @@ function initControls() {
 
   document.getElementById('jumpButton').addEventListener('pointerdown', (e) => {
     e.preventDefault(); e.stopPropagation();
-    if (isGrounded && jumpPhase === 'grounded') {
-      jumpPhase = 'takeoff';
-      takeoffTimer = 0.08; // Petite phase d'extension musculaire avant de décoller
+    if (isGrounded && movementState === 'idle' || movementState === 'run') {
+      movementState = 'takeoff';
+      takeoffTimer = 0.06; // Compression musculaire infime et instantanée pour pousser
     }
   });
 }
 
+// ============================================================================
+// BOUCLE PRINCIPALE ET ÉVOLUTION PHYSIQUE (Moteur Inertiel Rapide)
+// ============================================================================
 function animate() {
   requestAnimationFrame(animate);
   const delta = Math.min(clock.getDelta(), 0.1);
 
-  updateRealisticPhysics(delta);
-  processAnatomicalAnimations(delta);
+  executeInertialPhysics(delta);
+  computeAnatomicalKinematics(delta);
   updateCameraInstant();
 
   renderer.render(scene, camera);
 }
 
-function updateRealisticPhysics(delta) {
+function executeInertialPhysics(delta) {
   const camForward = new THREE.Vector3(0, 0, -1).applyQuaternion(camera.quaternion);
   camForward.y = 0; camForward.normalize();
   const camRight = new THREE.Vector3(1, 0, 0).applyQuaternion(camera.quaternion);
   camRight.y = 0; camRight.normalize();
 
-  const targetMove = new THREE.Vector3()
+  const targetDirection = new THREE.Vector3()
     .addScaledVector(camRight, moveDirection.x)
     .addScaledVector(camForward, -moveDirection.z);
 
-  if (targetMove.lengthSq() > 1) targetMove.normalize();
+  if (targetDirection.lengthSq() > 1) targetDirection.normalize();
 
-  // Inertie mécanique
-  if (targetMove.lengthSq() > 0.001 && jumpPhase !== 'takeoff') {
-    currentVelocity.lerp(targetMove.clone().multiplyScalar(CONFIG.maxSpeed), CONFIG.acceleration * delta);
+  // Application de la friction corporelle et accélération
+  if (targetDirection.lengthSq() > 0.001 && movementState !== 'takeoff') {
+    currentVelocity.lerp(targetDirection.clone().multiplyScalar(CONFIG.maxSpeed), CONFIG.acceleration * delta);
   } else {
     currentVelocity.lerp(new THREE.Vector3(0,0,0), CONFIG.friction * delta);
   }
@@ -391,166 +458,227 @@ function updateRealisticPhysics(delta) {
   const oldPos = playerGroup.position.clone();
   playerGroup.position.addScaledVector(currentVelocity, delta);
 
-  // Collisions fluides
-  const playerRadius = 0.35;
-  let onObject = false;
+  // Résolution stricte et rapide des boîtes de collisions
+  const pRad = 0.32;
+  let standingOnSurface = false;
 
   for (let i = 0; i < collidableObjects.length; i++) {
-    const obj = collidableObjects[i]; const objPos = obj.mesh.position;
-    if (Math.abs(playerGroup.position.x - objPos.x) < (obj.w/2 + playerRadius) &&
-        Math.abs(playerGroup.position.z - objPos.z) < (obj.d/2 + playerRadius)) {
-        if (oldPos.y >= (objPos.y + obj.h/2 - 0.25)) {
-          playerGroup.position.y = objPos.y + obj.h/2;
+    const obj = collidableObjects[i]; const oPos = obj.mesh.position;
+    if (Math.abs(playerGroup.position.x - oPos.x) < (obj.w/2 + pRad) &&
+        Math.abs(playerGroup.position.z - oPos.z) < (obj.d/2 + pRad)) {
+        
+        // Atterrissage sur la plateforme
+        if (oldPos.y >= (oPos.y + obj.h/2 - 0.22)) {
+          playerGroup.position.y = oPos.y + obj.h/2;
           velocityY = 0;
-          if(!isGrounded) { jumpPhase = 'landing'; landingTimer = 0.2; }
-          isGrounded = true; onObject = true;
+          if(!isGrounded) { movementState = 'landing'; landingTimer = 0.22; }
+          isGrounded = true; standingOnSurface = true;
         } else {
+          // Repoussement latéral immédiat
           playerGroup.position.x = oldPos.x; playerGroup.position.z = oldPos.z;
           currentVelocity.set(0,0,0);
         }
     }
   }
 
-  // Gestion des phases de Saut complexes
-  if (jumpPhase === 'takeoff') {
+  // Cinématique de l'impulsion de saut
+  if (movementState === 'takeoff') {
     takeoffTimer -= delta;
     if (takeoffTimer <= 0) {
       velocityY = CONFIG.jumpForce;
       isGrounded = false;
-      jumpPhase = 'air';
+      movementState = 'air';
     }
   }
 
-  if (!onObject && jumpPhase !== 'takeoff') {
+  if (!standingOnSurface && movementState !== 'takeoff') {
     velocityY -= CONFIG.gravity * delta;
     playerGroup.position.y += velocityY * delta;
 
     if (playerGroup.position.y <= 0) {
       playerGroup.position.y = 0; velocityY = 0;
-      if (!isGrounded) { jumpPhase = 'landing'; landingTimer = 0.25; }
+      if (!isGrounded) { movementState = 'landing'; landingTimer = 0.22; }
       isGrounded = true;
     }
   }
 
-  // Rotation fluide face à la trajectoire
-  if (currentVelocity.lengthSq() > 0.1) {
+  // Trajectoire de rotation : Orientation fluide du squelette vers l'axe de marche
+  if (currentVelocity.lengthSq() > 0.05) {
     const targetAngle = Math.atan2(currentVelocity.x, currentVelocity.z);
     let diff = targetAngle - playerGroup.rotation.y;
     diff = Math.atan2(Math.sin(diff), Math.cos(diff));
-    playerGroup.rotation.y += diff * 15 * delta;
+    playerGroup.rotation.y += diff * 16 * delta;
+    if(isGrounded && movementState !== 'landing') movementState = 'run';
+  } else if (isGrounded && movementState !== 'landing' && movementState !== 'takeoff') {
+    movementState = 'idle';
   }
 }
 
-// MOTEUR D'ANIMATION ANATOMIQUE COMPLEXE
-function processAnatomicalAnimations(delta) {
+// ============================================================================
+// CALCULATEUR DE CINÉMATIQUE INTERNE POUR LES MUSCLES ET LES ARTICULATIONS
+// ============================================================================
+function computeAnatomicalKinematics(delta) {
   const speed = currentVelocity.length();
   const speedRatio = speed / CONFIG.maxSpeed;
   const time = performance.now() * 0.0075;
 
-  // Réinitialisation par défaut des jointures pour l'interpolation
-  pelvis.position.y = 0.95; pelvis.rotation.set(0,0,0);
-  torso.rotation.set(0,0,0); head.rotation.set(0,0,0);
-  leftThigh.rotation.set(0,0,0); leftShin.rotation.set(0,0,0);
-  rightThigh.rotation.set(0,0,0); rightShin.rotation.set(0,0,0);
-  leftUpperArm.rotation.set(0,0,0); leftForearm.rotation.set(0,0,0);
-  rightUpperArm.rotation.set(0,0,0); rightForearm.rotation.set(0,0,0);
+  // Remise à zéro structurelle des matrices locales de rotation
+  pelvis.position.set(0, 0.92, 0); pelvis.rotation.set(0,0,0);
+  spineLower.rotation.set(0,0,0); spineUpper.rotation.set(0,0,0); 
+  neck.rotation.set(0,0,0); head.rotation.set(0,0,0);
+  leftClavicle.rotation.set(0,0,0); rightClavicle.rotation.set(0,0,0);
+  leftThigh.rotation.set(0,0,0); leftShin.rotation.set(0,0,0); leftFoot.rotation.set(0,0,0);
+  rightThigh.rotation.set(0,0,0); rightShin.rotation.set(0,0,0); rightFoot.rotation.set(0,0,0);
+  leftUpperArm.rotation.set(0,0,0); leftForearm.rotation.set(0,0,0); leftHand.rotation.set(0,0,0);
+  rightUpperArm.rotation.set(0,0,0); rightForearm.rotation.set(0,0,0); rightHand.rotation.set(0,0,0);
 
-  // 1. PHASE DE JUMP : IMPULSION (Tassement des muscles)
-  if (jumpPhase === 'takeoff') {
-    pelvis.position.y = 0.75; // Abaissement
-    leftThigh.rotation.x = -0.5; leftShin.rotation.x = 0.8;
-    rightThigh.rotation.x = -0.5; rightShin.rotation.x = 0.8;
-    leftUpperArm.rotation.x = -0.3; rightUpperArm.rotation.x = -0.3;
+  // 1. COMPLEXE DE JUMP : EXTENSION / ACCUMULATION FORCE
+  if (movementState === 'takeoff') {
+    pelvis.position.y = 0.72; 
+    spineLower.rotation.x = 0.15;
+    leftThigh.rotation.x = -0.55; leftShin.rotation.x = 0.9; leftFoot.rotation.x = -0.2;
+    rightThigh.rotation.x = -0.55; rightShin.rotation.x = 0.9; rightFoot.rotation.x = -0.2;
+    leftUpperArm.rotation.set(-0.4, 0, -0.1); rightUpperArm.rotation.set(-0.4, 0, 0.1);
     return;
   }
 
-  // 2. PHASE DE JUMP : EN L'AIR (Extension puis préparation à l'impact)
-  if (!isGrounded || jumpPhase === 'air') {
-    torso.rotation.x = 0.05;
-    if (velocityY > 0) { // Montée
-      leftThigh.rotation.x = -0.2; leftShin.rotation.x = 0.3;
-      rightThigh.rotation.x = 0.1; rightShin.rotation.x = 0.2;
-      leftUpperArm.rotation.set(0.5, 0, -0.2); rightUpperArm.rotation.set(-0.3, 0, 0.2);
-    } else { // Descente planée
-      leftThigh.rotation.x = -0.4; leftShin.rotation.x = 0.6;
-      rightThigh.rotation.x = -0.3; rightShin.rotation.x = 0.4;
-      leftUpperArm.rotation.x = 0.3; rightUpperArm.rotation.x = 0.3;
+  // 2. COMPLEXE DE JUMP : SUSPENSION ET GRAVITÉ AÉRIENNE
+  if (!isGrounded || movementState === 'air') {
+    spineUpper.rotation.x = 0.06;
+    if (velocityY > 0) { // Suspension ascendante
+      pelvis.rotation.x = -0.05;
+      leftThigh.rotation.set(-0.15, 0, -0.02); leftShin.rotation.x = 0.25;
+      rightThigh.rotation.set(0.18, 0, 0.02); rightShin.rotation.x = 0.15;
+      leftUpperArm.rotation.set(0.6, 0, -0.2); leftForearm.rotation.x = -0.4;
+      rightUpperArm.rotation.set(-0.4, 0, 0.2); rightForearm.rotation.x = -0.2;
+    } else { // Chute libre balancée
+      pelvis.rotation.x = 0.05;
+      leftThigh.rotation.x = -0.35; leftShin.rotation.x = 0.55; leftFoot.rotation.x = 0.2;
+      rightThigh.rotation.x = -0.25; rightShin.rotation.x = 0.45; rightFoot.rotation.x = 0.2;
+      leftUpperArm.rotation.set(0.2, 0, -0.1); rightUpperArm.rotation.set(0.2, 0, 0.1);
     }
     return;
   }
 
-  // 3. PHASE DE JUMP : LANDING AMORTI (Absorption cinétique de l'impact)
-  if (jumpPhase === 'landing') {
+  // 3. COMPLEXE DE JUMP : LANDING AMORTI (Dissipation de l'impact au sol)
+  if (movementState === 'landing') {
     landingTimer -= delta;
-    const progress = landingTimer / 0.25;
-    const flexIntensity = Math.sin(progress * Math.PI) * 0.35;
+    const progress = landingTimer / 0.22;
+    const dampFactor = Math.sin(progress * Math.PI) * 0.4;
     
-    pelvis.position.y -= flexIntensity * 0.8;
-    torso.rotation.x = flexIntensity * 0.9;
-    leftThigh.rotation.x = -flexIntensity * 1.8; leftShin.rotation.x = flexIntensity * 2.2;
-    rightThigh.rotation.x = -flexIntensity * 1.8; rightShin.rotation.x = flexIntensity * 2.2;
-    leftUpperArm.rotation.x = -flexIntensity; rightUpperArm.rotation.x = -flexIntensity;
-
-    if (landingTimer <= 0) jumpPhase = 'grounded';
+    pelvis.position.y -= dampFactor * 0.75;
+    spineLower.rotation.x = dampFactor * 0.6;
+    spineUpper.rotation.x = dampFactor * 0.5;
+    
+    // Flexion articulaire coordonnée
+    leftThigh.rotation.x = -dampFactor * 1.6; leftShin.rotation.x = dampFactor * 2.0; leftFoot.rotation.x = -dampFactor * 0.4;
+    rightThigh.rotation.x = -dampFactor * 1.6; rightShin.rotation.x = dampFactor * 2.0; rightFoot.rotation.x = -dampFactor * 0.4;
+    leftUpperArm.rotation.set(-dampFactor * 0.8, 0, -0.1); rightUpperArm.rotation.set(-dampFactor * 0.8, 0, 0.1);
+    
+    if (landingTimer <= 0) movementState = 'idle';
     return;
   }
 
-  // 4. ANIMATION DE RUN (Course organique calquée sur la physiologie)
-  if (speedRatio > 0.05) {
-    const wave = Math.sin(time * 2.2);
-    const doubleWave = Math.sin(time * 4.4);
+  // 4. ETAT : RUN (Course organique avec torsions squelettiques asymétriques)
+  if (movementState === 'run') {
+    const pace = time * 2.35;
+    const sWave = Math.sin(pace);
+    const dWave = Math.sin(pace * 2);
 
-    // Oscillation du bassin et inclinaisons du torse
-    pelvis.position.y += doubleWave * 0.04 * speedRatio;
-    pelvis.rotation.y = wave * 0.15 * speedRatio; // Torsion des hanches
-    torso.rotation.x = (0.18 + doubleWave * 0.02) * speedRatio; // Buste vers l'avant
-    torso.rotation.y = -wave * 0.12 * speedRatio; // Opposition épaules/hanches
+    // Oscillation du centre de gravité et torsion pelvienne
+    pelvis.position.y += dWave * 0.045 * speedRatio;
+    pelvis.rotation.y = sWave * 0.16 * speedRatio; 
+    pelvis.rotation.z = -sWave * 0.04 * speedRatio;
 
-    // Jambes : Articulation Hanche + Pli du genou synchrone
-    leftThigh.rotation.x = wave * 0.75 * speedRatio;
-    if (wave > 0) {
-      leftShin.rotation.x = (wave * 0.8) * speedRatio; // Pli du genou vers l'arrière
+    // Colonne et cage thoracique en contre-torsion par rapport aux hanches
+    spineLower.rotation.x = (0.12 + dWave * 0.02) * speedRatio;
+    spineUpper.rotation.y = -sWave * 0.14 * speedRatio; // Opposition scapulaire essentielle
+    spineUpper.rotation.z = sWave * 0.03 * speedRatio;
+
+    // Jambes : Cinématique Hanche -> Genou -> Cheville
+    leftThigh.rotation.x = sWave * 0.78 * speedRatio;
+    leftThigh.rotation.z = Math.max(0, sWave * 0.05) * speedRatio;
+    if (sWave > 0) {
+      leftShin.rotation.x = (sWave * 0.95) * speedRatio; // Propulsion arrière
+      leftFoot.rotation.x = (sWave * 0.25) * speedRatio;
     } else {
-      leftShin.rotation.x = (-wave * 0.2) * speedRatio; // Extension vers l'avant
+      leftShin.rotation.x = (-sWave * 0.22) * speedRatio; // Extension foulée avant
+      leftFoot.rotation.x = (sWave * 0.1) * speedRatio;
     }
 
-    rightThigh.rotation.x = -wave * 0.75 * speedRatio;
-    if (wave < 0) {
-      rightShin.rotation.x = (-wave * 0.8) * speedRatio;
+    rightThigh.rotation.x = -sWave * 0.78 * speedRatio;
+    rightThigh.rotation.z = Math.max(0, -sWave * 0.05) * speedRatio;
+    if (sWave < 0) {
+      rightShin.rotation.x = (-sWave * 0.95) * speedRatio;
+      rightFoot.rotation.x = (-sWave * 0.25) * speedRatio;
     } else {
-      rightShin.rotation.x = (wave * 0.2) * speedRatio;
+      rightShin.rotation.x = (sWave * 0.22) * speedRatio;
+      rightFoot.rotation.x = (-sWave * 0.1) * speedRatio;
     }
 
-    // Bras : Coudes pliés fixes balancés de façon agressive
-    leftUpperArm.rotation.set(-wave * 0.65 * speedRatio, 0, -0.1);
-    leftForearm.rotation.x = -0.5 - (wave * 0.15); // Coude verrouillé réaliste
+    // Bras : Épaules et coudes en flexion active
+    leftClavicle.rotation.z = -Math.abs(sWave) * 0.05 * speedRatio;
+    leftUpperArm.rotation.set(-sWave * 0.72 * speedRatio, sWave * 0.1, -0.12);
+    leftForearm.rotation.x = -0.65 - (sWave * 0.2); // Coude cassé fluide
+    leftHand.rotation.y = -sWave * 0.15;
 
-    rightUpperArm.rotation.set(wave * 0.65 * speedRatio, 0, 0.1);
-    rightForearm.rotation.x = -0.5 + (wave * 0.15);
+    rightClavicle.rotation.z = -Math.abs(sWave) * 0.05 * speedRatio;
+    rightUpperArm.rotation.set(sWave * 0.72 * speedRatio, -sWave * 0.1, 0.12);
+    rightForearm.rotation.x = -0.65 + (sWave * 0.2);
+    rightHand.rotation.y = sWave * 0.15;
 
-    head.rotation.x = -torso.rotation.x + 0.05;
+    // Stabilisation cinétique de l'axe de la tête
+    neck.rotation.x = -spineLower.rotation.x + 0.03;
+    head.rotation.y = -pelvis.rotation.y * 0.3;
+    head.rotation.z = -sWave * 0.02;
   } 
-  // 5. ANIMATION D'IDLE (Respiration et micro-mouvements de stabilisation)
+  
+  // 5. ETAT : IDLE (Repos vivant - Respiration + Transfert de charge mécanique)
   else {
-    const breath = Math.sin(performance.now() * 0.0025);
-    const microMove = Math.cos(performance.now() * 0.001);
+    const breath = Math.sin(performance.now() * 0.0022);
+    const pulse = Math.cos(performance.now() * 0.0011);
 
-    pelvis.position.y += breath * 0.012;
-    torso.rotation.x = 0.03 + breath * 0.01;
-    torso.rotation.z = microMove * 0.015; // Léger balancement gauche/droite
+    // Gestion du basculement cyclique du poids sur une hanche
+    idleWeightTimer += delta;
+    if (idleWeightTimer > 6) {
+      currentIdleStance = currentIdleStance === 0 ? (Math.random() > 0.5 ? 1 : -1) : 0;
+      idleWeightTimer = 0;
+    }
 
-    // Posture de repos des membres
-    leftThigh.rotation.set(0.05, 0, -0.02); leftShin.rotation.x = 0.05;
-    rightThigh.rotation.set(-0.02, 0, 0.02); rightShin.rotation.x = 0.02;
+    // Interpolation vers la posture de repos active
+    const targetHancheRot = currentIdleStance * 0.08;
+    pelvis.rotation.z = THREE.MathUtils.lerp(pelvis.rotation.z, targetHancheRot, 2 * delta);
+    pelvis.position.y += breath * 0.01;
 
-    leftUpperArm.rotation.set(breath * 0.03, 0, -0.08 + (microMove * 0.01));
-    leftForearm.rotation.x = -0.15;
-    rightUpperArm.rotation.set(-breath * 0.03, 0, 0.08 + (microMove * 0.01));
-    rightForearm.rotation.x = -0.15;
+    // Respiration pulmonaire (Dilatation du buste)
+    spineUpper.rotation.x = 0.02 + breath * 0.008;
+    spineUpper.scale.set(1.25 + breath * 0.005, 1, 0.85 + breath * 0.003);
+
+    // Positionnement des membres inférieurs en décharge
+    leftThigh.rotation.set(0.04, 0.02, -0.02 - targetHancheRot * 0.5);
+    leftShin.rotation.x = 0.06 + pulse * 0.01;
+    leftFoot.rotation.x = -0.02;
+
+    rightThigh.rotation.set(0.02, -0.02, 0.02 - targetHancheRot * 0.5);
+    rightShin.rotation.x = 0.04 - pulse * 0.01;
+    rightFoot.rotation.x = -0.01;
+
+    // Bras relâchés le long du corps avec micro-oscillations dues au rythme respiratoire
+    leftUpperArm.rotation.set(breath * 0.02, 0, -0.06 + pulse * 0.01);
+    leftForearm.rotation.x = -0.12;
+    leftHand.rotation.set(0, 0, 0.05);
+
+    rightUpperArm.rotation.set(-breath * 0.02, 0, 0.06 - pulse * 0.01);
+    rightForearm.rotation.x = -0.12;
+    rightHand.rotation.set(0, 0, -0.05);
+
+    // Mouvements oculaires/tête simulés
+    head.rotation.set(breath * 0.01, pulse * 0.04, 0);
   }
 }
 
 function updateCameraInstant() {
+  // Fixation absolue : Aucun décalage ni lissage amorti (Zero Lag visuel)
   camera.position.x = playerGroup.position.x + cameraOrbit.radius * Math.sin(cameraOrbit.theta) * Math.cos(cameraOrbit.phi);
   camera.position.y = playerGroup.position.y + cameraOrbit.targetY + cameraOrbit.radius * Math.sin(cameraOrbit.phi);
   camera.position.z = playerGroup.position.z + cameraOrbit.radius * Math.cos(cameraOrbit.theta) * Math.cos(cameraOrbit.phi);
